@@ -394,6 +394,9 @@ strong { font-weight: 600; }
 .rating-badge .stars { color: #F5B301; letter-spacing: 1px; }
 .rating-badge small { color: var(--muted); }
 
+.reviews-widget { max-width: 1100px; margin-inline: auto; min-height: 320px; }
+.reviews-widget iframe { display: block; border: 0; }
+
 /* ---------- areas ---------- */
 .areas__chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { display: inline-block; padding: 8px 14px; border-radius: var(--r-pill); background: #fff; border: 1px solid var(--line); font-size: .88rem; color: var(--ink-2); text-decoration: none; transition: border-color var(--t-fast), color var(--t-fast), background var(--t-fast), transform var(--t) var(--ease-out); }

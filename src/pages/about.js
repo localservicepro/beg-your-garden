@@ -1,6 +1,6 @@
 import { site, reviews } from '../data/site.js';
 import { page, breadcrumbSchema } from '../templates/layout.js';
-import { icons, esc, pageHero, credentialsGrid, ctaBand, reviewCard, ratingBadge } from '../templates/components.js';
+import { icons, esc, pageHero, credentialsGrid, ctaBand, reviewsWidget, ratingBadge } from '../templates/components.js';
 
 export default ({ assetHash }) => {
   const crumbs = [{ name: 'Home', href: '/' }, { name: 'About', href: '/about/' }];
@@ -56,7 +56,7 @@ ${pageHero({ h1: 'About Beg Your Garden: Ipswich\'s Quiet, Scheduled Lawn &amp; 
 <section class="section section--off">
   <div class="container">
     <div class="section-head center reveal"><span class="eyebrow">Reviews</span><h2>Trusted across Ipswich</h2><p>${ratingBadge()}</p></div>
-    <div class="grid grid-3 stagger">${reviews.slice(0, 3).map(reviewCard).join('')}</div>
+    <div class="reveal">${reviewsWidget()}</div>
     <p class="center" style="margin-top:24px"><a class="link-arrow" href="${site.gbp}" target="_blank" rel="noopener">Read all ${site.reviewCount} reviews on Google ${icons.arrow}</a></p>
   </div>
 </section>

@@ -1,6 +1,6 @@
 import { site, homeFaqs, beforeAfter } from '../data/site.js';
 import { page, faqSchema } from '../templates/layout.js';
-import { icons, servicesGrid, reviewsMarquee, ratingBadge, faqBlock, ctaBand, areasSection, compare, credentialsGrid } from '../templates/components.js';
+import { icons, servicesGrid, reviewsWidget, ratingBadge, faqBlock, ctaBand, areasSection, compare, credentialsGrid } from '../templates/components.js';
 
 export default ({ assetHash }) => {
   const body = `
@@ -52,7 +52,7 @@ export default ({ assetHash }) => {
       <span class="eyebrow">Your local team in Raceview</span>
       <h2>Lawn mowing in Ipswich that runs like clockwork</h2>
       <p>Beg Your Garden is a local, police-checked team based in Raceview, QLD 4305. We give Ipswich families, shift workers, landlords and DVA and NDIS clients a simple, set-and-forget path to a tidy, healthy lawn: fixed route days by suburb, a reminder before every visit, and a quick wrap-up with photos after.</p>
-      <p>Everything we run is commercial battery equipment. It cuts as cleanly as petrol, with a fraction of the noise and no fumes drifting through your windows. Alongside lawn mowing in Ipswich we handle hedge reduction, gardening, mulch laying, weed control and fertilising, pressure cleaning, green waste and rubbish removal, sprinkler installation and irrigation, so one team keeps the whole property to one standard.</p>
+      <p>Everything we run is commercial battery equipment. It cuts as cleanly as petrol, with a fraction of the noise and no fumes drifting through your windows. Alongside mowing we handle hedge reduction, gardening, mulch laying, weed control and fertilising, pressure cleaning, green waste and rubbish removal, sprinkler installation and irrigation, so one team keeps the whole property to one standard.</p>
       <div class="btn-row" style="margin-top:22px"><a class="btn btn--navy" href="/about/">More about us ${icons.arrow}</a><a class="link-arrow" href="/services/">All nine services ${icons.arrow}</a></div>
     </div>
   </div>
@@ -94,7 +94,6 @@ export default ({ assetHash }) => {
     <div class="section-head center reveal">
       <span class="eyebrow">How it works</span>
       <h2>From first quote to a lawn you don't think about</h2>
-      <p class="lede" style="margin-inline:auto">Four steps from “can someone just mow this?” to scheduled lawn mowing in Ipswich that happens without you.</p>
     </div>
     <div class="steps stagger">
       <div class="step"><h3>Tell us about the yard</h3><p>Send the form or call. A few details on size, access and what you'd like done is all we need to start.</p></div>
@@ -110,7 +109,7 @@ export default ({ assetHash }) => {
     <div class="reveal">
       <span class="eyebrow">Pricing</span>
       <h2>How much does lawn mowing cost in Ipswich?</h2>
-      <p>Every yard is different, and so are our clients' needs. We're not the local “cut-and-go” outfit: the price of lawn mowing in Ipswich with us covers a reliable scheduled visit from a police-checked, Blue Card-certified, fully insured team, with communication you can count on.</p>
+      <p>Every yard is different, and so are our clients' needs. We're not the local “cut-and-go” outfit: the price covers a reliable scheduled visit from a police-checked, Blue Card-certified, fully insured team, with communication you can count on.</p>
       <p>Most residential lawns in Ipswich fall between a set price per visit based on lawn size and access. We quote from a quick estimate, confirm it on site, and the price includes mowing, edging, whipper-snipping, blow-down and clippings. Fertilising, weed control, hedging and the rest are added to the plan at the rates we quote up front.</p>
       <div class="btn-row" style="margin-top:22px"><a class="btn" href="/contact/#quote">Get my lawn mowing price ${icons.arrow}</a><a class="link-arrow" href="/services/lawn-mowing/">What's included ${icons.arrow}</a></div>
     </div>
@@ -125,7 +124,7 @@ export default ({ assetHash }) => {
     <div class="section-head center reveal">
       <span class="eyebrow">Before &amp; after</span>
       <h2>A yard that looks after you</h2>
-      <p class="lede">Drag the handle. Real backyards from our lawn mowing Ipswich routes, photographed after the first scheduled visit.</p>
+      <p class="lede">Drag the handle. Real Ipswich backyards photographed after the first scheduled visit.</p>
     </div>
     <div class="grid grid-2 stagger">${beforeAfter.map(compare).join('')}</div>
     <p class="center" style="margin-top:28px"><a class="btn btn--ghost" href="/our-work/">See more of our work ${icons.arrow}</a></p>
@@ -140,7 +139,7 @@ export default ({ assetHash }) => {
       <p style="margin-top:8px">${ratingBadge()}</p>
     </div>
   </div>
-  <div class="reveal">${reviewsMarquee()}</div>
+  <div class="container reveal">${reviewsWidget()}</div>
 </section>
 
 <section class="section" id="areas">
@@ -148,7 +147,7 @@ export default ({ assetHash }) => {
     <div class="section-head reveal">
       <span class="eyebrow">Areas we service</span>
       <h2>Lawn mowing across Ipswich City &amp; the Springfield corridor</h2>
-      <p class="lede">Raceview is home base. From there, set-day lawn mowing Ipswich routes cover the city, Springfield and the rural fringe, 84 suburbs in all.</p>
+      <p class="lede">Raceview is home base. From there, set-day routes cover the city, Springfield and the rural fringe, 84 suburbs in all.</p>
     </div>
     ${areasSection({ compact: true })}
     <p style="margin-top:24px"><a class="link-arrow" href="/areas/">See every suburb we cover ${icons.arrow}</a></p>
@@ -159,7 +158,7 @@ export default ({ assetHash }) => {
   <div class="container">
     <div class="section-head center reveal">
       <span class="eyebrow">FAQ</span>
-      <h2>Lawn mowing Ipswich: questions we get asked</h2>
+      <h2>Questions we get asked</h2>
     </div>
     <div class="reveal">${faqBlock(homeFaqs)}</div>
   </div>

@@ -223,6 +223,15 @@ export function reviewsMarquee() {
 <div class="marquee"><div class="marquee__track">${cards}<div aria-hidden="true" style="display:contents">${cards}</div></div></div>`;
 }
 
+export function reviewsWidget() {
+  // LeadConnector reputation widget: pulls the live Google reviews for the GBP listing.
+  return `
+<div class="reviews-widget">
+  <script type="text/javascript" src="https://app.begyourgarden.com/reputation/assets/review-widget.js"></script>
+  <iframe class="lc_reviews_widget" title="Beg Your Garden customer reviews" src="https://app.begyourgarden.com/reputation/widgets/review_widget/kV79lWPmePKxBgY5beiF" frameborder="0" scrolling="no" style="min-width: 100%; width: 100%;" loading="lazy"></iframe>
+</div>`;
+}
+
 export function ratingBadge() {
   return `<a class="rating-badge" href="${site.gbp}" target="_blank" rel="noopener"><span class="g">G</span><span><strong>${site.rating}</strong> <span class="stars">★★★★★</span><br><small>${site.reviewCount} Google reviews</small></span></a>`;
 }
