@@ -63,6 +63,17 @@
     revealEls.forEach((el) => io.observe(el));
   }
 
+  /* ---------- hero video ---------- */
+  const hv = d.querySelector('.hero__video');
+  if (hv) {
+    if (reduce) { hv.removeAttribute('autoplay'); hv.pause(); hv.remove(); }
+    else {
+      const mark = () => hv.classList.add('is-playing');
+      hv.addEventListener('playing', mark, { once: true });
+      const p = hv.play(); if (p && p.catch) p.catch(() => {});
+    }
+  }
+
   /* ---------- counters ---------- */
   const counters = d.querySelectorAll('[data-count]');
   if (counters.length) {

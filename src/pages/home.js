@@ -1,11 +1,16 @@
 import { site, homeFaqs, beforeAfter } from '../data/site.js';
 import { page, faqSchema } from '../templates/layout.js';
-import { icons, quoteForm, servicesGrid, reviewsMarquee, ratingBadge, faqBlock, ctaBand, areasSection, compare, credentialsGrid } from '../templates/components.js';
+import { icons, servicesGrid, reviewsMarquee, ratingBadge, faqBlock, ctaBand, areasSection, compare, credentialsGrid } from '../templates/components.js';
 
 export default ({ assetHash }) => {
   const body = `
 <section class="hero" id="top">
-  <div class="hero__media"><img src="/images/hero-john-mowing-battery-raceview.webp" srcset="/images/hero-john-mowing-battery-raceview-800.webp 800w, /images/hero-john-mowing-battery-raceview.webp 1366w" sizes="100vw" width="1366" height="768" alt="Beg Your Garden battery lawn mowing in Raceview, Ipswich QLD" fetchpriority="high" decoding="async"></div>
+  <div class="hero__media">
+    <img src="/images/hero-john-mowing-battery-raceview.webp" srcset="/images/hero-john-mowing-battery-raceview-800.webp 800w, /images/hero-john-mowing-battery-raceview.webp 1366w" sizes="100vw" width="1366" height="768" alt="Beg Your Garden battery lawn mowing in Raceview, Ipswich QLD" fetchpriority="high" decoding="async">
+    <video class="hero__video" autoplay muted loop playsinline preload="metadata" poster="/images/hero-john-mowing-battery-raceview.webp" aria-hidden="true" tabindex="-1">
+      <source src="/video/hero-john-mowing-ipswich.mp4" type="video/mp4">
+    </video>
+  </div>
   <div class="hero__overlay"></div>
   <div class="container hero__grid">
     <div>
@@ -23,10 +28,6 @@ export default ({ assetHash }) => {
         <div>${icons.check} Fully insured</div>
       </div>
     </div>
-    <div class="quote-card">
-      <h2>Leaf it to us</h2>
-      <p class="small">Free quote for lawn mowing and garden care in Ipswich. Takes a minute.</p>
-      ${quoteForm({ id: 'hero-quote', compact: true })}
     </div>
   </div>
 </section>
