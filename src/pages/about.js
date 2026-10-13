@@ -5,7 +5,7 @@ import { icons, esc, pageHero, credentialsGrid, ctaBand, reviewCard, ratingBadge
 export default ({ assetHash }) => {
   const crumbs = [{ name: 'Home', href: '/' }, { name: 'About', href: '/about/' }];
   const body = `
-${pageHero({ h1: 'About Beg Your Garden: Ipswich\'s Quiet, Scheduled Lawn &amp; Garden Team', lede: 'A local, police-checked team based in Raceview, running set-day lawn and garden routes across Ipswich and Springfield with commercial battery equipment.', crumbs, image: 'hero-john-mowing-battery-raceview', imageAlt: 'John from Beg Your Garden mowing with a battery mower in Raceview, Ipswich' })}
+${pageHero({ h1: 'About Beg Your Garden: Ipswich\'s Quiet, Scheduled Lawn &amp; Garden Team', lede: 'A local, police-checked team based in Raceview, running set-day lawn and garden routes across Ipswich and Springfield with commercial battery equipment.', crumbs, image: 'hero-john-mowing-face-ipswich-generated', imageAlt: 'John from Beg Your Garden pushing a battery lawn mower across a mown lawn in Ipswich' })}
 <section class="section">
   <div class="container split">
     <div class="reveal">

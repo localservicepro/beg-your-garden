@@ -1,4 +1,11 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { site, services, serviceList, suburbs, coreSuburbs, routeDays, reviews, credentials } from '../data/site.js';
+
+const imagesDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../public/images');
+const imgExists = (name) => fs.existsSync(path.join(imagesDir, `${name}.webp`));
+const smallVariant = (image) => ['-640', '-800', '-1000'].map((sfx) => image + sfx).find(imgExists);
 
 export const esc = (s = '') => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -279,14 +286,30 @@ export function breadcrumb(items) {
   return `<ol class="breadcrumb">${items.map((it, i) => i < items.length - 1 ? `<li><a href="${it.href}">${esc(it.name)}</a></li>` : `<li aria-current="page">${esc(it.name)}</li>`).join('')}</ol>`;
 }
 
-export function pageHero({ h1, lede, crumbs, image, imageAlt, plain = false }) {
-  return `
-<section class="page-hero${plain ? ' page-hero--plain' : ''}">
-  ${image ? `<div class="page-hero__media"><img src="/images/${image}.webp" alt="${esc(imageAlt || '')}" fetchpriority="high" decoding="async"></div><div class="page-hero__overlay"></div>` : ''}
+export function pageHero({ h1, lede, crumbs, image, imageAlt, plain = false, imageSmall }) {
+  if (!image || plain) {
+    return `
+<section class="page-hero page-hero--plain">
   <div class="container">
     ${crumbs ? breadcrumb(crumbs) : ''}
     <h1 class="reveal in">${h1}</h1>
     ${lede ? `<p class="lede">${lede}</p>` : ''}
+  </div>
+</section>`;
+  }
+  const small = imageSmall || smallVariant(image);
+  const srcset = small ? ` srcset="/images/${small}.webp 640w, /images/${image}.webp 1200w" sizes="(max-width: 900px) 100vw, 46vw"` : '';
+  return `
+<section class="page-hero page-hero--split">
+  <div class="container page-hero__grid">
+    <div class="page-hero__copy">
+      ${crumbs ? breadcrumb(crumbs) : ''}
+      <h1 class="reveal in">${h1}</h1>
+      ${lede ? `<p class="lede">${lede}</p>` : ''}
+    </div>
+    <figure class="page-hero__figure reveal reveal--right in">
+      <img src="/images/${image}.webp"${srcset} alt="${esc(imageAlt || '')}" fetchpriority="high" decoding="async">
+    </figure>
   </div>
 </section>`;
 }
