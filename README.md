@@ -121,7 +121,7 @@ To add a post, append to `posts` in `src/data/blog.js` and rebuild; the index, h
 
 `routeMap()` in `src/templates/components.js` draws an inline SVG map of Ipswich City from the suburb
 coordinates in `mapPoints` (`src/data/site.js`): rivers, highways, the 20 route suburbs with labels and
-route-day tags, outer suburbs for reach, and a top-down battery mower that drives the route loop from the
+route-day tags, outer suburbs for reach, and a top-down mower that drives the route loop from the
 Raceview home base, pausing at each suburb and leaving a mowed trail. The animation runs only while the map
 is on screen, is skipped under `prefers-reduced-motion`, and the map crops to the core suburbs on phones.
 Coordinates are approximate suburb centroids; edit `mapPoints` to add, move or re-order stops.

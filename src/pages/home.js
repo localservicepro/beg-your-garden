@@ -7,7 +7,7 @@ export default ({ assetHash }) => {
   const body = `
 <section class="hero" id="top">
   <div class="hero__media">
-    ${img('hero-john-mowing-face-ipswich-generated', { alt: 'John from Beg Your Garden pushing a battery lawn mower across a freshly mown lawn in Ipswich QLD', sizes: '100vw', priority: true })}
+    ${img('hero-john-mowing-face-ipswich-generated', { alt: 'John from Beg Your Garden pushing a lawn mower across a freshly mown lawn in Ipswich QLD', sizes: '100vw', priority: true })}
     <video class="hero__video" muted loop playsinline preload="none" poster="/images/hero-john-mowing-face-ipswich-generated.webp" aria-hidden="true" tabindex="-1">
       <source data-src="/video/hero-john-mowing-ipswich.mp4" type="video/mp4">
       <source data-src="/video/hero-john-mowing-ipswich.webm" type="video/webm">
@@ -19,7 +19,7 @@ export default ({ assetHash }) => {
     <div>
       <div class="hero__pill reveal-up"><span class="dot">${icons.star}</span><span class="stars">★★★★★</span> ${site.rating} · ${site.reviewCount} Google reviews · Ipswich</div>
       <h1 class="reveal-up">Lawn Mowing Ipswich: <em>Quiet, Reliable, Scheduled</em> Lawn &amp; Garden Care</h1>
-      <p class="lede reveal-up">Set-day lawn mowing in Ipswich and garden care across Raceview, Ripley, Springfield Lakes and the Springfield corridor. Commercial battery gear so quiet the neighbours sleep through it, a message before we arrive, and a photo when we're done.</p>
+      <p class="lede reveal-up">Set-day lawn mowing in Ipswich and garden care across Raceview, Ripley, Springfield Lakes and the Springfield corridor. A fixed route day for your suburb, a message before we arrive, and a photo when we're done.</p>
       <div class="btn-row reveal-up">
         <a class="btn btn--lg" href="/contact/#quote">Get a free quote ${icons.arrow}</a>
         <a class="btn btn--outline-light btn--lg" href="tel:${site.phoneRaw}">${icons.phone} ${site.phone}</a>
@@ -39,7 +39,7 @@ export default ({ assetHash }) => {
   <div class="trust__box stagger">
     <div class="stat"><span class="stat__icon">${icons.star}</span><div><strong><span data-count="4.9">0</span>★</strong><small>Google rating, ${site.reviewCount} reviews</small></div></div>
     <div class="stat"><span class="stat__icon">${icons.pin}</span><div><strong><span data-count="84" data-suffix="+">0</span></strong><small>Ipswich &amp; Springfield suburbs</small></div></div>
-    <div class="stat"><span class="stat__icon">${icons.battery}</span><div><strong><span data-count="100" data-suffix="%">0</span></strong><small>Battery equipment, no fumes</small></div></div>
+    <div class="stat"><span class="stat__icon">${icons.shield}</span><div><strong><span data-count="100" data-suffix="%">0</span></strong><small>Police-checked &amp; insured team</small></div></div>
     <div class="stat"><span class="stat__icon">${icons.calendar}</span><div><strong>Set-day</strong><small>Routes, reminders &amp; photos</small></div></div>
   </div>
 </div>
@@ -54,7 +54,7 @@ export default ({ assetHash }) => {
       <span class="eyebrow">Your local team in Raceview</span>
       <h2>Lawn mowing in Ipswich that runs like clockwork</h2>
       <p>Beg Your Garden is a local, police-checked team based in Raceview, QLD 4305. We give Ipswich families, shift workers, landlords and DVA and NDIS clients a simple, set-and-forget path to a tidy, healthy lawn: fixed route days by suburb, a reminder before every visit, and a quick wrap-up with photos after.</p>
-      <p>Everything we run is commercial battery equipment. It cuts as cleanly as petrol, with a fraction of the noise and no fumes drifting through your windows. Alongside mowing we handle hedge reduction, gardening, mulch laying, weed control and fertilising, pressure cleaning, green waste and rubbish removal, sprinkler installation and irrigation, so one team keeps the whole property to one standard.</p>
+      <p>Alongside mowing we handle hedge reduction, gardening, mulch laying, weed control and fertilising, pressure cleaning, green waste and rubbish removal, sprinkler installation and irrigation, so one team keeps the whole property to one standard.</p>
       <div class="btn-row" style="margin-top:22px"><a class="btn btn--navy" href="/about/">More about us ${icons.arrow}</a><a class="link-arrow" href="/services/">All nine services ${icons.arrow}</a></div>
     </div>
   </div>
@@ -75,7 +75,7 @@ export default ({ assetHash }) => {
 <section class="section section--navy" id="why">
   <div class="container split split--rev">
     <div class="photo-frame photo-frame--navy reveal reveal--right">
-      ${img('battery-mower-greenworks-collage', { alt: 'Commercial Greenworks battery mowers used by Beg Your Garden for quiet lawn mowing in Ipswich', sizes: '(max-width: 900px) 100vw, 45vw', attrs: 'style="aspect-ratio:1/1"' })}
+      ${img('battery-mower-greenworks-collage', { alt: 'Commercial mowers used by Beg Your Garden for lawn mowing in Ipswich', sizes: '(max-width: 900px) 100vw, 45vw', attrs: 'style="aspect-ratio:1/1"' })}
     </div>
     <div class="reveal">
       <span class="eyebrow" style="color:#CBE6A5">Why Beg Your Garden</span>
@@ -83,7 +83,7 @@ export default ({ assetHash }) => {
       <p style="color:rgba(255,255,255,.82)">Lawns thrive on rhythm. A reliable cycle gives even growth, strong roots and a clean edge that lasts. That's the whole idea behind our lawn mowing in Ipswich: a schedule that runs like a good habit, instead of a scramble every time the grass gets away.</p>
       <div class="features" style="margin-top:28px">
         <div class="feature"><span class="feature__icon">${icons.calendar}</span><div><h3>Schedule over chaos</h3><p>Your lawn is booked on fixed route days. Your visit never gets bumped for ad-hoc jobs.</p></div></div>
-        <div class="feature"><span class="feature__icon">${icons.volume}</span><div><h3>Battery equipment only</h3><p>Quiet, commercial gear that cuts cleanly, protects hearing and leaves no fumes. Shift workers sleep through our visits.</p></div></div>
+        <div class="feature"><span class="feature__icon">${icons.volume}</span><div><h3>One team, one standard</h3><p>The same crew, the same checklist and the same finish at every visit: mow, edges, verge, blow-down, clippings gone.</p></div></div>
         <div class="feature"><span class="feature__icon">${icons.bell}</span><div><h3>Communication that removes doubt</h3><p>A note before we come, an early heads-up if rain moves the route, and a photo update after every visit.</p></div></div>
         <div class="feature"><span class="feature__icon">${icons.shield}</span><div><h3>Police-checked, Blue Card, insured</h3><p>ChemCert AQF3 accredited for treatments, and trusted by DVA clients and NDIS participants across Ipswich.</p></div></div>
       </div>
@@ -186,7 +186,7 @@ ${ctaBand({ heading: '<em>Leaf it to us.</em> Your lawn, on a schedule.', sub: '
     priority: '1.0',
     html: page({
       title: 'Lawn Mowing Ipswich | Beg Your Garden Lawn & Garden Care',
-      description: 'Reliable lawn mowing in Ipswich from Beg Your Garden. Quiet battery gear, set-day visits & full garden care across Raceview, Ripley & Springfield. Free quote!',
+      description: 'Reliable lawn mowing in Ipswich from Beg Your Garden. Set-day visits, sharp edges & full garden care across Raceview, Ripley & Springfield. Free quote!',
       path: '/',
       body,
       schema: [faqSchema(homeFaqs)],

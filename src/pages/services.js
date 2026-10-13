@@ -24,7 +24,7 @@ export default ({ assetHash }) => {
   // ---- /services/ index (existing URL kept) ----
   const indexCrumbs = [{ name: 'Home', href: '/' }, { name: 'Services', href: '/services/' }];
   const indexBody = `
-${pageHero({ h1: 'Lawn &amp; Garden Services in Ipswich', lede: 'Nine services across six pages: lawn mowing, hedge reduction and gardening, mulch laying, weed control and fertilising, pressure cleaning, rubbish removal, sprinkler installation and irrigation. All on a set schedule, all with the same quiet battery gear.', crumbs: indexCrumbs, image: 'front-yard-mulch-garden-bed-ipswich-1000', imageAlt: 'Mown front lawn and mulched garden bed in Ipswich' })}
+${pageHero({ h1: 'Lawn &amp; Garden Services in Ipswich', lede: 'Nine services across six pages: lawn mowing, hedge reduction and gardening, mulch laying, weed control and fertilising, pressure cleaning, rubbish removal, sprinkler installation and irrigation. All on a set schedule, all to the same standard.', crumbs: indexCrumbs, image: 'front-yard-mulch-garden-bed-ipswich-1000', imageAlt: 'Mown front lawn and mulched garden bed in Ipswich' })}
 <section class="section">
   <div class="container">
     ${servicesGrid()}
@@ -52,7 +52,7 @@ ${ctaBand()}`;
   pages.push({
     path: '/services/',
     priority: '0.8',
-    html: page({ title: 'Lawn & Garden Services Ipswich | Beg Your Garden', description: 'Lawn mowing, hedging, mulching, weed control, pressure cleaning, green waste removal & irrigation across Ipswich. Scheduled, insured, battery-only. Free quote!', path: '/services/', body: indexBody, schema: [breadcrumbSchema(indexCrumbs)], assetHash }),
+    html: page({ title: 'Lawn & Garden Services Ipswich | Beg Your Garden', description: 'Lawn mowing, hedging, mulching, weed control, pressure cleaning, green waste removal & irrigation across Ipswich. Scheduled, insured, local. Free quote!', path: '/services/', body: indexBody, schema: [breadcrumbSchema(indexCrumbs)], assetHash }),
   });
 
   // ---- individual service pages ----

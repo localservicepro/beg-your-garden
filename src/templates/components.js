@@ -91,7 +91,7 @@ export function header({ onDark = true } = {}) {
           <span class="dd-text"><strong>${esc(s.name)}</strong><em>${esc(s.navDescriptor)}</em></span>
         </a>`).join('');
   const mobileItems = services.map((s) => `<a href="/services/${s.slug}/">${esc(s.name)}</a>`).join('');
-  const areaPages = [{ name: 'Ripley', slug: 'ripley', lede: 'Friday route · Ripley, South Ripley, Deebing Heights' }, ...suburbPages.map((x) => ({ name: x.name, slug: x.slug, lede: x.name === 'Springfield' ? 'Springfield Central & Brookwater too' : 'Set-day route · quiet battery mowing' }))];
+  const areaPages = [{ name: 'Ripley', slug: 'ripley', lede: 'Friday route · Ripley, South Ripley, Deebing Heights' }, ...suburbPages.map((x) => ({ name: x.name, slug: x.slug, lede: x.name === 'Springfield' ? 'Springfield Central & Brookwater too' : 'Set-day route · reminder before every visit' }))];
   const areaItems = areaPages.map((a) => `
           <a class="dd-item" role="menuitem" href="/lawn-mowing-${a.slug}/">
             <span class="dd-icon">${icons.mower}</span>
@@ -171,7 +171,7 @@ export function footer() {
     <div class="footer-grid">
       <div>
         <a class="footer-logo" href="/" aria-label="${esc(site.name)} home"><img src="/images/logo-full-480.webp" width="230" height="160" alt="${esc(site.name)} – Leaf it to us, where grass is greener" loading="lazy"></a>
-        <p>Quiet, scheduled, battery-only lawn mowing and garden care for homes, rentals and strata across Ipswich and Springfield, QLD.</p>
+        <p>Scheduled, set-day lawn mowing and garden care for homes, rentals and strata across Ipswich and Springfield, QLD.</p>
         <ul class="nap">
           <li>${icons.phone}<a href="tel:${site.phoneRaw}">${site.phone}</a></li>
           <li>${icons.mail}<a href="mailto:${site.email}">${site.email}</a></li>

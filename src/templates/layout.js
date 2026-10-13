@@ -14,7 +14,7 @@ export function localBusinessSchema() {
     image: `${site.url}/images/logo-full.webp`,
     logo: `${site.url}/images/logo-full.webp`,
     slogan: site.tagline,
-    description: 'Quiet, scheduled, battery-only lawn mowing and garden care for homes, rentals and strata across Ipswich and Springfield, QLD.',
+    description: 'Scheduled, set-day lawn mowing and garden care for homes, rentals and strata across Ipswich and Springfield, QLD.',
     priceRange: '$$',
     // Service-area business: no street address is published.
     address: { '@type': 'PostalAddress', addressLocality: site.suburb, addressRegion: site.state, postalCode: site.postcode, addressCountry: 'AU' },

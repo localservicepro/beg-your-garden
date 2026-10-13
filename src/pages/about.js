@@ -5,7 +5,7 @@ import { icons, esc, pageHero, credentialsGrid, ctaBand, reviewsWidget, ratingBa
 export default ({ assetHash }) => {
   const crumbs = [{ name: 'Home', href: '/' }, { name: 'About', href: '/about/' }];
   const body = `
-${pageHero({ h1: 'About Beg Your Garden: Ipswich\'s Quiet, Scheduled Lawn &amp; Garden Team', lede: 'A local, police-checked team based in Raceview, running set-day lawn and garden routes across Ipswich and Springfield with commercial battery equipment.', crumbs, image: 'hero-john-mowing-face-ipswich-generated', imageAlt: 'John from Beg Your Garden pushing a battery lawn mower across a mown lawn in Ipswich' })}
+${pageHero({ h1: 'About Beg Your Garden: Ipswich\'s Quiet, Scheduled Lawn &amp; Garden Team', lede: 'A local, police-checked team based in Raceview, running set-day lawn and garden routes across Ipswich and Springfield.', crumbs, image: 'hero-john-mowing-face-ipswich-generated', imageAlt: 'John from Beg Your Garden pushing a battery lawn mower across a mown lawn in Ipswich' })}
 <section class="section">
   <div class="container split">
     <div class="reveal">
@@ -37,12 +37,12 @@ ${pageHero({ h1: 'About Beg Your Garden: Ipswich\'s Quiet, Scheduled Lawn &amp; 
 <section class="section">
   <div class="container split split--rev">
     <div class="photo-frame reveal reveal--right">
-      ${img('battery-mower-front-lawn-ipswich', { alt: 'Greenworks commercial battery lawn mower on an Ipswich front lawn', sizes: '(max-width: 900px) 100vw, 45vw' })}
+      ${img('battery-mower-front-lawn-ipswich', { alt: 'Commercial lawn mower on an Ipswich front lawn', sizes: '(max-width: 900px) 100vw, 45vw' })}
     </div>
     <div class="reveal">
       <span class="eyebrow">How we work</span>
-      <h2>Quiet by design</h2>
-      <p>Every mower, trimmer, hedge cutter and blower we run is commercial battery equipment. It cuts as cleanly as petrol, protects hearing, keeps fumes away from open windows and prams, and means no petrol stored on your property. Our 22-inch and 30-inch self-propelled mowers handle everything from a Springfield Lakes courtyard to small acreage around Ripley.</p>
+      <h2>Commercial gear, the same finish every time</h2>
+      <p>We run commercial mowers, trimmers, hedge cutters and blowers, kept sharp and serviced on a schedule. Self-propelled mowers in two sizes handle everything from a Springfield Lakes courtyard to small acreage around Ripley, and the checklist is the same at every address.</p>
       <ul class="check-list" style="margin-top:16px">
         <li>Set-day routes by suburb, with reminders and photo updates</li>
         <li>Scheduled plans for homes, rentals, strata and care clients</li>
@@ -63,6 +63,6 @@ ${pageHero({ h1: 'About Beg Your Garden: Ipswich\'s Quiet, Scheduled Lawn &amp; 
 ${ctaBand({ heading: '<em>Leaf it to us.</em> Meet the team on your route day.', sub: 'Tell us about your property and we\'ll quote it, book it on the right route and introduce ourselves at the first visit.' })}`;
   return [{
     path: '/about/',
-    html: page({ title: 'About Beg Your Garden | Lawn & Garden Care Ipswich', description: 'Meet Beg Your Garden: a police-checked, insured, ChemCert-accredited lawn & garden team from Raceview running quiet, set-day routes across Ipswich.', path: '/about/', body, schema: [breadcrumbSchema(crumbs)], assetHash }),
+    html: page({ title: 'About Beg Your Garden | Lawn & Garden Care Ipswich', description: 'Meet Beg Your Garden: a police-checked, insured, ChemCert-accredited lawn & garden team from Raceview running set-day routes across Ipswich.', path: '/about/', body, schema: [breadcrumbSchema(crumbs)], assetHash }),
   }];
 };

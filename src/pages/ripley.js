@@ -11,12 +11,12 @@ const faqs = [
 export default ({ assetHash }) => {
   const crumbs = [{ name: 'Home', href: '/' }, { name: 'Service Areas', href: '/areas/' }, { name: 'Lawn Mowing Ripley', href: '/lawn-mowing-ripley/' }];
   const body = `
-${pageHero({ h1: 'Lawn Mowing Ripley: Friday Route, Quiet Battery Mowers, Set-and-Forget Service', lede: 'Beg Your Garden provides scheduled lawn mowing in Ripley and South Ripley every Friday using commercial battery equipment.', crumbs, image: 'front-yard-new-build-springfield-lakes', imageAlt: 'Freshly mown front lawn of a new-build home near Ripley, Ipswich' })}
+${pageHero({ h1: 'Lawn Mowing Ripley: Friday Route, Sharp Edges, Set-and-Forget Service', lede: 'Beg Your Garden provides scheduled lawn mowing in Ripley and South Ripley every Friday with a reminder before every visit.', crumbs, image: 'front-yard-new-build-springfield-lakes', imageAlt: 'Freshly mown front lawn of a new-build home near Ripley, Ipswich' })}
 <section class="section">
   <div class="container layout-2col">
     <article class="prose">
-      <p>Ripley is one of the fastest-growing suburbs in Queensland, and most of its lawns are young: fresh turf on compacted builder's soil, narrow side access, a verge the council expects you to keep, and neighbours ten metres away in every direction. Lawn mowing in Ripley is about keeping that new lawn thick and even without the petrol-mower noise that carries across a tight estate.</p>
-      <p>Beg Your Garden runs Ripley as a Friday route. Your lawn goes on the schedule, you get a message the day before, and the mow, edges, whipper-snipping and blow-down are done the same way every visit. Our 22-inch and 30-inch self-propelled battery mowers fit through standard side gates and leave a clean, striped finish with no fumes.</p>
+      <p>Ripley is one of the fastest-growing suburbs in Queensland, and most of its lawns are young: fresh turf on compacted builder's soil, narrow side access, a verge the council expects you to keep, and neighbours ten metres away in every direction. Lawn mowing in Ripley is about keeping that new lawn thick and even with a regular cut at the right height.</p>
+      <p>Beg Your Garden runs Ripley as a Friday route. Your lawn goes on the schedule, you get a message the day before, and the mow, edges, whipper-snipping and blow-down are done the same way every visit. Our self-propelled commercial mowers fit through standard side gates and leave a clean, striped finish.</p>
       <h2>What's included in lawn mowing in Ripley</h2>
       <ul class="check-list">
         <li>Mow at the right height for buffalo, couch or zoysia turf</li>
@@ -43,6 +43,6 @@ ${ctaBand({ heading: '<em>Leaf it to us.</em> Join the Ripley Friday route.', su
   return [{
     path: '/lawn-mowing-ripley/',
     priority: '0.7',
-    html: page({ title: 'Lawn Mowing Ripley | Friday Route | Beg Your Garden', description: 'Scheduled lawn mowing in Ripley & South Ripley every Friday. Quiet battery mowers, sharp edges, verge included, reminders before each visit. Free quote!', path: '/lawn-mowing-ripley/', body, schema: [breadcrumbSchema(crumbs), faqSchema(faqs)], ogImage: '/images/front-yard-new-build-springfield-lakes.webp', assetHash }),
+    html: page({ title: 'Lawn Mowing Ripley | Friday Route | Beg Your Garden', description: 'Scheduled lawn mowing in Ripley & South Ripley every Friday. Sharp edges, verge included, reminders before each visit, photo after. Free quote!', path: '/lawn-mowing-ripley/', body, schema: [breadcrumbSchema(crumbs), faqSchema(faqs)], ogImage: '/images/front-yard-new-build-springfield-lakes.webp', assetHash }),
   }];
 };

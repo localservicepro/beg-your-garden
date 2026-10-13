@@ -93,7 +93,7 @@ export const posts = [
     metaTitle: 'How Much Does Lawn Mowing Cost in Ipswich? | Beg Your Garden',
     description: 'Typical lawn mowing prices in Ipswich and Springfield by block size, what changes the price, and why scheduled mowing costs less per visit than one-offs.',
     keyword: 'how much does lawn mowing cost', volume: '"how much does lawn mowing cost" 260/mo, "lawn mowing cost per hour" 70/mo, "jim mowing prices" 320/mo. KD 0.',
-    date: '2026-09-22', readTime: 5, image: 'battery-mower-front-lawn-ipswich', imageAlt: 'Commercial battery mower on an Ipswich front lawn during a scheduled visit',
+    date: '2026-09-22', readTime: 5, image: 'battery-mower-front-lawn-ipswich', imageAlt: 'Commercial mower on an Ipswich front lawn during a scheduled visit',
     excerpt: 'Most people want a number before they ask for a quote. Here is the honest range for Ipswich, what moves it up or down, and how to pay less per visit.',
     related: 'lawn-mowing',
     body: `
@@ -137,7 +137,7 @@ export const posts = [
     metaTitle: 'How Often Should You Mow Your Lawn in QLD? | Beg Your Garden',
     description: 'How often to mow buffalo, couch, kikuyu and zoysia lawns in South East Queensland, season by season, plus the right cutting height and when not to mow.',
     keyword: 'how often should you mow your lawn', volume: '"how often should you mow your lawn" 140/mo, "mowing wet grass" 590/mo, "scalping a lawn" 590/mo. KD 0.',
-    date: '2026-09-15', readTime: 5, image: 'hero-john-mowing-battery-raceview', imageAlt: 'John from Beg Your Garden mowing a Raceview lawn with a battery mower',
+    date: '2026-09-15', readTime: 5, image: 'hero-john-mowing-battery-raceview', imageAlt: 'John from Beg Your Garden mowing a Raceview lawn',
     excerpt: 'Fortnightly in summer, monthly in winter is the short answer. The long answer depends on your grass, the season and the one-third rule.',
     related: 'lawn-mowing',
     body: `
@@ -169,7 +169,7 @@ export const posts = [
 <p><strong>Straight after fertilising.</strong> Give it two to three days.</p>
 <p><strong>Freshly laid turf.</strong> Wait until it has rooted (tug a corner; if it holds, it is ready), then give it a light first cut on a high setting.</p>
 <h2>Keep the blade sharp</h2>
-<p>A blunt blade tears the leaf and leaves white, frayed tips that brown off within a day. If your lawn looks grey-brown the day after you mow, sharpen or replace the blade. Our commercial battery mowers are sharpened on a schedule for the same reason.</p>
+<p>A blunt blade tears the leaf and leaves white, frayed tips that brown off within a day. If your lawn looks grey-brown the day after you mow, sharpen or replace the blade. Our commercial mowers are sharpened on a schedule for the same reason.</p>
 <div class="callout"><strong>Never think about it again.</strong> Our <a href="/services/lawn-mowing/">scheduled lawn mowing</a> runs a set day for your street, fortnightly in the growing season and monthly in winter, at the right height for your grass.</div>`,
     faqs: [
       { q: 'How often should I mow my lawn in summer in Queensland?', a: 'Every 7 to 10 days for most buffalo and couch lawns, and weekly for kikuyu. The aim is never to remove more than a third of the leaf in one cut.' },
@@ -268,7 +268,7 @@ export const posts = [
     metaTitle: 'Winter Lawn Care in South East Queensland | Beg Your Garden',
     description: 'How to look after a buffalo, couch or kikuyu lawn through an Ipswich winter: mowing height, watering, winter grass and bindi, frost, and setting up spring.',
     keyword: 'lawn care in winter', volume: '"lawn care in winter" 140/mo, peaking 390/mo in June–July. "winter lawn care australia" KD 15.',
-    date: '2026-10-01', readTime: 5, image: 'lawn-mowing-equipment-shade-ipswich', imageAlt: 'Battery mower and trimmer on a shaded Ipswich lawn during a winter visit',
+    date: '2026-10-01', readTime: 5, image: 'lawn-mowing-equipment-shade-ipswich', imageAlt: 'Mower and trimmer on a shaded Ipswich lawn during a winter visit',
     excerpt: 'Winter is when lawns are won or lost in Queensland. Less mowing, smarter watering, and the two weed jobs that save your summer.',
     related: 'lawn-mowing',
     body: `

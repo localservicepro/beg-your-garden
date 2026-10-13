@@ -8,14 +8,14 @@ export const suburbPages = [
   {
     slug: 'redbank-plains', name: 'Redbank Plains', volume: '40–50 searches/mo',
     title: 'Lawn Mowing Redbank Plains | Beg Your Garden',
-    description: 'Scheduled lawn mowing in Redbank Plains with quiet battery mowers. Edges, verge and blow-down included, reminders before each visit. Free quote!',
-    h1: 'Lawn Mowing Redbank Plains: Scheduled, Quiet and Done the Same Way Every Visit',
-    lede: 'Beg Your Garden mows Redbank Plains homes, rentals and new estates on a set route day with commercial battery equipment.',
+    description: 'Scheduled lawn mowing in Redbank Plains on a set route day. Edges, verge and blow-down included, reminders before each visit. Free quote!',
+    h1: 'Lawn Mowing Redbank Plains: Scheduled, Reliable and Done the Same Way Every Visit',
+    lede: 'Beg Your Garden mows Redbank Plains homes, rentals and new estates on a set route day with a reminder before every visit.',
     image: 'front-yard-mown-springfield', imageAlt: 'Freshly mown front lawn and edged driveway at a Redbank Plains home',
     keyword: 'lawn mowing redbank plains',
     intro: [
       'Redbank Plains is one of the busiest suburbs on our eastern route, and for good reason: it has every kind of lawn we look after. Established homes off Redbank Plains Road with big back yards and old couch grass, newer estates toward Mount Juillerat Drive and the Town Square side with fresh buffalo turf on small blocks, and plenty of rentals where the agent wants the yard kept to the lease.',
-      'Lawn mowing in Redbank Plains with Beg Your Garden means a fixed route day, a text the day before, and the same finish every time: mow, edges, whipper-snip, verge, blow-down and the clippings gone. We use 22-inch and 30-inch self-propelled battery mowers, so there are no fumes and no petrol-mower noise bouncing around a tight estate at 7am.',
+      'Lawn mowing in Redbank Plains with Beg Your Garden means a fixed route day, a text the day before, and the same finish every time: mow, edges, whipper-snip, verge, blow-down and the clippings gone. Our self-propelled commercial mowers fit through a standard side gate and handle a big established back yard just as well.',
     ],
     sections: [
       { h2: 'What lawn mowing in Redbank Plains includes', list: ['Mow at the right height for buffalo, couch, kikuyu or zoysia', 'Edges along driveways, paths, kerbs and garden beds', 'Verge and nature strip mowed with the lawn', 'Driveway, paths and alfresco blown down', 'Clippings removed, gates closed, photo update sent'] },
@@ -35,14 +35,14 @@ export const suburbPages = [
   {
     slug: 'springfield-lakes', name: 'Springfield Lakes', volume: '30 searches/mo across three phrasings',
     title: 'Lawn Mowing Springfield Lakes | Beg Your Garden',
-    description: 'Lawn mowing & lawn care in Springfield Lakes. Quiet battery mowers for estate living, covenant-ready finish, set route day, photo after each visit. Free quote!',
-    h1: 'Lawn Mowing Springfield Lakes: Quiet Battery Mowing for Estate Living',
+    description: 'Lawn mowing & lawn care in Springfield Lakes. Set route day for estate living, covenant-ready finish, set route day, photo after each visit. Free quote!',
+    h1: 'Lawn Mowing Springfield Lakes: Scheduled Mowing for Estate Living',
     lede: 'Scheduled lawn mowing and lawn care across Springfield Lakes, from Discovery Lake to Spring Mountain, with a covenant-ready finish.',
     image: 'front-yard-new-build-springfield-lakes', imageAlt: 'Freshly mown front lawn of a new-build home in Springfield Lakes',
     keyword: 'lawn mowing springfield lakes',
     intro: [
-      'Springfield Lakes was planned around its lakes, parks and walkways, and the estates expect front yards to match. Most blocks are compact, the houses are close, and the turf is young buffalo or zoysia laid on builder\'s fill. Lawn mowing in Springfield Lakes is less about horsepower and more about a clean, even, quiet cut every fortnight that keeps the street looking the way the estate intended.',
-      'Beg Your Garden runs Springfield Lakes on a set route day. Our commercial battery mowers are nearly silent, so early visits do not disturb neighbours or shift workers, and the finish is the same each time: mow, crisp edges along the driveway and path, the nature strip, a blow-down, and clippings taken away. You get a photo when it is done.',
+      'Springfield Lakes was planned around its lakes, parks and walkways, and the estates expect front yards to match. Most blocks are compact, the houses are close, and the turf is young buffalo or zoysia laid on builder\'s fill. Lawn mowing in Springfield Lakes is less about horsepower and more about a clean, even cut every fortnight that keeps the street looking the way the estate intended.',
+      'Beg Your Garden runs Springfield Lakes on a set route day. The finish is the same each time: mow, crisp edges along the driveway and path, the nature strip, a blow-down, and clippings taken away. You get a photo when it is done.',
     ],
     sections: [
       { h2: 'Lawn care for Springfield Lakes turf', p: 'Young lawns on compacted fill need a little more help than an old established lawn. We mow new turf a notch higher until it thickens, feed it in spring and autumn, treat bindis and winter grass before they seed, and top up water advice for the dry months. Sir Walter and other soft-leaf buffalos common in Springfield Lakes should never be scalped; a regular cut at the right height is what keeps them dense.' },
@@ -52,24 +52,24 @@ export const suburbPages = [
     ],
     faqs: [
       { q: 'How often should a Springfield Lakes lawn be mowed?', a: 'Fortnightly from spring to autumn and every three to four weeks through winter suits most Springfield Lakes buffalo and zoysia lawns. New turf does better with a regular light cut than an occasional heavy one.' },
-      { q: 'Are your mowers quiet enough for an estate street?', a: 'Yes. We use commercial battery mowers, trimmers and blowers. They are a fraction of the noise of petrol gear, with no fumes, which is why most Springfield Lakes clients are happy with early visits.' },
+      { q: 'Do you send a reminder before each visit in Springfield Lakes?', a: 'Yes. You get a text the day before, an early message if rain moves the route, and a photo after the visit.' },
       { q: 'Do you look after rentals in Springfield Lakes?', a: 'Yes. We can invoice the property manager directly and send a photo after each visit so the file is always up to date.' },
       { q: 'Can you take care of the garden beds too?', a: 'Yes. Hedge trimming, mulching, weeding, fertilising and pressure cleaning can all be added to your Springfield Lakes lawn plan.' },
     ],
     review: 4, related: ['lawn-mowing', 'garden-maintenance', 'pressure-cleaning'],
-    cta: { heading: '<em>Leaf it to us.</em> Quiet mowing for Springfield Lakes.', sub: 'Send your address and a photo of the lawn. We\'ll quote it and confirm your route day.' },
+    cta: { heading: '<em>Leaf it to us.</em> Scheduled mowing for Springfield Lakes.', sub: 'Send your address and a photo of the lawn. We\'ll quote it and confirm your route day.' },
   },
   {
     slug: 'springfield', name: 'Springfield', volume: '20 searches/mo',
     title: 'Lawn Mowing Springfield & Brookwater | Beg Your Garden',
-    description: 'Scheduled lawn mowing in Springfield, Springfield Central & Brookwater QLD. Quiet battery mowers, edges and verge included, photo after every visit. Free quote!',
+    description: 'Scheduled lawn mowing in Springfield, Springfield Central & Brookwater QLD. Edges and verge included, reminders before and a photo after every visit. Free quote!',
     h1: 'Lawn Mowing Springfield, Springfield Central and Brookwater',
     lede: 'Set-day lawn mowing and garden care across the Greater Springfield corridor, from the original Springfield streets to Brookwater\'s larger blocks.',
     image: 'front-yard-mown-springfield', imageAlt: 'Mown front lawn with sharp edges at a Springfield QLD home',
     keyword: 'lawn mowing springfield',
     intro: [
       'Springfield covers three very different kinds of lawn. The original 1990s streets of Springfield have mature couch and kikuyu on decent-sized blocks. Springfield Central is apartments, townhouses and new homes around Orion and Robelle Domain, where common areas and small courtyards need a tidy, scheduled service. Brookwater has the biggest blocks in the corridor, with manicured buffalo, formal hedges and covenants that expect a showpiece front yard.',
-      'Beg Your Garden mows all three on a fixed route day with commercial battery equipment. No fumes, very little noise, and the same checklist each visit: mow at the right height, crisp edges, verge, blow-down, clippings removed and a photo sent when the gate is closed behind us.',
+      'Beg Your Garden mows all three on a fixed route day with the same checklist each visit: mow at the right height, crisp edges, verge, blow-down, clippings removed and a photo sent when the gate is closed behind us.',
     ],
     sections: [
       { h2: 'Lawn mowing in Springfield: what is included', list: ['Mow, edge and trim at the right height for your turf', 'Verge and nature strip mowed with the lawn', 'Driveway, paths and entertaining areas blown down', 'Clippings removed and gates closed', 'Reminder the day before, photo after'] },
@@ -88,14 +88,14 @@ export const suburbPages = [
   {
     slug: 'collingwood-park', name: 'Collingwood Park', volume: '20 searches/mo (50 in peak months)',
     title: 'Lawn Mowing Collingwood Park | Beg Your Garden',
-    description: 'Scheduled lawn mowing in Collingwood Park QLD. Quiet battery mowers, big back yards and verges included, reminder before each visit. Free quote!',
+    description: 'Scheduled lawn mowing in Collingwood Park QLD. Big back yards and verges included, reminder before each visit. Free quote!',
     h1: 'Lawn Mowing Collingwood Park: Big Back Yards, Sharp Edges, Set Route Day',
     lede: 'Beg Your Garden mows established and new-estate lawns across Collingwood Park on a fixed day each cycle.',
     image: 'after-backyard-mown-ipswich', imageAlt: 'Large back yard freshly mown and edged in Collingwood Park, Ipswich',
     keyword: 'lawn mowing collingwood park',
     intro: [
       'Collingwood Park grew up in the 1980s and 90s, which means a lot of the suburb has what newer estates do not: room. Big back yards, long side runs, mature trees dropping leaves on the lawn, and couch or kikuyu that has been there for decades. The newer stages toward Redbank Plains add fresh buffalo turf on smaller blocks. Lawn mowing in Collingwood Park has to handle both.',
-      'Beg Your Garden runs Collingwood Park on the eastern route with a 30-inch self-propelled battery mower for the big yards and a 22-inch for the tight spots. It is fast, quiet and clean. Every visit is the same: mow, edges, whipper-snip around fences and trees, verge, blow-down, clippings gone and a photo sent.',
+      'Beg Your Garden runs Collingwood Park on the eastern route with a wide-cut self-propelled mower for the big yards and a smaller one for the tight spots. Every visit is the same: mow, edges, whipper-snip around fences and trees, verge, blow-down, clippings gone and a photo sent.',
     ],
     sections: [
       { h2: 'What is included in lawn mowing in Collingwood Park', list: ['Mow at the right height for couch, kikuyu, buffalo or zoysia', 'Edges along driveways, paths, kerbs and beds', 'Trimming around fences, trees, sheds and clotheslines', 'Verge and nature strip mowed with the lawn', 'Blow-down, clippings removed, gates closed, photo sent'] },
@@ -104,7 +104,7 @@ export const suburbPages = [
       { h2: 'Nearby suburbs on the same route', p: 'Redbank Plains, Redbank, Bellbird Park, Goodna and Riverview are on the same eastern route day.', links: [['/lawn-mowing-redbank-plains/', 'Lawn mowing Redbank Plains'], ['/lawn-mowing-goodna/', 'Lawn mowing Goodna'], ['/services/rubbish-removal/', 'Green waste removal']] },
     ],
     faqs: [
-      { q: 'Do you handle large back yards in Collingwood Park?', a: 'Yes. Our 30-inch commercial battery mower is built for big yards and still fits through a standard side gate. Large blocks are quoted on size, not on time.' },
+      { q: 'Do you handle large back yards in Collingwood Park?', a: 'Yes. Our wide-cut commercial mower is built for big yards and still fits through a standard side gate. Large blocks are quoted on size, not on time.' },
       { q: 'Can you clear an overgrown yard first?', a: 'Yes. We do a one-off clean-up with green waste removal, then put the lawn on a regular schedule.' },
       { q: 'What day do you mow in Collingwood Park?', a: 'Collingwood Park is on our eastern route. You get a fixed day each cycle, confirmed when we quote, with a reminder the day before.' },
     ],
@@ -114,14 +114,14 @@ export const suburbPages = [
   {
     slug: 'goodna', name: 'Goodna', volume: '10 searches/mo (30 in peak months)',
     title: 'Lawn Mowing Goodna | Beg Your Garden',
-    description: 'Lawn mowing in Goodna QLD on a set route day. Quiet battery mowers for Queenslanders, units and rentals, verge and edges included. Free quote!',
+    description: 'Lawn mowing in Goodna QLD on a set route day. Set route day for Queenslanders, units and rentals, verge and edges included. Free quote!',
     h1: 'Lawn Mowing Goodna: Set-Day Service for Queenslanders, Units and Rentals',
     lede: 'Scheduled lawn mowing and garden care across Goodna, from the older streets near the river to the newer homes up the hill.',
-    image: 'nature-strip-battery-mowing-east-ipswich', imageAlt: 'Battery mower cutting a nature strip in front of an older Goodna home',
+    image: 'nature-strip-battery-mowing-east-ipswich', imageAlt: 'Mowing the nature strip in front of an older Goodna home',
     keyword: 'lawn mowing goodna',
     intro: [
       'Goodna is one of Ipswich\'s oldest suburbs, and its lawns show it. Queenslanders on sloping blocks with steps and retaining walls, post-war homes with long narrow yards, unit blocks with shared lawns, and a steady supply of rentals near the station. It is also a jacaranda suburb, which means a carpet of purple on the grass every October that needs to come off before it smothers the lawn.',
-      'Beg Your Garden mows Goodna on a set route day with commercial battery equipment. Quiet enough for the units, light enough to carry up a Queenslander\'s steps, and the same finish every time: mow, edges, whipper-snip the slopes and fence lines, verge, blow-down, clippings removed and a photo sent.',
+      'Beg Your Garden mows Goodna on a set route day, with mowers light enough to carry up a Queenslander\'s steps and the same finish every time: mow, edges, whipper-snip the slopes and fence lines, verge, blow-down, clippings removed and a photo sent.',
     ],
     sections: [
       { h2: 'What lawn mowing in Goodna includes', list: ['Mow at the right height for couch, kikuyu or buffalo', 'Slopes, banks and retaining-wall edges trimmed', 'Edges along driveways, paths and kerbs', 'Verge and nature strip mowed with the lawn', 'Blow-down, clippings removed, gates closed, photo sent'] },
@@ -131,7 +131,7 @@ export const suburbPages = [
     ],
     faqs: [
       { q: 'Do you mow unit complexes in Goodna?', a: 'Yes. Shared lawns and common areas are quoted as one scheduled job and invoiced to the body corporate or agent, with a photo after each visit.' },
-      { q: 'Can you mow a steep block in Goodna?', a: 'Yes. Self-propelled battery mowers handle most slopes, and we brushcut banks that are too steep to mow safely.' },
+      { q: 'Can you mow a steep block in Goodna?', a: 'Yes. Self-propelled mowers handle most slopes, and we brushcut banks that are too steep to mow safely.' },
       { q: 'What day do you mow in Goodna?', a: 'Goodna is on our eastern route. You get a fixed day each cycle, confirmed when we quote, with a reminder text the day before.' },
     ],
     review: null, related: ['lawn-mowing', 'pressure-cleaning', 'rubbish-removal'],
@@ -140,14 +140,14 @@ export const suburbPages = [
   {
     slug: 'brassall', name: 'Brassall', volume: '10 searches/mo, steady all year',
     title: 'Lawn Mowing Brassall | Beg Your Garden',
-    description: 'Scheduled lawn mowing in Brassall QLD, ten minutes from our Raceview base. Quiet battery mowers, edges and verge included, photo after every visit. Free quote!',
+    description: 'Scheduled lawn mowing in Brassall QLD, ten minutes from our Raceview base. Edges and verge included, reminders before and a photo after every visit. Free quote!',
     h1: 'Lawn Mowing Brassall: Reliable Set-Day Mowing Across the River From Ipswich',
-    lede: 'Beg Your Garden mows Brassall homes and rentals on a fixed route day with quiet commercial battery mowers.',
+    lede: 'Beg Your Garden mows Brassall homes and rentals on a fixed route day with a reminder before every visit.',
     image: 'nature-strip-mowing-fenceline-brassall', imageAlt: 'Nature strip mowed along a fence line in Brassall, Ipswich',
     keyword: 'lawn mowing brassall',
     intro: [
       'Brassall sits just across the Bremer from the Ipswich CBD, close enough to our Raceview base that it is one of the easiest suburbs for us to keep on schedule. It is a mix of post-war homes on generous blocks around Pine Mountain Road and Hunter Street, newer estates toward Pine Mountain, and a healthy share of rentals and retirees who want the yard handled without having to think about it.',
-      'Lawn mowing in Brassall with Beg Your Garden means a set day, a text the day before, and the same finish every visit: mow at the right height, crisp edges, whipper-snip around fences and beds, verge mowed, paths blown down, clippings removed and a photo sent. Our battery mowers are quiet, which matters on Brassall\'s older, closely built streets.',
+      'Lawn mowing in Brassall with Beg Your Garden means a set day, a text the day before, and the same finish every visit: mow at the right height, crisp edges, whipper-snip around fences and beds, verge mowed, paths blown down, clippings removed and a photo sent.',
     ],
     sections: [
       { h2: 'What is included in lawn mowing in Brassall', list: ['Mow, edge and trim at the right height for your turf', 'Verge and nature strip mowed with the lawn', 'Driveway, paths and patio blown down', 'Clippings removed, gates closed, photo sent', 'Reminder text before every visit'] },
@@ -166,14 +166,14 @@ export const suburbPages = [
   {
     slug: 'augustine-heights', name: 'Augustine Heights', volume: '10 searches/mo (40 in peak months)',
     title: 'Lawn Mowing Augustine Heights | Beg Your Garden',
-    description: 'Scheduled lawn mowing in Augustine Heights QLD. Quiet battery mowers, hedges and beds kept to the estate standard, photo after every visit. Free quote!',
+    description: 'Scheduled lawn mowing in Augustine Heights QLD. Hedges and beds kept to the estate standard, photo after every visit. Free quote!',
     h1: 'Lawn Mowing Augustine Heights: Covenant-Ready Lawns on a Set Route Day',
     lede: 'Beg Your Garden mows Augustine Heights homes and rentals on a fixed day each cycle, with hedges and garden beds kept to match.',
     image: 'lawn-edging-verge-ipswich', imageAlt: 'Sharp lawn edges along the kerb at an Augustine Heights home after a scheduled mow',
     keyword: 'lawn mowing augustine heights',
     intro: [
       'Augustine Heights sits between Brookwater and Springfield on the hilly side of the corridor, and its streets were built with front yards in mind: soft-leaf buffalo, lilly pilly and murraya hedges, mulched beds, and estate covenants that expect all of it to be kept. Blocks are mid-sized, side access is usually fine, and a lot of the homes are rentals managed from somewhere else.',
-      'Lawn mowing in Augustine Heights with Beg Your Garden means a set route day shared with Springfield and Brookwater, a text the day before, and the same finish every visit: mow at the right height, crisp edges along the driveway and path, the verge, a blow-down, clippings removed and a photo sent. Our commercial battery mowers are quiet enough for early starts on a close-built street.',
+      'Lawn mowing in Augustine Heights with Beg Your Garden means a set route day shared with Springfield and Brookwater, a text the day before, and the same finish every visit: mow at the right height, crisp edges along the driveway and path, the verge, a blow-down, clippings removed and a photo sent.',
     ],
     sections: [
       { h2: 'What lawn mowing in Augustine Heights includes', list: ['Mow, edge and trim at the right height for buffalo, zoysia or couch', 'Verge and nature strip mowed with the lawn', 'Driveway, path and alfresco blown down', 'Clippings removed, gates closed, photo sent', 'Reminder text the day before each visit'] },
@@ -192,25 +192,25 @@ export const suburbPages = [
   {
     slug: 'silkstone', name: 'Silkstone', volume: '10 searches/mo (30 in peak months)',
     title: 'Lawn Mowing Silkstone | Beg Your Garden',
-    description: 'Lawn mowing in Silkstone QLD, five minutes from our Raceview base. Quiet battery mowers, footpath edges and verge included, photo after every visit. Free quote!',
+    description: 'Lawn mowing in Silkstone QLD, five minutes from our Raceview base. Footpath edges and verge included, photo after every visit. Free quote!',
     h1: 'Lawn Mowing Silkstone: Set-Day Mowing Five Minutes From Our Raceview Base',
-    lede: 'Beg Your Garden mows Silkstone homes, rentals and Queenslanders on a fixed route day with quiet commercial battery mowers.',
+    lede: 'Beg Your Garden mows Silkstone homes, rentals and Queenslanders on a fixed route day with a reminder before every visit.',
     image: 'footpath-edge-trimming-silkstone', imageAlt: 'Footpath edge trimming along a nature strip in Silkstone, Ipswich',
     keyword: 'lawn mowing silkstone',
     intro: [
       'Silkstone is next door to Raceview, which makes it the closest suburb to our base and one of the easiest to keep on schedule. It is an older part of Ipswich: Queenslanders and post-war homes on decent blocks around Blackstone Road, mature trees, old couch lawns that have been there for fifty years, and long footpath frontages the council expects kept.',
-      'Lawn mowing in Silkstone with Beg Your Garden means a set day, a text the day before, and the same finish each visit: mow at the right height, crisp edges along the footpath and driveway, the nature strip, a blow-down, clippings gone and a photo sent. The battery mowers are quiet, which the neighbours on Silkstone\'s close streets appreciate.',
+      'Lawn mowing in Silkstone with Beg Your Garden means a set day, a text the day before, and the same finish each visit: mow at the right height, crisp edges along the footpath and driveway, the nature strip, a blow-down, clippings gone and a photo sent.',
     ],
     sections: [
       { h2: 'What lawn mowing in Silkstone includes', list: ['Mow, edge and trim at the right height for couch, kikuyu or buffalo', 'Footpath, kerb and driveway edges cut sharp', 'Nature strip and verge mowed with the lawn', 'Blow-down, clippings removed, gates closed, photo sent', 'Reminder text before every visit'] },
       { h2: 'Old couch lawns and big trees', p: 'Established Silkstone couch is tough but it runs. We keep it off the footpath and out of the beds with a proper edge every visit, lift the cut height under the big trees where the lawn thins in shade, and keep leaf litter off the grass through winter so it is not smothered. A spring feed and an autumn bindi treatment keep the old lawns thick.' },
-      { h2: 'Queenslanders, under-house access and sloping yards', p: 'A lot of Silkstone homes sit high with steps, under-house storage and a slope down the back. Our battery mowers are light enough to carry where a ride-on cannot go, and we brushcut the banks and fence lines that are too steep to mow.' },
+      { h2: 'Queenslanders, under-house access and sloping yards', p: 'A lot of Silkstone homes sit high with steps, under-house storage and a slope down the back. Our mowers are light enough to carry where a ride-on cannot go, and we brushcut the banks and fence lines that are too steep to mow.' },
       { h2: 'Nearby suburbs on the same route', p: 'Raceview, Booval, Eastern Heights, Blackstone, Flinders View and Newtown are on the same route day as Silkstone.', links: [['/areas/', 'All Ipswich service areas'], ['/services/lawn-mowing/', 'Lawn mowing service details'], ['/services/weed-control-fertilising/', 'Weed control & fertilising']] },
     ],
     faqs: [
       { q: 'What day do you mow in Silkstone?', a: 'Silkstone is next to our Raceview base and shares the Wednesday route. Your street gets a fixed day each cycle, confirmed when we quote.' },
       { q: 'Do you mow the footpath and nature strip in Silkstone?', a: 'Yes. The nature strip, footpath edges and kerb are part of every visit, not an extra.' },
-      { q: 'Can you handle a steep back yard in Silkstone?', a: 'Yes. Self-propelled battery mowers handle most slopes, and we brushcut the banks that are too steep to mow safely.' },
+      { q: 'Can you handle a steep back yard in Silkstone?', a: 'Yes. Self-propelled mowers handle most slopes, and we brushcut the banks that are too steep to mow safely.' },
     ],
     review: null, related: ['lawn-mowing', 'weed-control-fertilising', 'rubbish-removal'],
     cta: { heading: '<em>Leaf it to us.</em> Join the Silkstone route.', sub: 'Send your address and a photo of the lawn and we\'ll quote it the same day.' },
@@ -218,10 +218,10 @@ export const suburbPages = [
   {
     slug: 'leichhardt', name: 'Leichhardt', volume: '10 searches/mo, steady all year',
     title: 'Lawn Mowing Leichhardt QLD | Beg Your Garden',
-    description: 'Scheduled lawn mowing in Leichhardt, Ipswich. Quiet battery mowers, verge and edges included, rentals and clean-ups welcome, photo after each visit. Free quote!',
+    description: 'Scheduled lawn mowing in Leichhardt, Ipswich. Verge and edges included, rentals and clean-ups welcome, photo after each visit. Free quote!',
     h1: 'Lawn Mowing Leichhardt: Reliable Set-Day Mowing on the Western Side of Ipswich',
-    lede: 'Beg Your Garden mows Leichhardt homes and rentals on a fixed route day with quiet commercial battery mowers.',
-    image: 'nature-strip-battery-mowing-east-ipswich', imageAlt: 'Battery mower cutting a nature strip outside a Leichhardt, Ipswich home',
+    lede: 'Beg Your Garden mows Leichhardt homes and rentals on a fixed route day with a reminder before every visit.',
+    image: 'nature-strip-battery-mowing-east-ipswich', imageAlt: 'Mowing the nature strip outside a Leichhardt, Ipswich home',
     keyword: 'lawn mowing leichhardt',
     intro: [
       'Leichhardt is on the western edge of the Ipswich city suburbs, just past One Mile and across the Bremer from Brassall. It is mostly post-war and 1970s homes on good-sized blocks, with a high share of rentals and a steady turnover of tenants, which means a lot of yards that have been let go between leases and need bringing back before they go on a schedule.',
@@ -244,14 +244,14 @@ export const suburbPages = [
   {
     slug: 'riverview', name: 'Riverview', volume: '10 searches/mo',
     title: 'Lawn Mowing Riverview QLD | Beg Your Garden',
-    description: 'Lawn mowing in Riverview, Ipswich on a set route day. Quiet battery mowers for homes, rentals and units, verge and edges included, photo after each visit.',
+    description: 'Lawn mowing in Riverview, Ipswich on a set route day. Homes, rentals and units, verge and edges included, photo after each visit.',
     h1: 'Lawn Mowing Riverview: Set-Day Service Between Bundamba and Redbank',
     lede: 'Scheduled lawn mowing and garden care across Riverview, from the older streets near the river to the newer homes off the motorway.',
     image: 'verge-edging-footpath-booval', imageAlt: 'Verge mowing and footpath edging on a Riverview, Ipswich street',
     keyword: 'lawn mowing riverview',
     intro: [
       'Riverview runs along the Brisbane River between Bundamba and Redbank, right beside the Ipswich Motorway. It is a mix of 1960s and 70s homes on flat, generous blocks, unit complexes and townhouses closer to the station, and a steady supply of rentals. The flat river country stays soft after a wet week, and the old couch lawns here are thick, fast and quick to run over the paths.',
-      'Lawn mowing in Riverview with Beg Your Garden means a set route day on the eastern run, a text the day before, and the same finish every visit: mow at the right height, crisp edges along the footpath and driveway, the verge, a blow-down, clippings removed and a photo sent. Battery mowers keep the noise down on streets where the houses sit close together.',
+      'Lawn mowing in Riverview with Beg Your Garden means a set route day on the eastern run, a text the day before, and the same finish every visit: mow at the right height, crisp edges along the footpath and driveway, the verge, a blow-down, clippings removed and a photo sent.',
     ],
     sections: [
       { h2: 'What lawn mowing in Riverview includes', list: ['Mow, edge and trim at the right height for couch, kikuyu or buffalo', 'Footpath, kerb and driveway edges cut sharp', 'Verge and nature strip mowed with the lawn', 'Blow-down, clippings removed, gates closed, photo sent', 'Reminder text before every visit'] },

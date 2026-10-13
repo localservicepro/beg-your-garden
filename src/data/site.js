@@ -87,7 +87,7 @@ export const credentials = [
   { icon: 'flask', title: 'ChemCert AQF3', text: 'Accredited for safe herbicide and fertiliser application.' },
   { icon: 'umbrella', title: 'Fully insured', text: 'Public liability insurance on every job, every visit.' },
   { icon: 'heart', title: 'DVA & NDIS clients', text: 'Ongoing lawn and garden care with written service notes.' },
-  { icon: 'battery', title: 'Battery equipment only', text: 'Commercial battery gear: quiet, fume-free, no petrol spills.' },
+  { icon: 'calendar', title: 'Set-day routes', text: 'A fixed route day for your suburb, with a reminder before every visit.' },
 ];
 
 // The nine services from the brief, mapped to the six service pages in the
@@ -111,18 +111,18 @@ export const services = [
     slug: 'lawn-mowing',
     name: 'Lawn Mowing',
     navDescriptor: 'Redbank Plains, Springfield Lakes & Ripley',
-    short: 'Scheduled, set-day lawn mowing with quiet battery mowers, sharp edges and a reminder before every visit.',
+    short: 'Scheduled, set-day lawn mowing with sharp edges, verge included and a reminder before every visit.',
     icon: 'mower',
     h1: 'Scheduled Lawn Mowing in Redbank Plains, Springfield Lakes & Ripley',
     title: 'Lawn Mowing Redbank Plains & Springfield | Beg Your Garden',
-    description: 'Scheduled lawn mowing in Redbank Plains, Springfield Lakes & Ripley. Quiet battery mowers, sharp edges, reminders before every visit. Book a free quote today!',
+    description: 'Scheduled lawn mowing in Redbank Plains, Springfield Lakes & Ripley. Sharp edges, verge included, reminders before every visit. Book a free quote today!',
     keyword: 'Lawn Mowing Redbank Plains',
     image: 'battery-mower-front-lawn-ipswich',
-    imageAlt: 'Commercial battery lawn mower on a freshly cut front lawn in Ipswich, part of a scheduled Beg Your Garden mowing visit',
+    imageAlt: 'Commercial lawn mower on a freshly cut front lawn in Ipswich, part of a scheduled Beg Your Garden mowing visit',
     cardImage: 'battery-mower-front-lawn-ipswich',
-    cardAlt: 'Commercial battery lawn mower on a freshly cut front lawn in Ipswich',
-    citable: 'Beg Your Garden provides scheduled lawn mowing in Redbank Plains, Springfield Lakes and Ripley using commercial battery equipment.',
-    intro: `<p>Beg Your Garden provides scheduled lawn mowing in Redbank Plains, Springfield Lakes and Ripley using commercial battery equipment. Your lawn goes on a fixed day, you get a message before we arrive and a quick wrap-up when we leave, and the mow, edges, whipper-snipping and blow-down are done the same way every visit.</p>
+    cardAlt: 'Commercial lawn mower on a freshly cut front lawn in Ipswich',
+    citable: 'Beg Your Garden provides scheduled lawn mowing in Redbank Plains, Springfield Lakes and Ripley on fixed route days.',
+    intro: `<p>Beg Your Garden provides scheduled lawn mowing in Redbank Plains, Springfield Lakes and Ripley on fixed route days. Your lawn goes on a fixed day, you get a message before we arrive and a quick wrap-up when we leave, and the mow, edges, whipper-snipping and blow-down are done the same way every visit.</p>
 <p>Lawn mowing in Redbank Plains and the Springfield growth corridor is mostly about rhythm. Buffalo and couch lawns here grow fast from October to April and slow right down through winter, so a fortnightly cut in summer and a three- to four-weekly cut in the cooler months keeps the grass at the right height for the season without scalping it.</p>`,
     sections: [
       { h2: 'What is included in every lawn mowing visit', html: `<ul class="check-list">
@@ -133,16 +133,16 @@ export const services = [
 <li>Clippings removed or mulched, your choice</li>
 <li>Gates closed and a photo update when we're done</li>
 </ul>` },
-      { h2: 'Lawn mowing in Redbank Plains, Springfield Lakes and Ripley', html: `<p>These three suburbs are where most of our route days run. New estates in Ripley and Springfield Lakes tend to have smaller front lawns, narrow side access and fresh turf that needs a gentle, regular cut to thicken up. Established homes in Redbank Plains often have bigger backyards, mature trees and more edging. Our 22-inch and 30-inch self-propelled battery mowers cover both without the noise of a ride-on, which matters when the neighbour's a shift worker.</p>
+      { h2: 'Lawn mowing in Redbank Plains, Springfield Lakes and Ripley', html: `<p>These three suburbs are where most of our route days run. New estates in Ripley and Springfield Lakes tend to have smaller front lawns, narrow side access and fresh turf that needs a gentle, regular cut to thicken up. Established homes in Redbank Plains often have bigger backyards, mature trees and more edging. Our commercial self-propelled mowers cover both, from a tight new-estate side gate to a big established back yard.</p>
 <p>We also mow across Raceview, Brassall, Booval, Bundamba, Yamanto, Silkstone, Flinders View, Collingwood Park, Goodna and the rest of Ipswich City. If your suburb isn't on a current route day, ask: we add streets to routes as they fill.</p>` },
-      { h2: 'Why battery lawn mowing?', html: `<p>Commercial battery mowers cut as cleanly as petrol with far less noise and no fumes. Shift workers in Ipswich regularly sleep through a visit. There's no petrol stored on your property, no two-stroke smell drifting through open windows, and no oil drips on the driveway.</p>` },
+      { h2: 'Why a scheduled lawn service?', html: `<p>A lawn mowed on a fixed cycle at the right height stays thick, keeps weeds out and never needs the big catch-up cut that stresses the grass. You get a message before we arrive, a photo when we are done, and the same team each time who know where the gate sticks and which bed the dog digs in.</p>` },
       { h2: 'Scheduled lawn mowing, not one-off mows', html: `<p>${quoteNote} Keeping routes for regular clients is how we can promise your visit lands on the same day each cycle and that rain reschedules are sorted early, not after the fact.</p>` },
     ],
     faqs: [
       { q: 'How often should my lawn be mowed in Redbank Plains?', a: 'Fortnightly through spring and summer and every three to four weeks through winter suits most buffalo and couch lawns in Redbank Plains, Springfield Lakes and Ripley. We set your cycle at the first visit and adjust it with the season.' },
       { q: 'Do you offer one-off lawn mowing in Ipswich, or only regular service?', a: quoteNote },
       { q: 'Do you do NDIS or DVA lawn mowing in Ipswich?', a: 'Yes. Beg Your Garden provides ongoing lawn and garden maintenance for DVA clients and NDIS participants across Ipswich, with written service notes after every visit.' },
-      { q: 'Can you mow acreage or larger blocks around Ipswich?', a: 'Yes. We mow larger blocks and small acreage around Ripley, South Ripley, Deebing Heights, Purga and the rural fringe of Ipswich with wide-cut battery mowers and a battery brushcutter for the rough edges. Acreage work is quoted on site.' },
+      { q: 'Can you mow acreage or larger blocks around Ipswich?', a: 'Yes. We mow larger blocks and small acreage around Ripley, South Ripley, Deebing Heights, Purga and the rural fringe of Ipswich with wide-cut mowers and a brushcutter for the rough edges. Acreage work is quoted on site.' },
     ],
     related: ['weed-control-fertilising', 'garden-maintenance'],
   },
@@ -164,7 +164,7 @@ export const services = [
     intro: `<p>Beg Your Garden provides scheduled garden maintenance in Ipswich, including hedge trimming, hedge reduction, mulch laying, weeding and garden clean-ups. It's the same team that mows your lawn, so the whole yard is kept to one standard on one visit, and you deal with one person.</p>
 <p>Garden maintenance in Ipswich is a different job to lawn care. Beds fill with weeds after every summer storm, lilly pilly and murraya hedges put on half a metre a season, and mulch breaks down faster in our heat than it does down south. We build the garden work into your lawn schedule so nothing gets away from you.</p>`,
     sections: [
-      { h2: 'Hedge trimming and hedge reduction in Ipswich', html: `<p>Regular trims keep hedges dense and shaped. Hedge reduction is the bigger job: bringing an overgrown hedge back down to a manageable height and width over one or two cuts so it recovers well. We handle lilly pilly, murraya, photinia, viburnum, box and native screening hedges, use battery hedge trimmers (quiet, no fumes near your windows) and ladders rated for the job, and all clippings go with us.</p>
+      { h2: 'Hedge trimming and hedge reduction in Ipswich', html: `<p>Regular trims keep hedges dense and shaped. Hedge reduction is the bigger job: bringing an overgrown hedge back down to a manageable height and width over one or two cuts so it recovers well. We handle lilly pilly, murraya, photinia, viburnum, box and native screening hedges, use commercial hedge trimmers and ladders rated for the job, and all clippings go with us.</p>
 <ul class="check-list">
 <li>Maintenance trims on a 6- to 12-week cycle</li>
 <li>Staged hedge reduction for overgrown screens and boundary hedges</li>
@@ -228,7 +228,7 @@ export const services = [
     icon: 'nozzle',
     h1: 'House Washing & Pressure Cleaning in Ipswich — Driveways, Paths & Exteriors',
     title: 'House Washing Ipswich | Pressure Cleaning | Beg Your Garden',
-    description: 'House washing & pressure cleaning in Ipswich for driveways, paths, patios & exterior walls. Local, insured, quiet battery equipment. Get a free quote today!',
+    description: 'House washing & pressure cleaning in Ipswich for driveways, paths, patios & exterior walls. Local, insured, set-day scheduling. Get a free quote today!',
     keyword: 'House Washing Ipswich',
     image: 'pressure-cleaning-driveway-ipswich-generated',
     imageAlt: 'Pressure cleaning a concrete driveway in Ipswich, half cleaned to show the difference',
@@ -254,7 +254,7 @@ export const services = [
       { q: 'How often should a driveway be pressure cleaned in Ipswich?', a: 'Once a year keeps most concrete driveways in Ipswich looking fresh. Shaded or south-facing driveways that grow mould may need it twice a year, usually after the wet season.' },
       { q: 'Will pressure cleaning damage my pavers or render?', a: 'Not when the pressure is matched to the surface. We use a surface cleaner on concrete and pavers and a low-pressure soft wash on render, weatherboard and painted surfaces.' },
       { q: 'Can you pressure clean my driveway as well as mow the lawn in Ipswich?', a: 'Yes. Pressure cleaning, house washing, green waste removal and irrigation installation can all be added to a lawn care plan or booked as a separate job.' },
-      { q: 'Do you need my water or power?', a: 'We connect to an outdoor tap for most jobs and run battery or petrol equipment that doesn\'t need your power. If water access is limited, tell us and we\'ll bring our own.' },
+      { q: 'Do you need my water or power?', a: 'We connect to an outdoor tap for most jobs and run our own equipment that doesn\'t need your power. If water access is limited, tell us and we\'ll bring our own.' },
     ],
     related: ['garden-maintenance', 'rubbish-removal'],
   },
@@ -341,7 +341,7 @@ export const homeFaqs = [
   { q: 'Do you offer one-off lawn mowing in Ipswich, or only regular service?', a: 'Beg Your Garden runs scheduled, set-day routes across Ipswich so regular clients always get their visit on time. One-off garden clean-ups and pre-sale tidy-ups are quoted separately.' },
   { q: 'Which Ipswich suburbs do you service for lawn mowing?', a: 'Raceview, Ripley, Springfield Lakes, Redbank Plains, Brassall, Booval, Bundamba, Yamanto, Silkstone, Flinders View, Karalee, Collingwood Park, Goodna and surrounding suburbs across Ipswich City.' },
   { q: 'Do you do NDIS or DVA lawn mowing in Ipswich?', a: 'Yes. Beg Your Garden provides ongoing lawn and garden maintenance for DVA clients and NDIS participants across Ipswich, with written service notes after every visit.' },
-  { q: 'Is battery lawn mowing as good as petrol?', a: 'Commercial battery mowers cut as cleanly as petrol with far less noise and no fumes. Shift workers in Ipswich regularly sleep through a visit.' },
+  { q: 'What is included in a scheduled lawn mowing visit?', a: 'Every visit includes the mow at the right height for your turf, edges along paths and driveways, whipper-snipping, the nature strip, a blow-down and clippings removed, with a photo sent when we are done.' },
   { q: 'Can you pressure clean my driveway as well as mow the lawn in Ipswich?', a: 'Yes. Pressure cleaning, house washing, green waste removal and irrigation installation can all be added to a lawn care plan or booked as a separate job.' },
 ];
 
@@ -360,17 +360,17 @@ export const reviews = [
 // existing website (lc). Alt text names the service and an Ipswich suburb.
 export const gallery = [
   { src: 'front-yard-mulch-garden-bed-ipswich-1000', alt: 'Front yard lawn mowing and fresh garden bed mulch in Ipswich', cap: 'Mowing + mulch, Ipswich', size: 'wide tall', source: 'lc' },
-  { src: 'hero-john-mowing-battery-raceview-800', alt: 'John from Beg Your Garden mowing a lawn in Raceview with a battery mower', cap: 'Battery mowing, Raceview', size: 'wide', source: 'lc' },
-  { src: 'acreage-mowing-blower-ipswich', alt: 'Acreage mowing with a battery blower on a rural block near Ipswich', cap: 'Acreage mowing, Ipswich', size: '', source: 'lc' },
+  { src: 'hero-john-mowing-battery-raceview-800', alt: 'John from Beg Your Garden mowing a lawn in Raceview', cap: 'Mowing, Raceview', size: 'wide', source: 'lc' },
+  { src: 'acreage-mowing-blower-ipswich', alt: 'Acreage mowing and blow-down on a rural block near Ipswich', cap: 'Acreage mowing, Ipswich', size: '', source: 'lc' },
   { src: 'verge-edging-footpath-booval', alt: 'Verge mowing and footpath edging in Booval, Ipswich', cap: 'Verge + edging, Booval', size: 'wide', source: 'gbp' },
   { src: 'garden-bed-mulch-pebbles-ripley', alt: 'Garden bed with red mulch and pebble edging beside a driveway in Ripley', cap: 'Garden bed tidy, Ripley', size: 'tall', source: 'gbp' },
-  { src: 'battery-mower-front-lawn-ipswich-640', alt: 'Greenworks 76 cm commercial battery mower on an Ipswich front lawn', cap: 'Commercial battery gear', size: '', source: 'lc' },
+  { src: 'battery-mower-front-lawn-ipswich-640', alt: 'Commercial mower on an Ipswich front lawn', cap: 'Commercial gear', size: '', source: 'lc' },
   { src: 'front-yard-new-build-springfield-lakes', alt: 'Freshly mown front lawn of a new-build home in Springfield Lakes', cap: 'New-build lawn, Springfield Lakes', size: 'wide', source: 'gbp' },
   { src: 'footpath-edge-trimming-silkstone', alt: 'Footpath edge trimming along a nature strip in Silkstone, Ipswich', cap: 'Edge trimming, Silkstone', size: 'tall', source: 'gbp' },
   { src: 'street-verge-mowing-raceview', alt: 'Street verge and nature strip mowing in Raceview', cap: 'Nature strip, Raceview', size: 'wide', source: 'gbp' },
   { src: 'lawn-edging-verge-ipswich', alt: 'Sharp lawn edges along a kerb after a scheduled mow in Ipswich', cap: 'Sharp edges, Ipswich', size: 'wide', source: 'lc' },
   { src: 'courtyard-garden-tidy-yamanto', alt: 'Courtyard garden bed tidy-up in Yamanto, Ipswich', cap: 'Courtyard tidy, Yamanto', size: '', source: 'gbp' },
-  { src: 'lawn-mowing-equipment-shade-ipswich', alt: 'Battery mower and line trimmer on a shaded lawn in Ipswich', cap: 'Scheduled visit, Ipswich', size: '', source: 'gbp' },
+  { src: 'lawn-mowing-equipment-shade-ipswich', alt: 'Mower and line trimmer on a shaded lawn in Ipswich', cap: 'Scheduled visit, Ipswich', size: '', source: 'gbp' },
   { src: 'acreage-slashing-mount-walker-view', alt: 'Acreage lawn slashing with mountain views on the Ipswich rural fringe', cap: 'Acreage, rural Ipswich', size: 'wide', source: 'gbp' },
   { src: 'nature-strip-mowing-fenceline-brassall', alt: 'Nature strip mowing along a fence line in Brassall', cap: 'Fence line, Brassall', size: 'wide', source: 'gbp' },
   { src: 'front-yard-mown-springfield', alt: 'Mown front yard and clean footpath in Springfield', cap: 'Front yard, Springfield', size: 'wide', source: 'lc' },
