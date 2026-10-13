@@ -48,7 +48,7 @@ tools/optimise-images.py   image pipeline (WebP, resize, logo crops, favicons)
 | `/services/rubbish-removal/` | green waste removal ipswich |
 | `/services/irrigation/` | irrigation ipswich (sprinkler installation + irrigation) |
 | `/about/`, `/our-work/`, `/areas/`, `/contact/`, `/lawn-mowing-ripley/` | kept from the old site / supporting pages |
-| `/lawn-mowing-redbank-plains/`, `-springfield-lakes/`, `-springfield/`, `-collingwood-park/`, `-goodna/`, `-brassall/` | suburb pages chosen from live search volume (see below) |
+| `/lawn-mowing-redbank-plains/`, `-springfield-lakes/`, `-springfield/`, `-collingwood-park/`, `-goodna/`, `-brassall/`, `-augustine-heights/`, `-silkstone/`, `-leichhardt/`, `-riverview/` | suburb pages chosen from live search volume (see below) |
 | `/blog/` + 8 posts | lawn & garden guides chosen from live search volume (see below) |
 | `/thank-you/` | form redirect target (noindex) |
 | `/privacy-policy/`, `/terms-and-conditions/` | legal (draft copy for client review) |
@@ -94,9 +94,12 @@ Suburb pages (`src/data/areas.js`, URL pattern `/lawn-mowing-{suburb}/` to match
 | Collingwood Park | 20, up to 50 in peak months |
 | Goodna | 10, up to 30 in peak months |
 | Brassall | 10, steady all year |
+| Augustine Heights | 10, up to 40 in peak months |
+| Silkstone | 10, up to 30 in peak months |
+| Leichhardt | 10, steady all year |
+| Riverview | 10 |
 
-Suburbs with search demand but no page yet: Augustine Heights, Silkstone, Leichhardt, Riverview (10/mo each).
-Booval, Bundamba, Yamanto, Karalee, Raceview and most others show no measurable volume.
+Booval, Bundamba, Yamanto, Karalee, Raceview and most other suburbs show no measurable volume for their own phrase.
 
 Blog posts (`src/data/blog.js`), each with FAQ + BlogPosting schema and a link to the matching service:
 
