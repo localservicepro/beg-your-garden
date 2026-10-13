@@ -6,8 +6,8 @@ export default ({ assetHash }) => {
   const body = `
 <section class="hero" id="top">
   <div class="hero__media">
-    <img src="/images/hero-john-mowing-battery-raceview.webp" srcset="/images/hero-john-mowing-battery-raceview-800.webp 800w, /images/hero-john-mowing-battery-raceview.webp 1366w" sizes="100vw" width="1366" height="768" alt="Beg Your Garden battery lawn mowing in Raceview, Ipswich QLD" fetchpriority="high" decoding="async">
-    <video class="hero__video" autoplay muted loop playsinline preload="metadata" poster="/images/hero-john-mowing-battery-raceview.webp" aria-hidden="true" tabindex="-1">
+    <img src="/images/hero-john-mowing-face-ipswich-generated.webp" srcset="/images/hero-john-mowing-face-ipswich-generated-640.webp 640w, /images/hero-john-mowing-face-ipswich-generated.webp 1200w" sizes="100vw" width="1200" height="675" alt="John from Beg Your Garden pushing a battery lawn mower across a freshly mown lawn in Ipswich QLD" fetchpriority="high" decoding="async">
+    <video class="hero__video" autoplay muted loop playsinline preload="metadata" poster="/images/hero-john-mowing-face-ipswich-generated.webp" aria-hidden="true" tabindex="-1">
       <source src="/video/hero-john-mowing-ipswich.mp4" type="video/mp4">
       <source src="/video/hero-john-mowing-ipswich.webm" type="video/webm">
     </video>

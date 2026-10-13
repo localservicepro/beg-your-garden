@@ -86,7 +86,9 @@ the tagline sits in a white container in the footer.
 
 - `assets/source/leadconnector/` — the client's photos from the existing site (hero, feature sections, before/after).
 - `assets/source/gbp/` — the client's Google Business Profile photos (gallery). These are small (326 px tall) as served by Google.
-- `assets/source/generated/` — four Higgsfield-generated images used only where the client had no photo:
-  pressure cleaning, green waste removal, irrigation/sprinkler, hedge trimming. Filenames end in `-generated`.
+- `assets/source/generated/` — Higgsfield-generated images used only where the client had no photo:
+  pressure cleaning, green waste removal, irrigation/sprinkler, hedge trimming, and the homepage hero still of
+  John mowing (face from his real PPE photo, mower and scene from his real mowing photo). Filenames end in `-generated`.
+- `src/public/video/` — the homepage hero clip (MP4 + WebM, 6 s, muted loop), animated from that hero still with Higgsfield Kling.
   Replace them with real job photos when available: drop the photo in `assets/source/generated/`
   with the same base name, run `npm run images` and rebuild.
