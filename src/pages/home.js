@@ -9,6 +9,7 @@ export default ({ assetHash }) => {
     <img src="/images/hero-john-mowing-battery-raceview.webp" srcset="/images/hero-john-mowing-battery-raceview-800.webp 800w, /images/hero-john-mowing-battery-raceview.webp 1366w" sizes="100vw" width="1366" height="768" alt="Beg Your Garden battery lawn mowing in Raceview, Ipswich QLD" fetchpriority="high" decoding="async">
     <video class="hero__video" autoplay muted loop playsinline preload="metadata" poster="/images/hero-john-mowing-battery-raceview.webp" aria-hidden="true" tabindex="-1">
       <source src="/video/hero-john-mowing-ipswich.mp4" type="video/mp4">
+      <source src="/video/hero-john-mowing-ipswich.webm" type="video/webm">
     </video>
   </div>
   <div class="hero__overlay"></div>
