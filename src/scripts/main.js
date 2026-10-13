@@ -10,12 +10,12 @@
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
 
-  /* ---------- services mega dropdown ---------- */
-  const dd = d.querySelector('.nav-dropdown');
-  if (dd) {
+  /* ---------- header dropdowns (services, areas) ---------- */
+  const dropdowns = Array.from(d.querySelectorAll('.nav-dropdown'));
+  const hoverCapable = window.matchMedia('(hover: hover)').matches;
+  dropdowns.forEach((dd) => {
     const trigger = dd.querySelector('.nav-trigger');
-    const hoverCapable = window.matchMedia('(hover: hover)').matches;
-    const open = () => { dd.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); };
+    const open = () => { dropdowns.forEach((o) => { if (o !== dd) { o.classList.remove('open'); o.querySelector('.nav-trigger').setAttribute('aria-expanded', 'false'); } }); dd.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); };
     const close = () => { dd.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); };
     let hoverTimer;
     if (hoverCapable) {
@@ -25,7 +25,7 @@
     trigger.addEventListener('click', (e) => { e.preventDefault(); dd.classList.contains('open') ? close() : open(); });
     d.addEventListener('click', (e) => { if (!dd.contains(e.target)) close(); });
     d.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-  }
+  });
 
   /* ---------- mobile nav ---------- */
   const burger = d.querySelector('.nav-burger');
@@ -41,15 +41,14 @@
     mnav.querySelector('.mobile-nav__backdrop').addEventListener('click', () => setOpen(false));
     mnav.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
     d.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
-    const accBtn = mnav.querySelector('.m-link[aria-controls]');
-    if (accBtn) {
+    mnav.querySelectorAll('.m-link[aria-controls]').forEach((accBtn) => {
       const acc = d.getElementById(accBtn.getAttribute('aria-controls'));
       accBtn.addEventListener('click', () => {
         const o = accBtn.getAttribute('aria-expanded') === 'true';
         accBtn.setAttribute('aria-expanded', String(!o));
         acc.dataset.open = String(!o);
       });
-    }
+    });
   }
 
   /* ---------- scroll reveal ---------- */
@@ -63,98 +62,124 @@
     revealEls.forEach((el) => io.observe(el));
   }
 
-  /* ---------- hero video ---------- */
+  /* ---------- hero video: sources attach after the page has loaded so the poster (LCP) wins ---------- */
   const hv = d.querySelector('.hero__video');
   if (hv) {
-    if (reduce) { hv.removeAttribute('autoplay'); hv.pause(); hv.remove(); }
+    const conn = navigator.connection || {};
+    if (reduce || conn.saveData) { hv.remove(); }
     else {
-      const mark = () => hv.classList.add('is-playing');
-      hv.addEventListener('playing', mark, { once: true });
-      const p = hv.play(); if (p && p.catch) p.catch(() => {});
+      const attach = () => {
+        hv.querySelectorAll('source[data-src]').forEach((src) => { src.src = src.dataset.src; src.removeAttribute('data-src'); });
+        hv.addEventListener('playing', () => hv.classList.add('is-playing'), { once: true });
+        hv.load();
+        const p = hv.play(); if (p && p.catch) p.catch(() => {});
+      };
+      const later = () => ('requestIdleCallback' in window ? requestIdleCallback(attach, { timeout: 2500 }) : setTimeout(attach, 400));
+      d.readyState === 'complete' ? later() : window.addEventListener('load', later, { once: true });
     }
   }
 
   /* ---------- service-area map: mower drives the route ---------- */
   d.querySelectorAll('[data-route-map]').forEach((wrap) => {
+    const init = () => {
     const svg = wrap.querySelector('svg');
-    const route = svg.querySelector('.rm-route');
-    const trail = svg.querySelector('.rm-trail');
-    const mower = svg.querySelector('.rm-mower');
-    const stops = Array.from(svg.querySelectorAll('.rm-stop'));
-    if (!route || !trail || !mower || !stops.length || !route.getTotalLength) return;
-    const fullBox = svg.getAttribute('viewBox');
-    const mq = window.matchMedia('(max-width: 960px)');
-    const fit = () => svg.setAttribute('viewBox', mq.matches ? '300 40 600 450' : fullBox);
-    fit(); mq.addEventListener ? mq.addEventListener('change', fit) : mq.addListener(fit);
-
-    const L = route.getTotalLength();
-    trail.style.strokeDasharray = L + ' ' + L;
-    const setTrail = (len) => { trail.style.strokeDashoffset = String(L - Math.max(0, Math.min(L, len))); };
-
-    // Distance along the path of each stop, in route order.
-    const stopAt = stops.map((g) => {
-      const m = /translate\(([-\d.]+)[ ,]([-\d.]+)\)/.exec(g.getAttribute('transform')) || [0, 0, 0];
-      const sx = +m[1], sy = +m[2];
-      let best = 0, bd = Infinity;
-      for (let i = 0; i <= 600; i++) {
-        const pt = route.getPointAtLength((i / 600) * L);
-        const dd = (pt.x - sx) * (pt.x - sx) + (pt.y - sy) * (pt.y - sy);
-        if (dd < bd) { bd = dd; best = (i / 600) * L; }
+      const route = svg.querySelector('.rm-route');
+      const trail = svg.querySelector('.rm-trail');
+      const mower = svg.querySelector('.rm-mower');
+      const stops = Array.from(svg.querySelectorAll('.rm-stop'));
+      if (!route || !trail || !mower || !stops.length || !route.getTotalLength) return;
+      const fullBox = svg.getAttribute('viewBox');
+      const mq = window.matchMedia('(max-width: 960px)');
+      const fit = () => svg.setAttribute('viewBox', mq.matches ? '300 40 600 450' : fullBox);
+      fit(); mq.addEventListener ? mq.addEventListener('change', fit) : mq.addListener(fit);
+  
+      const L = route.getTotalLength();
+      trail.style.strokeDasharray = L + ' ' + L;
+      const setTrail = (len) => { trail.style.strokeDashoffset = String(L - Math.max(0, Math.min(L, len))); };
+  
+      // Sample the path once (getPointAtLength is slow on long paths) and interpolate from the samples.
+      const N = 600, step = L / N, pts = new Array(N + 1);
+      for (let i = 0; i <= N; i++) { const q = route.getPointAtLength(i * step); pts[i] = [q.x, q.y]; }
+      const at = (len) => {
+        const u = ((len % L) + L) % L / step, i = Math.floor(u), f = u - i, a = pts[i], b = pts[Math.min(N, i + 1)];
+        return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
+      };
+  
+      // Distance along the path of each stop, in route order.
+      const stopAt = stops.map((g) => {
+        const m = /translate\(([-\d.]+)[ ,]([-\d.]+)\)/.exec(g.getAttribute('transform')) || [0, 0, 0];
+        const sx = +m[1], sy = +m[2];
+        let best = 0, bd = Infinity;
+        for (let i = 0; i <= N; i++) {
+          const dd = (pts[i][0] - sx) * (pts[i][0] - sx) + (pts[i][1] - sy) * (pts[i][1] - sy);
+          if (dd < bd) { bd = dd; best = i * step; }
+        }
+        return best;
+      });
+      stopAt[0] = 0;
+  
+      const place = (len) => {
+        const a = at(len), b = at(len + 3);
+        const ang = Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI;
+        mower.setAttribute('transform', 'translate(' + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + ') rotate(' + ang.toFixed(1) + ')');
+      };
+  
+      if (reduce) {
+        stops.forEach((g) => g.classList.add('is-visited'));
+        setTrail(L); place(0);
+        return;
       }
-      return best;
-    });
-    stopAt[0] = 0;
-
-    const place = (len) => {
-      const a = route.getPointAtLength(len % L);
-      const b = route.getPointAtLength((len + 3) % L);
-      const ang = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
-      mower.setAttribute('transform', 'translate(' + a.x.toFixed(1) + ' ' + a.y.toFixed(1) + ') rotate(' + ang.toFixed(1) + ')');
+  
+      const SPEED = 95; // path units per second
+      const DWELL = 650; // ms paused at each suburb
+      const legs = stopAt.map((from, i) => {
+        const to = i === stopAt.length - 1 ? L : stopAt[i + 1];
+        return { from, dist: to - from, dur: ((to - from) / SPEED) * 1000 };
+      });
+      const total = legs.reduce((acc, l) => acc + l.dur + DWELL, 0);
+      const ease = (t) => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      const ping = (i) => {
+        const g = stops[i]; if (!g || g.classList.contains('is-visited')) return;
+        g.classList.add('is-visited', 'is-ping');
+        setTimeout(() => g.classList.remove('is-ping'), 1200);
+      };
+  
+      let clock = 0, last = 0, running = false, raf = 0;
+      const frame = (now) => {
+        if (!running) return;
+        if (last) clock += Math.min(100, now - last);
+        last = now;
+        let t = clock % total;
+        if (clock >= total) { clock = t; stops.forEach((g) => g.classList.remove('is-visited', 'is-ping')); }
+        for (let i = 0; i < legs.length; i++) {
+          const leg = legs[i];
+          if (t < DWELL) { ping(i); place(leg.from); setTrail(leg.from); break; }
+          t -= DWELL;
+          if (t < leg.dur) { ping(i); const len = leg.from + ease(t / leg.dur) * leg.dist; place(len); setTrail(len); break; }
+          t -= leg.dur;
+        }
+        raf = requestAnimationFrame(frame);
+      };
+      const start = () => { if (running) return; running = true; last = 0; raf = requestAnimationFrame(frame); };
+      const stop = () => { running = false; cancelAnimationFrame(raf); };
+      place(0); setTrail(0);
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver((en) => { en[0].isIntersecting ? start() : stop(); }, { threshold: 0.15 }).observe(wrap);
+      } else start();
+      d.addEventListener('visibilitychange', () => { d.hidden ? stop() : (wrap.getBoundingClientRect().top < window.innerHeight && start()); });
+    
     };
-
-    if (reduce) {
-      stops.forEach((g) => g.classList.add('is-visited'));
-      setTrail(L); place(0);
-      return;
-    }
-
-    const SPEED = 95; // path units per second
-    const DWELL = 650; // ms paused at each suburb
-    const legs = stopAt.map((from, i) => {
-      const to = i === stopAt.length - 1 ? L : stopAt[i + 1];
-      return { from, dist: to - from, dur: ((to - from) / SPEED) * 1000 };
-    });
-    const total = legs.reduce((acc, l) => acc + l.dur + DWELL, 0);
-    const ease = (t) => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-    const ping = (i) => {
-      const g = stops[i]; if (!g || g.classList.contains('is-visited')) return;
-      g.classList.add('is-visited', 'is-ping');
-      setTimeout(() => g.classList.remove('is-ping'), 1200);
-    };
-
-    let clock = 0, last = 0, running = false, raf = 0;
-    const frame = (now) => {
-      if (!running) return;
-      if (last) clock += Math.min(100, now - last);
-      last = now;
-      let t = clock % total;
-      if (clock >= total) { clock = t; stops.forEach((g) => g.classList.remove('is-visited', 'is-ping')); }
-      for (let i = 0; i < legs.length; i++) {
-        const leg = legs[i];
-        if (t < DWELL) { ping(i); place(leg.from); setTrail(leg.from); break; }
-        t -= DWELL;
-        if (t < leg.dur) { ping(i); const len = leg.from + ease(t / leg.dur) * leg.dist; place(len); setTrail(len); break; }
-        t -= leg.dur;
-      }
-      raf = requestAnimationFrame(frame);
-    };
-    const start = () => { if (running) return; running = true; last = 0; raf = requestAnimationFrame(frame); };
-    const stop = () => { running = false; cancelAnimationFrame(raf); };
-    place(0); setTrail(0);
     if ('IntersectionObserver' in window) {
-      new IntersectionObserver((en) => { en[0].isIntersecting ? start() : stop(); }, { threshold: 0.15 }).observe(wrap);
-    } else start();
-    d.addEventListener('visibilitychange', () => { d.hidden ? stop() : (wrap.getBoundingClientRect().top < window.innerHeight && start()); });
+      const pre = new IntersectionObserver((en) => { if (en[0].isIntersecting) { pre.disconnect(); init(); } }, { rootMargin: '400px 0px' });
+      pre.observe(wrap);
+    } else init();
+  });
+
+  /* ---------- review widget: load its script only when the widget is near the viewport ---------- */
+  d.querySelectorAll('[data-widget-script]').forEach((box) => {
+    const load = () => { if (box.dataset.loaded) return; box.dataset.loaded = '1'; const sc = d.createElement('script'); sc.src = box.dataset.widgetScript; sc.async = true; d.body.appendChild(sc); };
+    if ('IntersectionObserver' in window) { const io = new IntersectionObserver((en) => { if (en[0].isIntersecting) { io.disconnect(); load(); } }, { rootMargin: '600px 0px' }); io.observe(box); }
+    else load();
   });
 
   /* ---------- counters ---------- */

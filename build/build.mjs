@@ -17,11 +17,17 @@ fs.mkdirSync(dist, { recursive: true });
 fs.cpSync(path.join(src, 'public'), dist, { recursive: true });
 fs.mkdirSync(path.join(dist, 'assets'), { recursive: true });
 const css = fs.readFileSync(path.join(src, 'styles/main.css'), 'utf8');
-const js = fs.readFileSync(path.join(src, 'scripts/main.js'), 'utf8');
-fs.writeFileSync(path.join(dist, 'assets/main.css'), css);
-fs.writeFileSync(path.join(dist, 'assets/main.js'), js);
+let js = fs.readFileSync(path.join(src, 'scripts/main.js'), 'utf8');
+let cssOut = css, jsOut = js;
+try {
+  const esbuild = await import('esbuild');
+  cssOut = esbuild.transformSync(css, { loader: 'css', minify: true }).code;
+  jsOut = esbuild.transformSync(js, { loader: 'js', minify: true, target: 'es2018' }).code;
+} catch { console.log('esbuild not installed: shipping unminified CSS/JS'); }
+fs.writeFileSync(path.join(dist, 'assets/main.css'), cssOut);
+fs.writeFileSync(path.join(dist, 'assets/main.js'), jsOut);
 fs.copyFileSync(path.join(src, 'public/images/favicon.ico'), path.join(dist, 'favicon.ico'));
-const assetHash = crypto.createHash('md5').update(css + js).digest('hex').slice(0, 8);
+const assetHash = crypto.createHash('md5').update(cssOut + jsOut).digest('hex').slice(0, 8);
 
 // Pages
 const pageFiles = fs.readdirSync(path.join(src, 'pages')).filter((f) => f.endsWith('.js')).sort();

@@ -1,16 +1,16 @@
 import { site, homeFaqs, beforeAfter } from '../data/site.js';
 import { page, faqSchema } from '../templates/layout.js';
-import { icons, servicesGrid, reviewsWidget, ratingBadge, faqBlock, ctaBand, areasSection, compare, credentialsGrid, postCard } from '../templates/components.js';
+import { icons, servicesGrid, reviewsWidget, ratingBadge, faqBlock, ctaBand, areasSection, compare, credentialsGrid, postCard, img, srcsetFor } from '../templates/components.js';
 import { posts } from '../data/blog.js';
 
 export default ({ assetHash }) => {
   const body = `
 <section class="hero" id="top">
   <div class="hero__media">
-    <img src="/images/hero-john-mowing-face-ipswich-generated.webp" srcset="/images/hero-john-mowing-face-ipswich-generated-640.webp 640w, /images/hero-john-mowing-face-ipswich-generated.webp 1200w" sizes="100vw" width="1200" height="675" alt="John from Beg Your Garden pushing a battery lawn mower across a freshly mown lawn in Ipswich QLD" fetchpriority="high" decoding="async">
-    <video class="hero__video" autoplay muted loop playsinline preload="metadata" poster="/images/hero-john-mowing-face-ipswich-generated.webp" aria-hidden="true" tabindex="-1">
-      <source src="/video/hero-john-mowing-ipswich.mp4" type="video/mp4">
-      <source src="/video/hero-john-mowing-ipswich.webm" type="video/webm">
+    ${img('hero-john-mowing-face-ipswich-generated', { alt: 'John from Beg Your Garden pushing a battery lawn mower across a freshly mown lawn in Ipswich QLD', sizes: '100vw', priority: true })}
+    <video class="hero__video" muted loop playsinline preload="none" poster="/images/hero-john-mowing-face-ipswich-generated.webp" aria-hidden="true" tabindex="-1">
+      <source data-src="/video/hero-john-mowing-ipswich.mp4" type="video/mp4">
+      <source data-src="/video/hero-john-mowing-ipswich.webm" type="video/webm">
     </video>
     <div class="hero__badge" aria-hidden="true"><span class="dot">${icons.star}</span><span class="stars">★★★★★</span> ${site.rating} · ${site.reviewCount} Google reviews</div>
   </div>
@@ -47,7 +47,7 @@ export default ({ assetHash }) => {
 <section class="section" id="about-intro">
   <div class="container split">
     <div class="photo-frame reveal reveal--left">
-      <img src="/images/front-yard-mulch-garden-bed-ipswich-1000.webp" srcset="/images/front-yard-mulch-garden-bed-ipswich-640.webp 640w, /images/front-yard-mulch-garden-bed-ipswich-1000.webp 1000w" sizes="(max-width: 900px) 100vw, 50vw" width="1000" height="450" alt="Front yard lawn mowing and garden bed mulching by Beg Your Garden in Ipswich" loading="lazy" decoding="async">
+      ${img('front-yard-mulch-garden-bed-ipswich', { alt: 'Front yard lawn mowing and garden bed mulching by Beg Your Garden in Ipswich', sizes: '(max-width: 900px) 100vw, 50vw' })}
       <div class="photo-frame__badge"><span class="big">${site.rating}★</span><small>${site.reviewCount} Google reviews from Ipswich homes, rentals and strata</small></div>
     </div>
     <div class="reveal">
@@ -75,7 +75,7 @@ export default ({ assetHash }) => {
 <section class="section section--navy" id="why">
   <div class="container split split--rev">
     <div class="photo-frame photo-frame--navy reveal reveal--right">
-      <img src="/images/battery-mower-greenworks-collage-640.webp" srcset="/images/battery-mower-greenworks-collage-640.webp 640w, /images/battery-mower-greenworks-collage.webp 1020w" sizes="(max-width: 900px) 100vw, 45vw" width="1020" height="1020" alt="Commercial Greenworks battery mowers used by Beg Your Garden for quiet lawn mowing in Ipswich" loading="lazy" decoding="async" style="aspect-ratio:1/1">
+      ${img('battery-mower-greenworks-collage', { alt: 'Commercial Greenworks battery mowers used by Beg Your Garden for quiet lawn mowing in Ipswich', sizes: '(max-width: 900px) 100vw, 45vw', attrs: 'style="aspect-ratio:1/1"' })}
     </div>
     <div class="reveal">
       <span class="eyebrow" style="color:#CBE6A5">Why Beg Your Garden</span>
@@ -191,6 +191,7 @@ ${ctaBand({ heading: '<em>Leaf it to us.</em> Your lawn, on a schedule.', sub: '
       body,
       schema: [faqSchema(homeFaqs)],
       ogImage: '/images/hero-john-mowing-battery-raceview.webp',
+      preload: { href: '/images/hero-john-mowing-face-ipswich-generated-640.webp', srcset: srcsetFor('hero-john-mowing-face-ipswich-generated'), sizes: '100vw' },
       assetHash,
     }),
   }];

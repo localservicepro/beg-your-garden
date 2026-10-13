@@ -44,7 +44,7 @@ export function breadcrumbSchema(items) {
   return { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: `${site.url}${it.href}` })) };
 }
 
-export function page({ title, description, path, body, schema = [], onDark = true, noindex = false, ogImage = '/images/front-yard-mulch-garden-bed-ipswich-1000.webp', assetHash = '' }) {
+export function page({ title, description, path, body, schema = [], onDark = true, noindex = false, ogImage = '/images/front-yard-mulch-garden-bed-ipswich-1000.webp', assetHash = '', preload = null }) {
   const canonical = `${site.url}${path}`;
   const json = [localBusinessSchema(), ...schema].map((s) => `<script type="application/ld+json">${JSON.stringify(s).replace(/</g, '\\u003c')}</script>`).join('\n');
   return `<!doctype html>
@@ -74,10 +74,11 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow">' : '<meta name="ro
 <link rel="icon" href="/images/icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="/images/icon-180.png">
 <link rel="manifest" href="/site.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap">
+<link rel="preload" href="/fonts/manrope.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+${preload ? `<link rel="preload" as="image" href="${preload.href}"${preload.srcset ? ` imagesrcset="${preload.srcset}" imagesizes="${preload.sizes}"` : ''} fetchpriority="high">` : ''}
 <link rel="stylesheet" href="/assets/main.css?v=${assetHash}">
+<link rel="preconnect" href="https://app.begyourgarden.com">
 <script src="${site.trackingScript.src}" data-tracking-id="${site.trackingScript.id}" async></script>
 ${json}
 </head>

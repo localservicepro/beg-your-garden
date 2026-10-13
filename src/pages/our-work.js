@@ -1,10 +1,10 @@
 import { gallery, beforeAfter } from '../data/site.js';
 import { page, breadcrumbSchema } from '../templates/layout.js';
-import { icons, esc, pageHero, compare, ctaBand } from '../templates/components.js';
+import { icons, esc, pageHero, compare, ctaBand, img } from '../templates/components.js';
 
 export default ({ assetHash }) => {
   const crumbs = [{ name: 'Home', href: '/' }, { name: 'Our Work', href: '/our-work/' }];
-  const figures = gallery.map((g) => `<figure class="${g.size}"><img src="/images/${g.src}.webp" alt="${esc(g.alt)}" loading="lazy" decoding="async"><figcaption>${esc(g.cap)}</figcaption></figure>`).join('');
+  const figures = gallery.map((g) => `<figure class="${g.size}">${img(g.src.replace(/-(640|800|1000)$/, ''), { alt: g.alt, sizes: g.size.includes('wide') ? '(max-width: 900px) 66vw, 600px' : '(max-width: 900px) 33vw, 300px' })}<figcaption>${esc(g.cap)}</figcaption></figure>`).join('');
   const body = `
 ${pageHero({ h1: 'Our Work: Lawn Mowing &amp; Garden Care Across Ipswich', lede: 'Real jobs from real route days in Raceview, Ripley, Springfield Lakes, Booval, Brassall and across Ipswich City. No stock photos in this gallery.', crumbs, image: 'front-yard-mulch-garden-bed-ipswich-1000', imageAlt: 'Front yard with fresh mulch and mown lawn in Ipswich' })}
 <section class="section">

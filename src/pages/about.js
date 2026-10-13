@@ -1,6 +1,6 @@
 import { site, reviews } from '../data/site.js';
 import { page, breadcrumbSchema } from '../templates/layout.js';
-import { icons, esc, pageHero, credentialsGrid, ctaBand, reviewsWidget, ratingBadge } from '../templates/components.js';
+import { icons, esc, pageHero, credentialsGrid, ctaBand, reviewsWidget, ratingBadge, img } from '../templates/components.js';
 
 export default ({ assetHash }) => {
   const crumbs = [{ name: 'Home', href: '/' }, { name: 'About', href: '/about/' }];
@@ -17,7 +17,7 @@ ${pageHero({ h1: 'About Beg Your Garden: Ipswich\'s Quiet, Scheduled Lawn &amp; 
       <p>Keep the lawns and gardens of Ipswich looking their best all year round, by showing up on the day we say, doing what we said we'd do, and leaving work that speaks for itself.</p>
     </div>
     <div class="photo-frame photo-frame--tall reveal reveal--right">
-      <img src="/images/weed-control-ppe-spraying-ipswich-640.webp" srcset="/images/weed-control-ppe-spraying-ipswich-640.webp 640w, /images/weed-control-ppe-spraying-ipswich.webp 940w" sizes="(max-width: 900px) 100vw, 45vw" width="940" height="788" alt="John Wilson of Beg Your Garden in PPE before a lawn weed control treatment in Ipswich" loading="lazy" decoding="async">
+      ${img('weed-control-ppe-spraying-ipswich', { alt: 'John Wilson of Beg Your Garden in PPE before a lawn weed control treatment in Ipswich', sizes: '(max-width: 900px) 100vw, 45vw' })}
       <div class="photo-frame__badge"><span class="big">AQF3</span><small>ChemCert accredited herbicide &amp; fertiliser application</small></div>
     </div>
   </div>
@@ -37,7 +37,7 @@ ${pageHero({ h1: 'About Beg Your Garden: Ipswich\'s Quiet, Scheduled Lawn &amp; 
 <section class="section">
   <div class="container split split--rev">
     <div class="photo-frame reveal reveal--right">
-      <img src="/images/battery-mower-front-lawn-ipswich-640.webp" srcset="/images/battery-mower-front-lawn-ipswich-640.webp 640w, /images/battery-mower-front-lawn-ipswich.webp 940w" sizes="(max-width: 900px) 100vw, 45vw" width="940" height="788" alt="Greenworks commercial battery lawn mower on an Ipswich front lawn" loading="lazy" decoding="async">
+      ${img('battery-mower-front-lawn-ipswich', { alt: 'Greenworks commercial battery lawn mower on an Ipswich front lawn', sizes: '(max-width: 900px) 100vw, 45vw' })}
     </div>
     <div class="reveal">
       <span class="eyebrow">How we work</span>

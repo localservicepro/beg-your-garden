@@ -126,6 +126,16 @@ Raceview home base, pausing at each suburb and leaving a mowed trail. The animat
 is on screen, is skipped under `prefers-reduced-motion`, and the map crops to the core suburbs on phones.
 Coordinates are approximate suburb centroids; edit `mapPoints` to add, move or re-order stops.
 
+## Performance
+
+- Fonts are self-hosted variable WOFF2 files (`src/public/fonts/`, latin subset of Inter and Manrope) and preloaded; no Google Fonts request.
+- `img()` in `src/templates/components.js` emits `srcset`/`sizes` from every `-640/-800/-1000` variant that exists, with exact widths read from the WebP header, plus `width`/`height` for zero layout shift. Add variants by dropping files with those suffixes into `src/public/images/`.
+- The homepage hero poster is preloaded; the video's sources are attached by JS after the `load` event (and skipped under reduced motion or Data Saver) so it never competes with the first paint.
+- The animated map initialises only when it scrolls near the viewport and samples the route path once (per-frame `getPointAtLength` calls were costing seconds on load).
+- The LeadConnector review widget script is deferred; the tracking script is async.
+- CSS and JS are minified with esbuild when it is installed (`npm install`); the build still works without it.
+- Hosting configs set one-year immutable caching for `/images/*` and `/assets/*` (hashed URLs).
+
 ## Brand
 
 Colours are sampled from the supplied logo file: green `#458D01` (frame / tagline) and navy

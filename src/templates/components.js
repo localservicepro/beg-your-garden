@@ -16,6 +16,38 @@ const imagesDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..
 const imgExists = (name) => fs.existsSync(path.join(imagesDir, `${name}.webp`));
 const smallVariant = (image) => ['-640', '-800', '-1000'].map((sfx) => image + sfx).find(imgExists);
 
+// Read a WebP's pixel width from its header (VP8 / VP8L / VP8X) so srcset descriptors are exact.
+const dimCache = new Map();
+export function webpSize(name) {
+  if (dimCache.has(name)) return dimCache.get(name);
+  let out = null;
+  try {
+    const fd = fs.openSync(path.join(imagesDir, `${name}.webp`), 'r');
+    const b = Buffer.alloc(40); fs.readSync(fd, b, 0, 40, 0); fs.closeSync(fd);
+    const tag = b.toString('ascii', 12, 16);
+    if (tag === 'VP8X') out = { w: 1 + b.readUIntLE(24, 3), h: 1 + b.readUIntLE(27, 3) };
+    else if (tag === 'VP8L') { const bits = b.readUInt32LE(21); out = { w: 1 + (bits & 0x3fff), h: 1 + ((bits >> 14) & 0x3fff) }; }
+    else if (tag === 'VP8 ') out = { w: b.readUInt16LE(26) & 0x3fff, h: b.readUInt16LE(28) & 0x3fff };
+  } catch { out = null; }
+  dimCache.set(name, out); return out;
+}
+
+// Responsive <img>: uses every -640/-800/-1000 variant that exists plus the full file, with real widths.
+export function srcsetFor(name) {
+  const variants = ['-640', '-800', '-1000'].map((sfx) => name + sfx).filter(imgExists);
+  const all = [...variants, name].map((n) => ({ n, w: (webpSize(n) || {}).w })).filter((v) => v.w);
+  return all.length > 1 ? all.map((v) => `/images/${v.n}.webp ${v.w}w`).join(', ') : '';
+}
+export function img(name, { alt = '', sizes = '100vw', loading = 'lazy', cls = '', priority = false, width, height, attrs = '' } = {}) {
+  const variants = ['-640', '-800', '-1000'].map((sfx) => name + sfx).filter(imgExists);
+  const full = webpSize(name) || {};
+  const ss = srcsetFor(name);
+  const srcset = ss ? ` srcset="${ss}" sizes="${sizes}"` : '';
+  const src = variants.length ? `/images/${variants[variants.length - 1]}.webp` : `/images/${name}.webp`;
+  const dims = width && height ? ` width="${width}" height="${height}"` : full.w ? ` width="${full.w}" height="${full.h}"` : '';
+  return `<img${cls ? ` class="${cls}"` : ''} src="${src}"${srcset} alt="${esc(alt)}"${dims}${priority ? ' fetchpriority="high" decoding="async"' : ` loading="${loading}" decoding="async"`}${attrs ? ' ' + attrs : ''}>`;
+}
+
 export const esc = (s = '') => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 /* ---------- inline SVG icons (24x24, stroked) ---------- */
@@ -59,6 +91,13 @@ export function header({ onDark = true } = {}) {
           <span class="dd-text"><strong>${esc(s.name)}</strong><em>${esc(s.navDescriptor)}</em></span>
         </a>`).join('');
   const mobileItems = services.map((s) => `<a href="/services/${s.slug}/">${esc(s.name)}</a>`).join('');
+  const areaPages = [{ name: 'Ripley', slug: 'ripley', lede: 'Friday route · Ripley, South Ripley, Deebing Heights' }, ...suburbPages.map((x) => ({ name: x.name, slug: x.slug, lede: x.name === 'Springfield' ? 'Springfield Central & Brookwater too' : 'Set-day route · quiet battery mowing' }))];
+  const areaItems = areaPages.map((a) => `
+          <a class="dd-item" role="menuitem" href="/lawn-mowing-${a.slug}/">
+            <span class="dd-icon">${icons.mower}</span>
+            <span class="dd-text"><strong>${esc(a.name)}</strong></span>
+          </a>`).join('');
+  const mobileAreas = areaPages.map((a) => `<a href="/lawn-mowing-${a.slug}/">Lawn mowing ${esc(a.name)}</a>`).join('');
   return `
 <a class="sr-only" href="#main">Skip to content</a>
 <header class="site-header ${onDark ? 'on-dark' : 'is-light'}">
@@ -82,7 +121,17 @@ export function header({ onDark = true } = {}) {
       </div>
       <a href="/about/" class="nav-link">About</a>
       <a href="/our-work/" class="nav-link">Our Work</a>
-      <a href="/areas/" class="nav-link">Areas</a>
+      <div class="nav-dropdown">
+        <button class="nav-link nav-trigger" aria-expanded="false" aria-controls="areas-menu" type="button">
+          Areas <svg class="caret" viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+        <div class="dropdown-panel dropdown-panel--areas" id="areas-menu" role="menu">
+          <a class="dd-item is-all" role="menuitem" href="/areas/">
+            <span class="dd-icon">${icons.pin}</span>
+            <span class="dd-text"><strong>All Service Areas</strong><em>${suburbs.length} suburbs across Ipswich City &amp; Springfield</em></span>
+          </a>${areaItems}
+        </div>
+      </div>
       <a href="/blog/" class="nav-link">Blog</a>
       <a href="/contact/" class="nav-link">Contact</a>
     </nav>
@@ -101,7 +150,8 @@ export function header({ onDark = true } = {}) {
     <div class="m-acc" id="m-services" data-open="false"><div><a href="/services/">All Services</a>${mobileItems}</div></div>
     <a class="m-link" href="/about/">About</a>
     <a class="m-link" href="/our-work/">Our Work</a>
-    <a class="m-link" href="/areas/">Service Areas</a>
+    <button class="m-link" type="button" aria-expanded="false" aria-controls="m-areas">Service Areas <svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+    <div class="m-acc" id="m-areas" data-open="false"><div><a href="/areas/">All Service Areas</a>${mobileAreas}</div></div>
     <a class="m-link" href="/blog/">Blog</a>
     <a class="m-link" href="/contact/">Contact</a>
     <a class="btn" href="/contact/#quote">Get a Free Quote</a>
@@ -200,7 +250,7 @@ export function quoteForm({ id = 'quote-form', compact = false, defaultService =
 export function serviceCard(s, { tag = '' } = {}) {
   return `
 <a class="svc-card" href="/services/${s.slug}/">
-  <div class="svc-card__media"><img src="/images/${s.cardImage}.webp" alt="${esc(s.cardAlt)}" loading="lazy" decoding="async" width="800" height="600">${tag ? `<span class="svc-card__tag">${esc(tag)}</span>` : ''}</div>
+  <div class="svc-card__media">${img(s.cardImage, { alt: s.cardAlt, sizes: '(max-width: 640px) 100vw, (max-width: 960px) 50vw, 400px' })}${tag ? `<span class="svc-card__tag">${esc(tag)}</span>` : ''}</div>
   <div class="svc-card__body">
     <span class="svc-card__icon">${icons[s.icon]}</span>
     <h3>${esc(s.name)}</h3>
@@ -234,8 +284,7 @@ export function reviewsMarquee() {
 export function reviewsWidget() {
   // LeadConnector reputation widget: pulls the live Google reviews for the GBP listing.
   return `
-<div class="reviews-widget">
-  <script type="text/javascript" src="https://app.begyourgarden.com/reputation/assets/review-widget.js"></script>
+<div class="reviews-widget" data-widget-script="https://app.begyourgarden.com/reputation/assets/review-widget.js">
   <iframe class="lc_reviews_widget" title="Beg Your Garden customer reviews" src="https://app.begyourgarden.com/reputation/widgets/review_widget/kV79lWPmePKxBgY5beiF" frameborder="0" scrolling="no" style="min-width: 100%; width: 100%;" loading="lazy"></iframe>
 </div>`;
 }
@@ -410,7 +459,7 @@ export function areasSection({ compact = false } = {}) {
 export function postCard(p) {
   return `
 <a class="post-card" href="/blog/${p.slug}/">
-  <div class="post-card__media"><img src="/images/${p.image}.webp" alt="${esc(p.imageAlt)}" loading="lazy" decoding="async" width="800" height="600"></div>
+  <div class="post-card__media">${img(p.image, { alt: p.imageAlt, sizes: '(max-width: 640px) 100vw, (max-width: 960px) 50vw, 400px' })}</div>
   <div class="post-card__body">
     <span class="post-card__meta"><time datetime="${p.date}">${fmtDate(p.date)}</time> · ${p.readTime} min read</span>
     <h3>${esc(p.title)}</h3>
@@ -427,8 +476,8 @@ export function credentialsGrid() {
 export function compare(item) {
   return `
 <figure class="compare" aria-label="Before and after: ${esc(item.title)}">
-  <img class="compare__before" src="/images/${item.before}.webp" alt="${esc(item.beforeAlt)}" loading="lazy" decoding="async">
-  <img class="compare__after" src="/images/${item.after}.webp" alt="${esc(item.afterAlt)}" loading="lazy" decoding="async">
+  ${img(item.before, { alt: item.beforeAlt, cls: 'compare__before', sizes: '(max-width: 900px) 100vw, 560px' })}
+  ${img(item.after, { alt: item.afterAlt, cls: 'compare__after', sizes: '(max-width: 900px) 100vw, 560px' })}
   <span class="compare__label compare__label--before">Before</span>
   <span class="compare__label compare__label--after">After</span>
   <div class="compare__handle" aria-hidden="true"></div>

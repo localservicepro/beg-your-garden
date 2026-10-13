@@ -1,6 +1,6 @@
 import { site, suburbs, coreSuburbs, routeDays, reviews } from '../data/site.js';
 import { page, breadcrumbSchema, faqSchema } from '../templates/layout.js';
-import { icons, esc, pageHero, ctaBand, faqBlock, reviewCard, areasSection, suburbHref } from '../templates/components.js';
+import { icons, esc, pageHero, ctaBand, faqBlock, reviewCard, areasSection, suburbHref, img } from '../templates/components.js';
 import { suburbPages } from '../data/areas.js';
 
 const areaFaqs = [
@@ -39,7 +39,7 @@ ${pageHero({ h1: 'Lawn Mowing &amp; Garden Care Service Areas Across Ipswich &am
 <section class="section section--green">
   <div class="container">
     <div class="section-head reveal"><span class="eyebrow">Suburb guides</span><h2>Lawn mowing by suburb</h2><p class="lede">Our most-requested suburbs each have their own page: what the lawns are like, what's included, the route, and local FAQs.</p></div>
-    <div class="grid grid-3 stagger suburb-grid">${[{ name: 'Ripley', slug: 'ripley', blurb: 'Friday route for Ripley, South Ripley and Deebing Heights new-build lawns.', image: 'front-yard-new-build-springfield-lakes' }, ...suburbPages.map((s) => ({ name: s.name, slug: s.slug, blurb: s.lede, image: s.image }))].map((s) => `<a class="suburb-card" href="/lawn-mowing-${s.slug}/"><img src="/images/${s.image}.webp" alt="Lawn mowing in ${esc(s.name)}" loading="lazy" decoding="async" width="800" height="600"><div><h3>Lawn mowing ${esc(s.name)}</h3><p>${esc(s.blurb)}</p><span class="link-arrow">${esc(s.name)} guide ${icons.arrow}</span></div></a>`).join('')}</div>
+    <div class="grid grid-3 stagger suburb-grid">${[{ name: 'Ripley', slug: 'ripley', blurb: 'Friday route for Ripley, South Ripley and Deebing Heights new-build lawns.', image: 'front-yard-new-build-springfield-lakes' }, ...suburbPages.map((s) => ({ name: s.name, slug: s.slug, blurb: s.lede, image: s.image }))].map((s) => `<a class="suburb-card" href="/lawn-mowing-${s.slug}/">${img(s.image, { alt: `Lawn mowing in ${s.name}`, sizes: '(max-width: 640px) 100vw, (max-width: 960px) 50vw, 400px' })}<div><h3>Lawn mowing ${esc(s.name)}</h3><p>${esc(s.blurb)}</p><span class="link-arrow">${esc(s.name)} guide ${icons.arrow}</span></div></a>`).join('')}</div>
   </div>
 </section>
 <section class="section section--off">
