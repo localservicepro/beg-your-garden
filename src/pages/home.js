@@ -11,6 +11,7 @@ export default ({ assetHash }) => {
       <source src="/video/hero-john-mowing-ipswich.mp4" type="video/mp4">
       <source src="/video/hero-john-mowing-ipswich.webm" type="video/webm">
     </video>
+    <div class="hero__badge" aria-hidden="true"><span class="dot">${icons.star}</span><span class="stars">★★★★★</span> ${site.rating} · ${site.reviewCount} Google reviews</div>
   </div>
   <div class="hero__overlay"></div>
   <div class="container hero__grid">

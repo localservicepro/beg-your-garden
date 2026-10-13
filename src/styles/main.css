@@ -251,9 +251,17 @@ strong { font-weight: 600; }
 .hero__overlay { position: absolute; inset: 0; z-index: -1; background: linear-gradient(100deg, rgba(23, 30, 82, .94) 0%, rgba(23, 30, 82, .8) 36%, rgba(23, 30, 82, .35) 58%, rgba(23, 30, 82, .08) 100%); }
 .hero__overlay::after { content: ""; position: absolute; inset: auto 0 0 0; height: 160px; background: linear-gradient(to top, rgba(23, 30, 82, .6), transparent); }
 @keyframes kenburns { from { transform: scale(1); } to { transform: scale(1.08); } }
+.hero__badge { display: none; }
 @media (max-width: 960px) {
-  .hero { display: block; min-height: 0; padding: var(--header-h) 0 56px; }
-  .hero__media { position: relative; inset: auto; height: 64vw; max-height: 420px; margin-bottom: 26px; }
+  .hero { display: block; min-height: 0; padding: var(--header-h) 0 48px; }
+  .hero__media { position: relative; inset: auto; height: 54vw; max-height: 340px; margin-bottom: 18px; }
+  .hero__badge { display: inline-flex; align-items: center; gap: 8px; position: absolute; left: 16px; bottom: 14px; z-index: 2; padding: 7px 12px 7px 7px; border-radius: var(--r-pill); background: rgba(23, 30, 82, .82); border: 1px solid rgba(255, 255, 255, .25); backdrop-filter: blur(8px); color: #fff; font-size: .82rem; font-weight: 600; white-space: nowrap; }
+  .hero__badge .stars { color: #FFD166; letter-spacing: 1px; font-size: .9rem; }
+  .hero__badge .dot { width: 24px; height: 24px; border-radius: 50%; background: var(--green); display: grid; place-items: center; }
+  .hero__badge .dot svg { width: 13px; height: 13px; }
+  .hero .hero__pill { display: none; }
+  .hero h1 { font-size: clamp(1.9rem, 7.6vw, 2.6rem); line-height: 1.1; margin-bottom: .4em; }
+  .hero .lede { font-size: 1rem; margin-bottom: 20px; }
   .hero__media img { position: absolute; inset: 0; animation: none; }
   .hero__media img, .hero__media video { object-position: 68% 18%; }
   .hero__media::after { content: ""; position: absolute; inset: auto 0 0 0; height: 38%; background: linear-gradient(to top, var(--navy-900), transparent); }
