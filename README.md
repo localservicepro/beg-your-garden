@@ -25,6 +25,8 @@ build/build.mjs       static site generator (clean URLs, sitemap.xml, robots.txt
 build/check.mjs       post-build SEO checks
 build/serve.mjs       local preview server
 src/data/site.js      ALL business facts, copy, services, suburbs, reviews, FAQs
+src/data/areas.js     suburb landing pages (copy, FAQs, images)
+src/data/blog.js      blog posts (HTML body, FAQs, meta, keyword notes)
 src/templates/        layout.js (head, schema, header/footer wiring), components.js (nav, forms, cards…)
 src/pages/*.js        one module per page group; each returns [{ path, html }]
 src/styles/main.css   design system (tokens sampled from the logo) + components + motion
@@ -46,6 +48,8 @@ tools/optimise-images.py   image pipeline (WebP, resize, logo crops, favicons)
 | `/services/rubbish-removal/` | green waste removal ipswich |
 | `/services/irrigation/` | irrigation ipswich (sprinkler installation + irrigation) |
 | `/about/`, `/our-work/`, `/areas/`, `/contact/`, `/lawn-mowing-ripley/` | kept from the old site / supporting pages |
+| `/lawn-mowing-redbank-plains/`, `-springfield-lakes/`, `-springfield/`, `-collingwood-park/`, `-goodna/`, `-brassall/` | suburb pages chosen from live search volume (see below) |
+| `/blog/` + 8 posts | lawn & garden guides chosen from live search volume (see below) |
 | `/thank-you/` | form redirect target (noindex) |
 | `/privacy-policy/`, `/terms-and-conditions/` | legal (draft copy for client review) |
 
@@ -74,6 +78,41 @@ Quote forms (`data-quote-form`) use these field names so the CRM mapping is dire
 
 On submit the page lets the tracking script capture the submission, then redirects to `/thank-you/`.
 There is no form endpoint of our own.
+
+## Suburb pages and blog (keyword-led)
+
+Both sets were chosen from live Australian Google Ads search-volume data (DataForSEO, Sep 2026) and
+DataForSEO Labs keyword difficulty, cross-checked with Ubersuggest.
+
+Suburb pages (`src/data/areas.js`, URL pattern `/lawn-mowing-{suburb}/` to match the existing Ripley page):
+
+| Suburb | Monthly searches ("lawn mowing {suburb}") |
+|---|---|
+| Redbank Plains | 40–50 (KD 0) |
+| Springfield Lakes | 10 + "lawn mowing services …" 10 + "lawn care …" 10 |
+| Springfield (covers Springfield Central, Brookwater) | 20 |
+| Collingwood Park | 20, up to 50 in peak months |
+| Goodna | 10, up to 30 in peak months |
+| Brassall | 10, steady all year |
+
+Suburbs with search demand but no page yet: Augustine Heights, Silkstone, Leichhardt, Riverview (10/mo each).
+Booval, Bundamba, Yamanto, Karalee, Raceview and most others show no measurable volume.
+
+Blog posts (`src/data/blog.js`), each with FAQ + BlogPosting schema and a link to the matching service:
+
+| Post | Head keyword (AU monthly) |
+|---|---|
+| Lawn grubs in Ipswich | "lawn grubs" 5,400 · "lawn grub treatment" 1,000 · "army worm lawn" 390 |
+| When to fertilise your lawn in Queensland | "when to fertilise lawn" 480 · "best time to fertilise lawn" 260 |
+| How much does lawn mowing cost in Ipswich | "how much does lawn mowing cost" 260 · "lawn mowing cost per hour" 70 |
+| How often should you mow your lawn in Queensland | 140 · "mowing wet grass" 590 · "scalping a lawn" 590 |
+| How to fix a patchy lawn | 210 · "brown patches on lawn" 480 · "dead patches in lawn" 260 |
+| Get rid of weeds without killing the grass | 140 · "killing weeds in buffalo lawn" 1,000 · "how to get rid of nut grass" 210 |
+| Winter lawn care in South East Queensland | "lawn care in winter" 140 (390 in Jun–Jul) |
+| How much mulch do I need | 210 · "mulch types" 480 |
+
+The price guide in the cost post is a general Ipswich market range, not Beg Your Garden's price list; adjust in `src/data/blog.js` if needed.
+To add a post, append to `posts` in `src/data/blog.js` and rebuild; the index, homepage strip, sitemap and schema update automatically.
 
 ## Service-area map
 

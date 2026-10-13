@@ -2,6 +2,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { site, services, serviceList, suburbs, coreSuburbs, routeDays, reviews, credentials, mapPoints } from '../data/site.js';
+import { suburbPages } from '../data/areas.js';
+
+export const suburbHref = (name) => {
+  const sp = suburbPages.find((x) => x.name === name);
+  if (sp) return `/lawn-mowing-${sp.slug}/`;
+  if (name === 'Ripley') return '/lawn-mowing-ripley/';
+  return '/areas/';
+};
+export const fmtDate = (iso) => new Date(iso + 'T00:00:00').toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
 
 const imagesDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../public/images');
 const imgExists = (name) => fs.existsSync(path.join(imagesDir, `${name}.webp`));
@@ -74,6 +83,7 @@ export function header({ onDark = true } = {}) {
       <a href="/about/" class="nav-link">About</a>
       <a href="/our-work/" class="nav-link">Our Work</a>
       <a href="/areas/" class="nav-link">Areas</a>
+      <a href="/blog/" class="nav-link">Blog</a>
       <a href="/contact/" class="nav-link">Contact</a>
     </nav>
     <div class="nav-actions">
@@ -92,6 +102,7 @@ export function header({ onDark = true } = {}) {
     <a class="m-link" href="/about/">About</a>
     <a class="m-link" href="/our-work/">Our Work</a>
     <a class="m-link" href="/areas/">Service Areas</a>
+    <a class="m-link" href="/blog/">Blog</a>
     <a class="m-link" href="/contact/">Contact</a>
     <a class="btn" href="/contact/#quote">Get a Free Quote</a>
     <a class="m-phone" href="tel:${site.phoneRaw}">${icons.phone} Call ${site.phone}</a>
@@ -103,7 +114,7 @@ export function header({ onDark = true } = {}) {
 /* ---------- footer ---------- */
 export function footer() {
   const svcLinks = services.map((s) => `<li><a href="/services/${s.slug}/">${esc(s.name)}</a></li>`).join('');
-  const areaLinks = coreSuburbs.slice(0, 8).map((s) => `<li><a href="/areas/">Lawn mowing ${esc(s)}</a></li>`).join('');
+  const areaLinks = ['Raceview', 'Ripley', ...suburbPages.map((x) => x.name)].map((s) => `<li><a href="${suburbHref(s)}">Lawn mowing ${esc(s)}</a></li>`).join('');
   return `
 <footer class="site-footer" id="footer">
   <div class="container">
@@ -132,7 +143,7 @@ export function footer() {
           <li><a href="/about/">About Beg Your Garden</a></li>
           <li><a href="/our-work/">Our work</a></li>
           <li><a href="/areas/">Service areas</a></li>
-          <li><a href="/lawn-mowing-ripley/">Lawn mowing Ripley</a></li>
+          <li><a href="/blog/">Lawn &amp; garden tips</a></li>
           <li><a href="/contact/">Contact &amp; free quote</a></li>
           <li><a href="${site.gbp}" target="_blank" rel="noopener">Google reviews (${site.rating}★)</a></li>
         </ul>
@@ -377,7 +388,7 @@ export function routeMap() {
 }
 
 export function areasSection({ compact = false } = {}) {
-  const core = coreSuburbs.map((s) => `<a class="chip chip--route" href="/areas/">${esc(s)}</a>`).join('');
+  const core = coreSuburbs.map((s) => `<a class="chip chip--route" href="${suburbHref(s)}">${esc(s)}</a>`).join('');
   const rest = suburbs.filter((s) => !coreSuburbs.includes(s)).map((s) => `<span class="chip">${esc(s)}</span>`).join('');
   return `
 <div class="route-map-wrap">
@@ -394,6 +405,19 @@ export function areasSection({ compact = false } = {}) {
   <div class="areas__chips">${core}</div>
   ${compact ? '' : `<h3 style="margin:22px 0 12px">And across the rest of Ipswich City</h3><div class="areas__chips">${rest}</div>`}
 </div>`;
+}
+
+export function postCard(p) {
+  return `
+<a class="post-card" href="/blog/${p.slug}/">
+  <div class="post-card__media"><img src="/images/${p.image}.webp" alt="${esc(p.imageAlt)}" loading="lazy" decoding="async" width="800" height="600"></div>
+  <div class="post-card__body">
+    <span class="post-card__meta"><time datetime="${p.date}">${fmtDate(p.date)}</time> · ${p.readTime} min read</span>
+    <h3>${esc(p.title)}</h3>
+    <p>${esc(p.excerpt)}</p>
+    <span class="link-arrow">Read the guide ${icons.arrow}</span>
+  </div>
+</a>`;
 }
 
 export function credentialsGrid() {

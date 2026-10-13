@@ -1,6 +1,7 @@
 import { site, homeFaqs, beforeAfter } from '../data/site.js';
 import { page, faqSchema } from '../templates/layout.js';
-import { icons, servicesGrid, reviewsWidget, ratingBadge, faqBlock, ctaBand, areasSection, compare, credentialsGrid } from '../templates/components.js';
+import { icons, servicesGrid, reviewsWidget, ratingBadge, faqBlock, ctaBand, areasSection, compare, credentialsGrid, postCard } from '../templates/components.js';
+import { posts } from '../data/blog.js';
 
 export default ({ assetHash }) => {
   const body = `
@@ -152,6 +153,18 @@ export default ({ assetHash }) => {
     </div>
     ${areasSection({ compact: true })}
     <p style="margin-top:24px"><a class="link-arrow" href="/areas/">See every suburb we cover ${icons.arrow}</a></p>
+  </div>
+</section>
+
+<section class="section" id="tips">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">From the route</span>
+      <h2>Lawn &amp; garden tips for Queensland yards</h2>
+      <p class="lede">When to feed, how often to cut, and what to do about grubs and weeds. Written from what we see doing lawn mowing in Ipswich every week.</p>
+    </div>
+    <div class="grid grid-3 stagger post-grid">${[...posts].sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 3).map(postCard).join('')}</div>
+    <p style="margin-top:24px"><a class="link-arrow" href="/blog/">All lawn &amp; garden tips ${icons.arrow}</a></p>
   </div>
 </section>
 

@@ -1,6 +1,7 @@
 import { site, suburbs, coreSuburbs, routeDays, reviews } from '../data/site.js';
 import { page, breadcrumbSchema, faqSchema } from '../templates/layout.js';
-import { icons, esc, pageHero, ctaBand, faqBlock, reviewCard, areasSection } from '../templates/components.js';
+import { icons, esc, pageHero, ctaBand, faqBlock, reviewCard, areasSection, suburbHref } from '../templates/components.js';
+import { suburbPages } from '../data/areas.js';
 
 const areaFaqs = [
   { q: 'Which Ipswich suburbs do you service for lawn mowing?', a: 'Raceview, Ripley, Springfield Lakes, Redbank Plains, Brassall, Booval, Bundamba, Yamanto, Silkstone, Flinders View, Karalee, Collingwood Park, Goodna and surrounding suburbs across Ipswich City.' },
@@ -24,7 +25,7 @@ export default ({ assetHash }) => {
   const groupHtml = Object.entries(groups).map(([name, list]) => `
 <div class="reveal">
   <h3>${esc(name)}</h3>
-  <div class="areas__chips">${list.map((s) => `<span class="chip${coreSuburbs.includes(s) ? ' chip--route' : ''}">${esc(s)}</span>`).join('')}</div>
+  <div class="areas__chips">${list.map((s) => suburbHref(s) !== '/areas/' ? `<a class="chip chip--route chip--link" href="${suburbHref(s)}">${esc(s)}</a>` : `<span class="chip${coreSuburbs.includes(s) ? ' chip--route' : ''}">${esc(s)}</span>`).join('')}</div>
 </div>`).join('');
 
   const body = `
@@ -33,6 +34,12 @@ ${pageHero({ h1: 'Lawn Mowing &amp; Garden Care Service Areas Across Ipswich &am
   <div class="container">
     <div class="section-head reveal"><span class="eyebrow">Route days</span><h2>Where we mow, and when</h2><p class="lede">Green chips are route suburbs we're in every cycle. Every other suburb on this page is inside our service area and joins the nearest route day.</p></div>
     ${areasSection({ compact: true })}
+  </div>
+</section>
+<section class="section section--green">
+  <div class="container">
+    <div class="section-head reveal"><span class="eyebrow">Suburb guides</span><h2>Lawn mowing by suburb</h2><p class="lede">Our most-requested suburbs each have their own page: what the lawns are like, what's included, the route, and local FAQs.</p></div>
+    <div class="grid grid-3 stagger suburb-grid">${[{ name: 'Ripley', slug: 'ripley', blurb: 'Friday route for Ripley, South Ripley and Deebing Heights new-build lawns.', image: 'front-yard-new-build-springfield-lakes' }, ...suburbPages.map((s) => ({ name: s.name, slug: s.slug, blurb: s.lede, image: s.image }))].map((s) => `<a class="suburb-card" href="/lawn-mowing-${s.slug}/"><img src="/images/${s.image}.webp" alt="Lawn mowing in ${esc(s.name)}" loading="lazy" decoding="async" width="800" height="600"><div><h3>Lawn mowing ${esc(s.name)}</h3><p>${esc(s.blurb)}</p><span class="link-arrow">${esc(s.name)} guide ${icons.arrow}</span></div></a>`).join('')}</div>
   </div>
 </section>
 <section class="section section--off">
