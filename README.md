@@ -28,7 +28,7 @@ src/data/site.js      ALL business facts, copy, services, suburbs, reviews, FAQs
 src/templates/        layout.js (head, schema, header/footer wiring), components.js (nav, forms, cards…)
 src/pages/*.js        one module per page group; each returns [{ path, html }]
 src/styles/main.css   design system (tokens sampled from the logo) + components + motion
-src/scripts/main.js   header, mega menu, mobile drawer, reveals, counters, before/after slider, form handling
+src/scripts/main.js   header, mega menu, mobile drawer, reveals, counters, before/after slider, service-area map animation, form handling
 src/public/           copied verbatim into dist/ (images, manifest, _redirects)
 tools/optimise-images.py   image pipeline (WebP, resize, logo crops, favicons)
 ```
@@ -74,6 +74,15 @@ Quote forms (`data-quote-form`) use these field names so the CRM mapping is dire
 
 On submit the page lets the tracking script capture the submission, then redirects to `/thank-you/`.
 There is no form endpoint of our own.
+
+## Service-area map
+
+`routeMap()` in `src/templates/components.js` draws an inline SVG map of Ipswich City from the suburb
+coordinates in `mapPoints` (`src/data/site.js`): rivers, highways, the 20 route suburbs with labels and
+route-day tags, outer suburbs for reach, and a top-down battery mower that drives the route loop from the
+Raceview home base, pausing at each suburb and leaving a mowed trail. The animation runs only while the map
+is on screen, is skipped under `prefers-reduced-motion`, and the map crops to the core suburbs on phones.
+Coordinates are approximate suburb centroids; edit `mapPoints` to add, move or re-order stops.
 
 ## Brand
 

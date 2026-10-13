@@ -43,6 +43,44 @@ export const suburbs = [
 // Suburbs on the current set-day routes / most-asked-for (shown first).
 export const coreSuburbs = ['Raceview', 'Ripley', 'Springfield Lakes', 'Redbank Plains', 'Brassall', 'Booval', 'Bundamba', 'Yamanto', 'Silkstone', 'Flinders View', 'Karalee', 'Collingwood Park', 'Goodna', 'Augustine Heights', 'Springfield', 'North Ipswich', 'East Ipswich', 'Leichhardt', 'Riverview', 'Churchill'];
 
+// Approximate suburb centroids for the animated service-area map (schematic, not to survey scale).
+// route: visited by the animated mower, in this order. lp: label position (r l t b tl tr bl br).
+export const mapPoints = [
+  { name: 'Raceview', lat: -27.638, lng: 152.778, route: 1, home: true, lp: 'r', day: 'Wed' },
+  { name: 'Flinders View', lat: -27.656, lng: 152.775, route: 2, lp: 'br' },
+  { name: 'Yamanto', lat: -27.672, lng: 152.742, route: 3, lp: 'bl' },
+  { name: 'Churchill', lat: -27.645, lng: 152.752, route: 4, lp: 'l' },
+  { name: 'Leichhardt', lat: -27.624, lng: 152.738, route: 5, lp: 'l' },
+  { name: 'Brassall', lat: -27.594, lng: 152.745, route: 6, lp: 'tl' },
+  { name: 'North Ipswich', lat: -27.603, lng: 152.763, route: 7, lp: 't' },
+  { name: 'East Ipswich', lat: -27.607, lng: 152.780, route: 8, lp: 'tr' },
+  { name: 'Booval', lat: -27.614, lng: 152.795, route: 9, lp: 'r' },
+  { name: 'Silkstone', lat: -27.627, lng: 152.788, route: 10, lp: 'br' },
+  { name: 'Bundamba', lat: -27.608, lng: 152.814, route: 11, lp: 'r' },
+  { name: 'Karalee', lat: -27.563, lng: 152.800, route: 12, lp: 'r' },
+  { name: 'Riverview', lat: -27.600, lng: 152.846, route: 13, lp: 't' },
+  { name: 'Collingwood Park', lat: -27.622, lng: 152.862, route: 14, lp: 'br' },
+  { name: 'Goodna', lat: -27.610, lng: 152.897, route: 15, lp: 'tr' },
+  { name: 'Springfield', lat: -27.655, lng: 152.918, route: 16, lp: 't' },
+  { name: 'Springfield Lakes', lat: -27.678, lng: 152.930, route: 17, lp: 'bl' },
+  { name: 'Augustine Heights', lat: -27.661, lng: 152.882, route: 18, lp: 'bl' },
+  { name: 'Redbank Plains', lat: -27.646, lng: 152.860, route: 19, lp: 'tl' },
+  { name: 'Ripley', lat: -27.693, lng: 152.832, route: 20, lp: 'r', day: 'Fri' },
+  // Outer suburbs shown for reach (no marker on the animated route)
+  { name: 'Rosewood', lat: -27.636, lng: 152.592, lp: 'r', minor: true },
+  { name: 'Marburg', lat: -27.565, lng: 152.598, lp: 'r', minor: true },
+  { name: 'Walloon', lat: -27.603, lng: 152.672, lp: 'b', minor: true },
+  { name: 'Amberley', lat: -27.640, lng: 152.705, lp: 'b', minor: true },
+  { name: 'Willowbank', lat: -27.700, lng: 152.690, lp: 'r', minor: true },
+  { name: 'Peak Crossing', lat: -27.785, lng: 152.745, lp: 'r', minor: true },
+  { name: 'Pine Mountain', lat: -27.545, lng: 152.720, lp: 'r', minor: true },
+  { name: 'Chuwar', lat: -27.553, lng: 152.775, lp: 'r', minor: true },
+  { name: 'Redbank', lat: -27.596, lng: 152.868, lp: 't', minor: true },
+  { name: 'Camira', lat: -27.634, lng: 152.918, lp: 'r', minor: true },
+  { name: 'Spring Mountain', lat: -27.708, lng: 152.900, lp: 'b', minor: true },
+  { name: 'South Ripley', lat: -27.727, lng: 152.825, lp: 'b', minor: true },
+];
+
 export const credentials = [
   { icon: 'shield', title: 'Police checked', text: 'Every team member holds a current national police check.' },
   { icon: 'card', title: 'Blue Card holder', text: 'Working with Children Check for family homes and care settings.' },

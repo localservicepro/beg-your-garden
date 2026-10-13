@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { site, services, serviceList, suburbs, coreSuburbs, routeDays, reviews, credentials } from '../data/site.js';
+import { site, services, serviceList, suburbs, coreSuburbs, routeDays, reviews, credentials, mapPoints } from '../data/site.js';
 
 const imagesDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../public/images');
 const imgExists = (name) => fs.existsSync(path.join(imagesDir, `${name}.webp`));
@@ -254,21 +254,145 @@ export function ctaBand({ heading = 'Leaf it to us.', sub = 'Tell us about your 
 </section>`;
 }
 
+/* ---------- animated service-area map ---------- */
+const MAP = { W: 900, H: 700, w: 152.565, e: 152.955, n: -27.53, s: -27.80 };
+const proj = (p) => ({ x: +(((p.lng - MAP.w) / (MAP.e - MAP.w)) * MAP.W).toFixed(1), y: +(((MAP.n - p.lat) / (MAP.n - MAP.s)) * MAP.H).toFixed(1) });
+
+// Smooth closed loop through the route points (Catmull-Rom -> cubic Bézier).
+function loopPath(pts) {
+  const n = pts.length; const seg = [];
+  for (let i = 0; i < n; i++) {
+    const p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
+    const c1 = { x: p1.x + (p2.x - p0.x) / 6, y: p1.y + (p2.y - p0.y) / 6 };
+    const c2 = { x: p2.x - (p3.x - p1.x) / 6, y: p2.y - (p3.y - p1.y) / 6 };
+    seg.push(`C${c1.x.toFixed(1)} ${c1.y.toFixed(1)} ${c2.x.toFixed(1)} ${c2.y.toFixed(1)} ${p2.x} ${p2.y}`);
+  }
+  return `M${pts[0].x} ${pts[0].y} ${seg.join(' ')}`;
+}
+
+const LABEL = {
+  r: (x, y) => ({ x: x + 12, y: y + 5, a: 'start' }), l: (x, y) => ({ x: x - 12, y: y + 5, a: 'end' }),
+  t: (x, y) => ({ x, y: y - 13, a: 'middle' }), b: (x, y) => ({ x, y: y + 22, a: 'middle' }),
+  tl: (x, y) => ({ x: x - 8, y: y - 10, a: 'end' }), tr: (x, y) => ({ x: x + 8, y: y - 10, a: 'start' }),
+  bl: (x, y) => ({ x: x - 8, y: y + 20, a: 'end' }), br: (x, y) => ({ x: x + 8, y: y + 20, a: 'start' }),
+};
+
+export function routeMap() {
+  const pts = mapPoints.map((p) => ({ ...p, ...proj(p) }));
+  const route = pts.filter((p) => p.route).sort((a, b) => a.route - b.route);
+  const home = route[0];
+  const d = loopPath(route);
+
+  const dayPill = (x, y, day) => `<g class="rm-day" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><rect width="38" height="18" rx="9"/><text x="19" y="13">${esc(day)}</text></g>`;
+  const markers = route.map((p, i) => {
+    if (p.home) {
+      return `<g class="rm-stop rm-home" data-idx="${i}" transform="translate(${p.x} ${p.y})">
+      <circle class="rm-ping" r="10"/>
+      <circle r="14" class="rm-home__ring"/>
+      <path class="rm-home__pin" d="M0 -30c-9 0-15 6.5-15 14.5C-15 -5 0 10 0 10s15-15 15-25.5C15 -23.5 9 -30 0 -30Z"/>
+      <path class="rm-home__house" d="M-6 -14l6-5 6 5v7h-4v-4h-4v4h-4z"/>
+      <text class="rm-label rm-label--home" x="-17" y="-4" text-anchor="end">${esc(p.name)}</text>
+      <text class="rm-sub" x="-17" y="10" text-anchor="end">Home base</text>
+      ${p.day ? dayPill(-19, -54, p.day) : ''}
+    </g>`;
+    }
+    const l = LABEL[p.lp](p.x, p.y);
+    const lx = l.x - p.x, ly = l.y - p.y;
+    return `<g class="rm-stop" data-idx="${i}" transform="translate(${p.x} ${p.y})">
+      <circle class="rm-ping" r="7"/>
+      <circle class="rm-dot" r="6.5"/>
+      <text class="rm-label" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${l.a}">${esc(p.name)}</text>
+      ${p.day ? dayPill(l.a === 'end' ? lx - p.name.length * 8.6 - 46 : lx + p.name.length * 8.6 + 8, ly - 13, p.day) : ''}
+    </g>`;
+  }).join('\n');
+
+  const others = pts.filter((p) => !p.route).map((p) => {
+    const l = LABEL[p.lp](p.x, p.y);
+    return `<g class="rm-minor" transform="translate(${p.x} ${p.y})"><circle r="3.5"/><text class="rm-label rm-label--minor" x="${(l.x - p.x).toFixed(1)}" y="${(l.y - p.y).toFixed(1)}" text-anchor="${l.a}">${esc(p.name)}</text></g>`;
+  }).join('\n');
+
+  const names = route.map((p) => p.name).join(', ');
+  return `
+<div class="route-map" data-route-map data-home="${esc(home.name)}">
+  <svg viewBox="0 0 ${MAP.W} ${MAP.H}" role="img" aria-labelledby="rm-title rm-desc" preserveAspectRatio="xMidYMid meet">
+    <title id="rm-title">Beg Your Garden service-area map: Ipswich, Springfield and Ripley</title>
+    <desc id="rm-desc">Stylised map of Ipswich City showing the lawn mowing route from the Raceview home base through ${names}, with outer suburbs from Rosewood to Springfield Lakes.</desc>
+    <defs>
+      <pattern id="rm-grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M50 0H0V50" fill="none" stroke="#2C3990" stroke-opacity=".06"/></pattern>
+      <radialGradient id="rm-glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#458D01" stop-opacity=".14"/><stop offset="1" stop-color="#458D01" stop-opacity="0"/></radialGradient>
+      <filter id="rm-shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#10153B" flood-opacity=".28"/></filter>
+    </defs>
+    <!-- land -->
+    <rect class="rm-land" width="${MAP.W}" height="${MAP.H}"/>
+    <rect width="${MAP.W}" height="${MAP.H}" fill="url(#rm-grid)"/>
+    <ellipse cx="560" cy="270" rx="360" ry="230" fill="url(#rm-glow)"/>
+    <!-- green space -->
+    <g class="rm-park">
+      <ellipse cx="180" cy="560" rx="150" ry="90"/><ellipse cx="760" cy="560" rx="150" ry="110"/>
+      <ellipse cx="90" cy="110" rx="130" ry="80"/><ellipse cx="420" cy="620" rx="120" ry="50"/>
+      <ellipse cx="820" cy="80" rx="110" ry="60"/>
+    </g>
+    <!-- rivers -->
+    <g class="rm-river">
+      <path d="M-10 455C110 430 230 395 330 320S430 235 455 205S520 150 605 128"/>
+      <path d="M330 -10C360 50 420 95 500 112S605 120 605 128S700 160 735 200S790 240 830 225S890 215 910 235"/>
+    </g>
+    <!-- highways -->
+    <g class="rm-road">
+      <path d="M-10 178H120C260 178 380 166 470 198S640 200 740 206S880 215 910 212"/>
+      <path d="M470 198C430 260 400 330 340 410S240 540 180 600"/>
+      <path d="M470 198C480 160 520 110 545 60"/>
+      <path d="M640 200C660 280 650 360 625 410S640 500 700 560"/>
+      <path d="M760 206C790 280 830 330 870 400"/>
+      <path d="M-10 300C120 290 230 285 330 320"/>
+    </g>
+    <!-- route -->
+    <path class="rm-route" d="${d}"/>
+    <path class="rm-trail" d="${d}"/>
+    ${others}
+    ${markers}
+    <!-- mower (top-down, front faces +x) -->
+    <g class="rm-mower" transform="translate(${home.x} ${home.y})" filter="url(#rm-shadow)">
+      <g class="rm-mower__body" transform="scale(.85)">
+        <path d="M-15 -8L-31 -13M-15 8L-31 13M-31 -13V13" stroke="#2C3990" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <rect x="-14" y="-16" width="9" height="6" rx="2" fill="#171E52"/><rect x="-14" y="10" width="9" height="6" rx="2" fill="#171E52"/>
+        <rect x="7" y="-15" width="8" height="5" rx="2" fill="#171E52"/><rect x="7" y="10" width="8" height="5" rx="2" fill="#171E52"/>
+        <rect x="-15" y="-11" width="33" height="22" rx="8" fill="#458D01" stroke="#2F6300" stroke-width="2"/>
+        <rect x="-7" y="-6" width="13" height="12" rx="3" fill="#F7F8F4"/>
+        <rect x="-5" y="-3" width="9" height="6" rx="1.5" fill="#2C3990"/>
+        <circle cx="13" cy="0" r="2.5" fill="#fff" opacity=".85"/>
+      </g>
+    </g>
+    <!-- compass + legend -->
+    <g class="rm-compass" transform="translate(850 60)"><circle r="20"/><path d="M0 -13L6 4H-6Z"/><text y="30" text-anchor="middle">N</text></g>
+    <g class="rm-legend" transform="translate(24 ${MAP.H - 92})">
+      <rect width="232" height="70" rx="12"/>
+      <path transform="translate(22 24) scale(.55)" class="rm-home__pin" d="M0 -30c-9 0-15 6.5-15 14.5C-15 -5 0 10 0 10s15-15 15-25.5C15 -23.5 9 -30 0 -30Z"/>
+      <text x="40" y="24">Home base · ${esc(home.name)}</text>
+      <circle cx="22" cy="48" r="6" class="rm-dot rm-dot--on"/>
+      <text x="40" y="52">Route suburb · mowed every cycle</text>
+    </g>
+  </svg>
+</div>`;
+}
+
 export function areasSection({ compact = false } = {}) {
   const core = coreSuburbs.map((s) => `<a class="chip chip--route" href="/areas/">${esc(s)}</a>`).join('');
   const rest = suburbs.filter((s) => !coreSuburbs.includes(s)).map((s) => `<span class="chip">${esc(s)}</span>`).join('');
   return `
-<div class="split">
-  <div class="reveal">
-    <h3 style="margin-bottom:12px">Route suburbs we mow every cycle</h3>
-    <div class="areas__chips" style="margin-bottom:22px">${core}</div>
-    ${compact ? '' : `<h3 style="margin-bottom:12px">And across the rest of Ipswich City</h3><div class="areas__chips">${rest}</div>`}
-  </div>
+<div class="route-map-wrap">
+  <div class="reveal">${routeMap()}</div>
   <div class="route-card reveal reveal--right">
     <h3>Set-day routes, not “sometime this week”</h3>
     <p>Each suburb has a fixed route day so your visit lands on the same day every cycle. Rain pushes the route, and you hear from us early with the new time.</p>
     <ul>${routeDays.map((r) => `<li><span>${esc(r.suburb)}</span><span>${esc(r.day)}</span></li>`).join('')}<li><span>Your suburb</span><span><a href="/contact/#quote" style="color:#CBE6A5">Ask for your route day</a></span></li></ul>
+    <p class="route-card__note">Watch the mower: it follows our real route order from the ${esc(routeDays[0].suburb)} home base through ${coreSuburbs.length} route suburbs and back.</p>
   </div>
+</div>
+<div class="reveal" style="margin-top:28px">
+  <h3 style="margin-bottom:12px">Route suburbs we mow every cycle</h3>
+  <div class="areas__chips">${core}</div>
+  ${compact ? '' : `<h3 style="margin:22px 0 12px">And across the rest of Ipswich City</h3><div class="areas__chips">${rest}</div>`}
 </div>`;
 }
 

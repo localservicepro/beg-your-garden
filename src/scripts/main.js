@@ -74,6 +74,89 @@
     }
   }
 
+  /* ---------- service-area map: mower drives the route ---------- */
+  d.querySelectorAll('[data-route-map]').forEach((wrap) => {
+    const svg = wrap.querySelector('svg');
+    const route = svg.querySelector('.rm-route');
+    const trail = svg.querySelector('.rm-trail');
+    const mower = svg.querySelector('.rm-mower');
+    const stops = Array.from(svg.querySelectorAll('.rm-stop'));
+    if (!route || !trail || !mower || !stops.length || !route.getTotalLength) return;
+    const fullBox = svg.getAttribute('viewBox');
+    const mq = window.matchMedia('(max-width: 960px)');
+    const fit = () => svg.setAttribute('viewBox', mq.matches ? '300 40 600 450' : fullBox);
+    fit(); mq.addEventListener ? mq.addEventListener('change', fit) : mq.addListener(fit);
+
+    const L = route.getTotalLength();
+    trail.style.strokeDasharray = L + ' ' + L;
+    const setTrail = (len) => { trail.style.strokeDashoffset = String(L - Math.max(0, Math.min(L, len))); };
+
+    // Distance along the path of each stop, in route order.
+    const stopAt = stops.map((g) => {
+      const m = /translate\(([-\d.]+)[ ,]([-\d.]+)\)/.exec(g.getAttribute('transform')) || [0, 0, 0];
+      const sx = +m[1], sy = +m[2];
+      let best = 0, bd = Infinity;
+      for (let i = 0; i <= 600; i++) {
+        const pt = route.getPointAtLength((i / 600) * L);
+        const dd = (pt.x - sx) * (pt.x - sx) + (pt.y - sy) * (pt.y - sy);
+        if (dd < bd) { bd = dd; best = (i / 600) * L; }
+      }
+      return best;
+    });
+    stopAt[0] = 0;
+
+    const place = (len) => {
+      const a = route.getPointAtLength(len % L);
+      const b = route.getPointAtLength((len + 3) % L);
+      const ang = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
+      mower.setAttribute('transform', 'translate(' + a.x.toFixed(1) + ' ' + a.y.toFixed(1) + ') rotate(' + ang.toFixed(1) + ')');
+    };
+
+    if (reduce) {
+      stops.forEach((g) => g.classList.add('is-visited'));
+      setTrail(L); place(0);
+      return;
+    }
+
+    const SPEED = 95; // path units per second
+    const DWELL = 650; // ms paused at each suburb
+    const legs = stopAt.map((from, i) => {
+      const to = i === stopAt.length - 1 ? L : stopAt[i + 1];
+      return { from, dist: to - from, dur: ((to - from) / SPEED) * 1000 };
+    });
+    const total = legs.reduce((acc, l) => acc + l.dur + DWELL, 0);
+    const ease = (t) => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    const ping = (i) => {
+      const g = stops[i]; if (!g || g.classList.contains('is-visited')) return;
+      g.classList.add('is-visited', 'is-ping');
+      setTimeout(() => g.classList.remove('is-ping'), 1200);
+    };
+
+    let clock = 0, last = 0, running = false, raf = 0;
+    const frame = (now) => {
+      if (!running) return;
+      if (last) clock += Math.min(100, now - last);
+      last = now;
+      let t = clock % total;
+      if (clock >= total) { clock = t; stops.forEach((g) => g.classList.remove('is-visited', 'is-ping')); }
+      for (let i = 0; i < legs.length; i++) {
+        const leg = legs[i];
+        if (t < DWELL) { ping(i); place(leg.from); setTrail(leg.from); break; }
+        t -= DWELL;
+        if (t < leg.dur) { ping(i); const len = leg.from + ease(t / leg.dur) * leg.dist; place(len); setTrail(len); break; }
+        t -= leg.dur;
+      }
+      raf = requestAnimationFrame(frame);
+    };
+    const start = () => { if (running) return; running = true; last = 0; raf = requestAnimationFrame(frame); };
+    const stop = () => { running = false; cancelAnimationFrame(raf); };
+    place(0); setTrail(0);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((en) => { en[0].isIntersecting ? start() : stop(); }, { threshold: 0.15 }).observe(wrap);
+    } else start();
+    d.addEventListener('visibilitychange', () => { d.hidden ? stop() : (wrap.getBoundingClientRect().top < window.innerHeight && start()); });
+  });
+
   /* ---------- counters ---------- */
   const counters = d.querySelectorAll('[data-count]');
   if (counters.length) {
