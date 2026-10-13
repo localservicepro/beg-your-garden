@@ -1,0 +1,16 @@
+{
+  "name": "beg-your-garden-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static marketing website for Beg Your Garden - lawn mowing and garden care, Ipswich QLD",
+  "type": "module",
+  "scripts": {
+    "build": "node build/build.mjs",
+    "serve": "node build/serve.mjs",
+    "images": "python3 tools/optimise-images.py",
+    "check": "node build/check.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
