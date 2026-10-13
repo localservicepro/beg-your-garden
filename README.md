@@ -117,6 +117,13 @@ Blog posts (`src/data/blog.js`), each with FAQ + BlogPosting schema and a link t
 The price guide in the cost post is a general Ipswich market range, not Beg Your Garden's price list; adjust in `src/data/blog.js` if needed.
 To add a post, append to `posts` in `src/data/blog.js` and rebuild; the index, homepage strip, sitemap and schema update automatically.
 
+## Monthly SEO routine
+
+A scheduled Claude Routine re-runs the keyword research every month, following `agent/SEO-ROUTINE.md`:
+it refreshes `src/data/keywords.json` from DataForSEO, Ubersuggest and RankTitan, adds suburb pages or blog
+posts only when the thresholds in that file are met, rebuilds, and opens a draft pull request for review.
+It never pushes to `main` directly.
+
 ## Service-area map
 
 `routeMap()` in `src/templates/components.js` draws an inline SVG map of Ipswich City from the suburb

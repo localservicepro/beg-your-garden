@@ -1,0 +1,72 @@
+{
+  "updated": "2026-10-13",
+  "source": "DataForSEO Google Ads search volume (Australia, en) + DataForSEO Labs keyword difficulty; cross-checked with Ubersuggest",
+  "thresholds": {
+    "new_suburb_page_min_volume": 10,
+    "new_suburb_page_min_months": 3,
+    "new_blog_min_volume": 100,
+    "new_blog_max_difficulty": 30,
+    "max_new_pages_per_run": 2,
+    "max_new_posts_per_run": 2,
+    "max_meta_rewrites_per_run": 4
+  },
+  "money_keywords": [
+    { "keyword": "lawn mowing ipswich", "page": "/", "volume": 260, "difficulty": 12, "history": { "2026-10": 260 } },
+    { "keyword": "lawn mowing services ipswich", "page": "/services/lawn-mowing/", "volume": 90, "history": { "2026-10": 90 } },
+    { "keyword": "mowing ipswich", "page": "/", "volume": 90, "history": { "2026-10": 90 } },
+    { "keyword": "gardener ipswich", "page": "/services/garden-maintenance/", "volume": 40, "history": { "2026-10": 40 } },
+    { "keyword": "lawn care ipswich", "page": "/services/weed-control-fertilising/", "volume": 20, "history": { "2026-10": 20 } },
+    { "keyword": "gardening services ipswich", "page": "/services/garden-maintenance/", "volume": 20, "history": { "2026-10": 20 } },
+    { "keyword": "hedge trimming ipswich", "page": "/services/garden-maintenance/", "volume": 10, "history": { "2026-10": 10 } },
+    { "keyword": "pressure cleaning ipswich", "page": "/services/pressure-cleaning/", "volume": 10, "history": { "2026-10": 10 } }
+  ],
+  "suburbs": [
+    { "suburb": "Redbank Plains", "keyword": "lawn mowing redbank plains", "page": "/lawn-mowing-redbank-plains/", "volume": 40, "difficulty": 0, "history": { "2026-10": 40 } },
+    { "suburb": "Springfield Lakes", "keyword": "lawn mowing springfield lakes", "page": "/lawn-mowing-springfield-lakes/", "volume": 10, "difficulty": 41, "history": { "2026-10": 10 } },
+    { "suburb": "Springfield", "keyword": "lawn mowing springfield", "page": "/lawn-mowing-springfield/", "volume": 20, "history": { "2026-10": 20 } },
+    { "suburb": "Collingwood Park", "keyword": "lawn mowing collingwood park", "page": "/lawn-mowing-collingwood-park/", "volume": 20, "history": { "2026-10": 20 } },
+    { "suburb": "Goodna", "keyword": "lawn mowing goodna", "page": "/lawn-mowing-goodna/", "volume": 10, "history": { "2026-10": 10 } },
+    { "suburb": "Brassall", "keyword": "lawn mowing brassall", "page": "/lawn-mowing-brassall/", "volume": 10, "history": { "2026-10": 10 } },
+    { "suburb": "Augustine Heights", "keyword": "lawn mowing augustine heights", "page": "/lawn-mowing-augustine-heights/", "volume": 10, "history": { "2026-10": 10 } },
+    { "suburb": "Silkstone", "keyword": "lawn mowing silkstone", "page": "/lawn-mowing-silkstone/", "volume": 10, "history": { "2026-10": 10 } },
+    { "suburb": "Leichhardt", "keyword": "lawn mowing leichhardt", "page": "/lawn-mowing-leichhardt/", "volume": 10, "history": { "2026-10": 10 } },
+    { "suburb": "Riverview", "keyword": "lawn mowing riverview", "page": "/lawn-mowing-riverview/", "volume": 10, "history": { "2026-10": 10 } },
+    { "suburb": "Ripley", "keyword": "lawn mowing ripley", "page": "/lawn-mowing-ripley/", "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "Booval", "keyword": "lawn mowing booval", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "Bundamba", "keyword": "lawn mowing bundamba", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "Yamanto", "keyword": "lawn mowing yamanto", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "Karalee", "keyword": "lawn mowing karalee", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "Flinders View", "keyword": "lawn mowing flinders view", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "North Ipswich", "keyword": "lawn mowing north ipswich", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "East Ipswich", "keyword": "lawn mowing east ipswich", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "Churchill", "keyword": "lawn mowing churchill", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "Camira", "keyword": "lawn mowing camira", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "Bellbird Park", "keyword": "lawn mowing bellbird park", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "Brookwater", "keyword": "lawn mowing brookwater", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "Rosewood", "keyword": "lawn mowing rosewood", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "Deebing Heights", "keyword": "lawn mowing deebing heights", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "South Ripley", "keyword": "lawn mowing south ripley", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "Spring Mountain", "keyword": "lawn mowing spring mountain", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "Redbank", "keyword": "lawn mowing redbank", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "Springfield Central", "keyword": "lawn mowing springfield central", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "Walloon", "keyword": "lawn mowing walloon", "page": null, "volume": 0, "history": { "2026-10": 0 } },
+    { "suburb": "Eastern Heights", "keyword": "lawn mowing eastern heights", "page": null, "volume": 0, "history": { "2026-10": 0 } }
+  ],
+  "blog_topics": [
+    { "keyword": "lawn grubs", "post": "/blog/lawn-grubs-ipswich-signs-and-treatment/", "volume": 5400, "difficulty": 0 },
+    { "keyword": "when to fertilise lawn", "post": "/blog/when-to-fertilise-your-lawn-in-queensland/", "volume": 480, "difficulty": 0 },
+    { "keyword": "how much does lawn mowing cost", "post": "/blog/how-much-does-lawn-mowing-cost-ipswich/", "volume": 260, "difficulty": 0 },
+    { "keyword": "how often should you mow your lawn", "post": "/blog/how-often-should-you-mow-your-lawn-queensland/", "volume": 140, "difficulty": 0 },
+    { "keyword": "how to fix patchy lawn", "post": "/blog/how-to-fix-a-patchy-lawn/", "volume": 210, "difficulty": 0 },
+    { "keyword": "how to get rid of weeds in lawn", "post": "/blog/get-rid-of-weeds-in-lawn-without-killing-grass/", "volume": 140, "difficulty": 0 },
+    { "keyword": "lawn care in winter", "post": "/blog/winter-lawn-care-south-east-queensland/", "volume": 140 },
+    { "keyword": "how much mulch do i need", "post": "/blog/how-much-mulch-do-i-need/", "volume": 210 },
+    { "keyword": "when to prune hedges", "post": null, "volume": 110, "difficulty": 5, "note": "backlog: ties to garden maintenance service" },
+    { "keyword": "army worm lawn", "post": null, "volume": 390, "note": "covered inside the lawn grubs post; standalone only if it keeps growing" },
+    { "keyword": "buffalo grass care", "post": null, "volume": 50, "note": "backlog" }
+  ],
+  "rankings": [],
+  "log": [
+    { "date": "2026-10-13", "note": "Initial research baseline from site build. Ten suburb pages and eight blog posts chosen from this data." }
+  ]
+}
