@@ -18,7 +18,7 @@ export default ({ assetHash }) => {
   <div class="container hero__grid">
     <div>
       <div class="hero__pill reveal-up"><span class="dot">${icons.star}</span><span class="stars">★★★★★</span> ${site.rating} · ${site.reviewCount} Google reviews · Ipswich</div>
-      <h1 class="reveal-up">Lawn Mowing Ipswich: <em>Quiet, Reliable, Scheduled</em> Lawn &amp; Garden Care</h1>
+      <h1 class="reveal-up">Lawn Mowing Ipswich: <em>Reliable, Scheduled</em> Lawn &amp; Garden Care</h1>
       <p class="lede reveal-up">Set-day lawn mowing in Ipswich and garden care across Raceview, Ripley, Springfield Lakes and the Springfield corridor. A fixed route day for your suburb, a message before we arrive, and a photo when we're done.</p>
       <div class="btn-row reveal-up">
         <a class="btn btn--lg" href="/contact/#quote">Get a free quote ${icons.arrow}</a>
