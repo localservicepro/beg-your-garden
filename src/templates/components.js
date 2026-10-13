@@ -97,10 +97,7 @@ export function header({ onDark = true } = {}) {
     <a class="m-phone" href="tel:${site.phoneRaw}">${icons.phone} Call ${site.phone}</a>
   </nav>
 </div>
-<div class="call-bar">
-  <a class="btn btn--navy" href="tel:${site.phoneRaw}">${icons.phone} Call now</a>
-  <a class="btn" href="/contact/#quote">Free quote</a>
-</div>`;
+`;
 }
 
 /* ---------- footer ---------- */
