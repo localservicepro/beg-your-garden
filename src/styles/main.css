@@ -239,6 +239,8 @@ strong { font-weight: 600; }
 .m-acc a:hover { background: var(--green-50); color: var(--green-700); }
 .mobile-nav .btn { width: 100%; margin-top: 20px; }
 .mobile-nav .m-phone { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 14px; font-weight: 700; color: var(--navy-900); text-decoration: none; }
+.mobile-nav .m-phone svg { width: 20px; height: 20px; flex: none; color: var(--green); stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.mobile-nav .m-phone span, .mobile-nav .m-phone { white-space: nowrap; }
 
 @media (max-width: 960px) {
   .nav-main, .nav-phone { display: none; }
