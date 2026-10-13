@@ -62,7 +62,7 @@ export const suburbPages = [
   {
     slug: 'springfield', name: 'Springfield', volume: '20 searches/mo',
     title: 'Lawn Mowing Springfield & Brookwater | Beg Your Garden',
-    description: 'Scheduled lawn mowing in Springfield, Springfield Central & Brookwater QLD. Edges and verge included, reminders before and a photo after every visit. Free quote!',
+    description: 'Scheduled lawn mowing in Springfield, Springfield Central & Brookwater QLD. Edges and verge included, reminder before and photo after every visit. Free quote!',
     h1: 'Lawn Mowing Springfield, Springfield Central and Brookwater',
     lede: 'Set-day lawn mowing and garden care across the Greater Springfield corridor, from the original Springfield streets to Brookwater\'s larger blocks.',
     image: 'front-yard-mown-springfield', imageAlt: 'Mown front lawn with sharp edges at a Springfield QLD home',
