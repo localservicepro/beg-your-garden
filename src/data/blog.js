@@ -355,4 +355,53 @@ export const posts = [
       { q: 'Does mulch stop weeds?', a: 'A 75–100 mm layer stops most weed seeds germinating by blocking light. It will not kill weeds that are already established, so weed the bed first.' },
     ],
   },
+  {
+    slug: 'when-to-prune-hedges-in-queensland',
+    title: 'When to Prune Hedges in Queensland: A Month-by-Month Guide',
+    metaTitle: 'When to Prune Hedges in Queensland | Beg Your Garden',
+    description: 'The best time to prune and trim hedges in South East Queensland, by hedge type: lilly pilly, murraya, privet and more. A seasonal guide from Ipswich.',
+    keyword: 'when to prune hedges', volume: '"when to prune hedges" 110/mo (Oct 2026, DataForSEO AU), KD 5. Ties to the garden maintenance service.',
+    date: '2026-10-14', readTime: 5, image: 'hedge-trimming-lilly-pilly-ipswich-generated', imageAlt: 'Neatly trimmed lilly pilly hedge beside a front path in Ipswich',
+    excerpt: 'In South East Queensland hedges grow nearly all year, so the question is less "when can I" and more "when should I". Here is the seasonal rhythm that keeps a hedge dense and tidy.',
+    related: 'garden-maintenance',
+    body: `
+<p>Most hedge advice online is written for cold climates, where you prune once in late winter and forget about it. In Ipswich and Springfield the growing season is long and mild, so the real answer to "when should I prune my hedge?" is a rhythm of light trims through the warm months, with one firmer cut at the right time of year.</p>
+<h2>The short answer</h2>
+<p>For most common Queensland hedges, <strong>give a hard shape-up in late winter to early spring (August to September)</strong>, just before the main spring flush, then <strong>trim lightly every 6 to 10 weeks</strong> through spring, summer and autumn to hold the shape. Avoid heavy cutting in the depths of winter and in extreme summer heat.</p>
+<h2>Why timing matters</h2>
+<ul>
+<li><strong>Spring cuts recover fastest.</strong> A hedge that is about to put on new growth fills in quickly after pruning, so a firm cut in August or September is forgiven within weeks.</li>
+<li><strong>Little and often keeps it dense.</strong> Regular light trims encourage branching from the outer layer, which is what gives a hedge a solid face instead of a leafy shell over bare wood.</li>
+<li><strong>Heat stress is real.</strong> Cutting hard into a hedge in a heatwave exposes inner leaves that have never seen full sun, and they scorch. If it is a hot week, wait.</li>
+<li><strong>Frost-tender growth.</strong> In the cooler pockets around Ipswich, a late-winter cut that triggers soft new growth can see that growth knocked back by a late frost, so avoid heavy cutting in June and July.</li>
+</ul>
+<h2>By hedge type</h2>
+<h3>Lilly pilly (Syzygium)</h3>
+<p>Grows quickly and takes pruning well. Shape it in late winter or early spring, then trim after each flush of new pink-red growth. Lilly pillies are popular for privacy, so regular light trims matter more than one big cut.</p>
+<h3>Murraya (mock orange)</h3>
+<p>Very tolerant. A firm prune in late winter, then light trims after each flowering flush. Cutting right after flowering keeps the shape tidy and encourages another round of growth.</p>
+<h3>Privet and other dense-leaf hedges</h3>
+<p>Fast growers that can get away quickly. Trim every 6 to 8 weeks in the growing season to avoid having to cut back into bare wood.</p>
+<h3>Native hedging (such as callistemon and westringia)</h3>
+<p>Prune lightly after flowering and avoid cutting into old, leafless wood, which these shrubs can be slow to shoot from. Little and often is the rule.</p>
+<h3>Conifers and cypress</h3>
+<p>Do not cut back into brown, leafless inner growth because it will not reshoot. Keep them trimmed while they are still green and aim for a slightly narrower top than base so light reaches the lower branches.</p>
+<h2>How to trim a hedge properly</h2>
+<ol>
+<li><strong>Check for nests first.</strong> Birds nest in hedges in spring. If you find an active nest, leave that section for now.</li>
+<li><strong>Make the base wider than the top.</strong> A gentle taper lets light reach the bottom branches so the hedge does not go bare at the bottom.</li>
+<li><strong>Use a string line</strong> for a straight top on long hedges, and work from the bottom up.</li>
+<li><strong>Take off new growth, not old wood.</strong> Each trim should only remove the soft green growth since the last cut. Taking a little more than the last cut each time slowly builds a dense face.</li>
+<li><strong>Clean up and water.</strong> Rake up the clippings and give the hedge a good drink, especially in warm weather.</li>
+</ol>
+<h2>Overgrown hedge? Do it in stages</h2>
+<p>A hedge that has been left for a few years can often be reduced in two steps rather than one. Cut one side back in late winter, let it reshoot, and do the other side and the top the following season. It takes longer, but it avoids leaving a hedge looking bare and stressed. Some species will not reshoot from old wood at all, so if you are not sure what you have, ask before cutting hard.</p>
+<div class="callout"><strong>Want it done properly?</strong> Hedge reduction and trimming across Ipswich and Springfield is part of our <a href="/services/garden-maintenance/">garden maintenance</a> service, with green waste taken away so you are not left with a pile of clippings.</div>`,
+    faqs: [
+      { q: 'What is the best month to prune a hedge in Queensland?', a: 'Late winter to early spring (August to September) is the best time for a firmer cut on most hedges, as new growth is about to start. Follow it with light trims through the warm months.' },
+      { q: 'How often should I trim my hedge?', a: 'Every 6 to 10 weeks in the growing season for fast growers such as lilly pilly, murraya and privet. Slower or native hedges may need only two or three trims a year.' },
+      { q: 'Can I prune hedges in summer?', a: 'Yes, lightly. Light trims are fine in summer, but avoid heavy cutting in extreme heat because exposed inner leaves can scorch.' },
+      { q: 'How hard can I cut back an overgrown hedge?', a: 'It depends on the species. Many broadleaf hedges reshoot from old wood, but conifers and some natives do not. Reduce in stages across two seasons if you are unsure.' },
+    ],
+  },
 ];
