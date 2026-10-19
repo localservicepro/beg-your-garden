@@ -79,6 +79,9 @@ Quote forms (`data-quote-form`) use these field names so the CRM mapping is dire
 On submit the page lets the tracking script capture the submission, then redirects to `/thank-you/`.
 There is no form endpoint of our own.
 
+The Closebot chat widget (`https://api.closebot.com/scripts/cb.js?source=NOaznR477jeopRlH`) is loaded once,
+async, just before `</body>` on every page from `src/templates/layout.js`.
+
 ## Suburb pages and blog (keyword-led)
 
 Both sets were chosen from live Australian Google Ads search-volume data (DataForSEO, Sep 2026) and

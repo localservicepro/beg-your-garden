@@ -89,6 +89,7 @@ ${body}
 </main>
 ${footer()}
 <script src="/assets/main.js?v=${assetHash}" defer></script>
+<script src="https://api.closebot.com/scripts/cb.js?source=NOaznR477jeopRlH" async></script>
 </body>
 </html>`;
 }
