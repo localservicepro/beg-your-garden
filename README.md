@@ -128,6 +128,7 @@ Suburb pages (`src/data/areas.js`, URL pattern `/lawn-mowing-{suburb}/` to match
 | Silkstone | 10, up to 30 in peak months |
 | Leichhardt | 10, steady all year |
 | Riverview | 10 |
+| Raceview | 0 (home base and Google Business Profile address; added for local relevance) |
 
 Booval, Bundamba, Yamanto, Karalee, Raceview and most other suburbs show no measurable volume for their own phrase.
 

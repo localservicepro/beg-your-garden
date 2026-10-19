@@ -6,6 +6,33 @@
 // URL pattern matches the existing /lawn-mowing-ripley/ page.
 export const suburbPages = [
   {
+    slug: 'raceview', name: 'Raceview', volume: 'home base; no measured search volume, built for local relevance',
+    title: 'Lawn Mowing Raceview | Beg Your Garden Home Base',
+    description: 'Lawn mowing in Raceview QLD 4305 from the team based right here. Wednesday route, edges and verge included, photo after every visit. Free quote!',
+    h1: 'Lawn Mowing Raceview: Our Home Suburb, Mowed Every Wednesday',
+    lede: 'Beg Your Garden is based in Raceview QLD 4305. Raceview lawns are on our Wednesday route, so you get the shortest wait and the most familiar faces on the street.',
+    image: 'street-verge-mowing-raceview', imageAlt: 'Street verge and nature strip mowing on a Raceview, Ipswich street',
+    keyword: 'lawn mowing raceview',
+    intro: [
+      'Raceview is where Beg Your Garden lives. Our base is here, our Wednesday route starts here, and most of the streets between Raceview Shopping Centre, Briggs Road and the Silkstone border are ones we drive every week. The suburb is mostly 1960s to 1980s homes on good-sized blocks, with established couch and kikuyu lawns, mature trees, long footpath frontages and the odd steep driveway down to a garage.',
+      'Lawn mowing in Raceview with Beg Your Garden means a Wednesday visit each cycle, a text the day before, and the same finish every time: mow at the right height, crisp edges along the footpath and driveway, the nature strip, a blow-down, clippings removed and a photo sent when the gate is closed. Being local also means we can fit in a quick extra, like a tidy before guests arrive, without waiting for the next route day.',
+    ],
+    sections: [
+      { h2: 'What lawn mowing in Raceview includes', list: ['Mow, edge and trim at the right height for couch, kikuyu or buffalo', 'Footpath, kerb and driveway edges cut sharp', 'Nature strip and verge mowed with the lawn', 'Blow-down, clippings removed, gates closed, photo sent', 'Reminder text every Tuesday for your Wednesday visit'] },
+      { h2: 'Established lawns, big trees and footpath frontages', p: 'Old Raceview couch is tough but spreads, so a proper edge every visit keeps it off the path and out of the beds. Shade from the mature gums and jacarandas thins the grass underneath, so we lift the cut height there and keep leaf litter off the lawn through autumn and winter. A spring feed and a late-autumn bindi treatment keep these older lawns thick and barefoot-friendly through summer.' },
+      { h2: 'Families, retirees and rentals', p: 'Raceview has a lot of long-term residents, families near the schools, and rentals managed from across town. We keep it simple for all of them: fixed day, fixed price, the same crew each visit, invoices to the property manager if preferred, and a quick call if we notice something in the yard that needs attention.' },
+      { h2: 'Next-door suburbs on the Wednesday route', p: 'Silkstone, Flinders View, Eastern Heights, Blackstone, Yamanto and Churchill are on the same route day as Raceview.', links: [['/lawn-mowing-silkstone/', 'Lawn mowing Silkstone'], ['/services/lawn-mowing/', 'Lawn mowing service details'], ['/areas/', 'All Ipswich service areas']] },
+    ],
+    faqs: [
+      { q: 'What day do you mow in Raceview?', a: 'Wednesday. Raceview is our home suburb and the first stop on the Wednesday route, with a reminder text the day before and an early message if rain moves the day.' },
+      { q: 'Is Beg Your Garden actually based in Raceview?', a: 'Yes. The business is based in Raceview QLD 4305 and services Ipswich City and the Springfield corridor from here. We do not have a shopfront; quotes are done from your address and a photo.' },
+      { q: 'Can you fit in a one-off tidy in Raceview?', a: 'Usually, yes. Because we are local we can often slot a Raceview tidy-up in between route visits. Send the address and a photo and we will confirm a time.' },
+      { q: 'Do you mow the nature strip and footpath edge in Raceview?', a: 'Yes. The nature strip, footpath edges and kerb are part of every visit, not an extra.' },
+    ],
+    review: 5, related: ['lawn-mowing', 'weed-control-fertilising', 'garden-maintenance'],
+    cta: { heading: '<em>Leaf it to us.</em> Join the Raceview Wednesday route.', sub: 'Send your address and a photo of the lawn and we\'ll quote it today and confirm your first Wednesday.' },
+  },
+  {
     slug: 'redbank-plains', name: 'Redbank Plains', volume: '40–50 searches/mo',
     title: 'Lawn Mowing Redbank Plains | Beg Your Garden',
     description: 'Scheduled lawn mowing in Redbank Plains on a set route day. Edges, verge and blow-down included, reminders before each visit. Free quote!',
