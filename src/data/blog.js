@@ -4,7 +4,7 @@
 export const posts = [
   {
     slug: 'lawn-grubs-ipswich-signs-and-treatment',
-    title: 'Lawn Grubs in Ipswich: How to Spot Them and What Actually Works',
+    title: 'Lawn Grubs in Ipswich: How to Spot Them and What to Do',
     metaTitle: 'Lawn Grubs in Ipswich: Signs & Treatment | Beg Your Garden',
     description: 'Brown patches spreading fast in summer? Lawn grubs and army worm hit Ipswich lawns from November. How to check, treat and recover your lawn.',
     keyword: 'lawn grubs', volume: '"lawn grubs" 5,400/mo, "lawn grub treatment" 1,000/mo, "army worm lawn" 390/mo. Peaks Dec–Mar.',
@@ -12,7 +12,7 @@ export const posts = [
     excerpt: 'If a patch of your lawn turned brown in a week and it is not the heat, it is probably grubs. Here is how to check in two minutes and what to do about it.',
     related: 'weed-control-fertilising',
     body: `
-<p>Every summer from about November we get the same call from Raceview, Springfield Lakes and Redbank Plains: "My lawn was fine last week and now there's a brown patch the size of a car." Nine times out of ten the answer is lawn grubs. They are the single most-searched lawn problem in Australia, and South East Queensland's warm, wet summers are exactly what they like.</p>
+<p>Every summer from about November we get the same call from Raceview, Springfield Lakes and Redbank Plains: "My lawn was fine last week and now there's a brown patch the size of a car." More often than not the answer is lawn grubs. They are the single most-searched lawn problem in Australia, and South East Queensland's warm, wet summers are exactly what they like.</p>
 <h2>What lawn grubs actually are</h2>
 <p>"Lawn grub" is a catch-all for a few different pests. In Ipswich the two that matter are:</p>
 <ul>
@@ -27,14 +27,14 @@ export const posts = [
 <li><strong>Watch the birds.</strong> Magpies, ibis and butcherbirds pecking the same patch every morning are a reliable early warning.</li>
 <li><strong>Look at the moths.</strong> Small brown moths lifting out of the lawn at dusk in December usually mean eggs have already been laid.</li>
 </ol>
-<h2>What works (and what doesn't)</h2>
+<h2>What usually works (and what doesn't)</h2>
 <p><strong>Treat with a registered lawn grub product, applied properly.</strong> Granular products for curl grubs need to be watered in so they reach the root zone. Liquid or hose-on products for army worm and webworm need to go on in the late afternoon, because the caterpillars feed at night. Either way, follow the label rate; doubling it does not work faster and can burn the lawn.</p>
 <p><strong>Treat the whole lawn, not just the patch.</strong> By the time a patch is visible the pests are already working outward into the green grass around it. Spraying only the brown area is why "it came back".</p>
 <p><strong>Keep mowing, but lift the height.</strong> Scalping a stressed lawn makes it worse. Raise the cut a notch and keep the lawn moist (not soggy) while it recovers.</p>
 <p><strong>Feed it afterwards.</strong> Once the pests are gone, a light application of a balanced lawn fertiliser plus consistent water will bring buffalo, couch and kikuyu back from leaf damage in two to four weeks. Root damage from curl grubs takes longer and bare patches may need a plug or seed repair.</p>
 <p><strong>Skip the home remedies.</strong> Detergent brings grubs to the surface for a check, but it does not control them. Neither does petrol, bleach or "just mowing it short".</p>
 <h2>Prevention for next summer</h2>
-<p>A thick, healthy lawn is the best defence because it recovers faster than the grubs can eat it. Through spring: fertilise, water deeply but less often, and mow regularly at the right height. If you have had grubs two summers running, a preventative application in late November before the moths lay is far cheaper than a lawn repair in February.</p>
+<p>A thick, healthy lawn is the best defence because it tends to recover faster than the grubs can eat it. Through spring: fertilise, water deeply but less often, and mow regularly at the right height. If you have had grubs two summers running, a preventative application in late November before the moths lay is far cheaper than a lawn repair in February.</p>
 <div class="callout"><strong>Need it done?</strong> Beg Your Garden's ChemCert-accredited team treats lawn grubs across Ipswich and Springfield as part of our <a href="/services/weed-control-fertilising/">weed control &amp; fertilising</a> service, and can put the lawn on a mowing schedule so it recovers evenly.</div>`,
     faqs: [
       { q: 'How do I know if I have lawn grubs or just dry grass?', a: 'Dry grass browns evenly across sunny or high areas and greens up again after rain. Grub damage spreads outward from a patch in days, often with birds pecking at it, and the soapy-water test will bring caterpillars to the surface.' },

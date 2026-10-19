@@ -517,13 +517,13 @@ export function pageHero({ h1, lede, crumbs, image, imageAlt, plain = false, ima
 </section>`;
 }
 
-export function asideCard({ related = [] } = {}) {
+export function asideCard({ related = [], label = 'Request a quote', oneOff = false } = {}) {
   const rel = related.map((slug) => services.find((s) => s.slug === slug)).filter(Boolean);
   return `
 <aside class="aside-card">
   <h3>Get a free quote</h3>
-  <p style="color:var(--muted);font-size:.95rem">Tell us about the job and we'll confirm a price and your route day.</p>
-  <a class="btn" href="/contact/#quote" style="width:100%">Request a quote ${icons.arrow}</a>
+  <p style="color:var(--muted);font-size:.95rem">${oneOff ? 'Tell us about the job and we\'ll confirm a price and a date.' : 'Tell us about the job and we\'ll confirm a price and your route day.'}</p>
+  <a class="btn" href="/contact/#quote" style="width:100%">${esc(label)} ${icons.arrow}</a>
   <ul class="nap">
     <li>${icons.phone}<a href="tel:${site.phoneRaw}">${site.phone}</a></li>
     <li>${icons.mail}<a href="mailto:${site.email}">${site.email}</a></li>

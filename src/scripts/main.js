@@ -197,6 +197,7 @@
         if (p < 1) requestAnimationFrame(step);
       };
       if (reduce) { el.textContent = target.toFixed(decimals) + suffix; return; }
+      el.textContent = (0).toFixed(decimals) + suffix;
       requestAnimationFrame(step);
     };
     const cio = new IntersectionObserver((entries) => {

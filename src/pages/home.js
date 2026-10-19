@@ -1,6 +1,6 @@
-import { site, homeFaqs, beforeAfter } from '../data/site.js';
+import { site, homeFaqs, beforeAfter, suburbs, reviews } from '../data/site.js';
 import { page, faqSchema } from '../templates/layout.js';
-import { icons, servicesGrid, reviewsWidget, ratingBadge, faqBlock, ctaBand, areasSection, compare, credentialsGrid, postCard, img, srcsetFor } from '../templates/components.js';
+import { icons, servicesGrid, reviewsWidget, ratingBadge, faqBlock, ctaBand, areasSection, compare, credentialsGrid, postCard, img, srcsetFor, reviewCard } from '../templates/components.js';
 import { posts } from '../data/blog.js';
 
 export default ({ assetHash }) => {
@@ -37,9 +37,9 @@ export default ({ assetHash }) => {
 
 <div class="container trust">
   <div class="trust__box stagger">
-    <div class="stat"><span class="stat__icon">${icons.star}</span><div><strong><span data-count="4.9">0</span>★</strong><small>Google rating, ${site.reviewCount} reviews</small></div></div>
-    <div class="stat"><span class="stat__icon">${icons.pin}</span><div><strong><span data-count="84" data-suffix="+">0</span></strong><small>Ipswich &amp; Springfield suburbs</small></div></div>
-    <div class="stat"><span class="stat__icon">${icons.shield}</span><div><strong><span data-count="100" data-suffix="%">0</span></strong><small>Police-checked &amp; insured team</small></div></div>
+    <div class="stat"><span class="stat__icon">${icons.star}</span><div><strong><span data-count="4.9">4.9</span>★</strong><small>Google rating, ${site.reviewCount} reviews</small></div></div>
+    <div class="stat"><span class="stat__icon">${icons.pin}</span><div><strong><span data-count="${suburbs.length}" data-suffix="+">${suburbs.length}+</span></strong><small>Ipswich &amp; Springfield suburbs</small></div></div>
+    <div class="stat"><span class="stat__icon">${icons.shield}</span><div><strong><span data-count="100" data-suffix="%">100%</span></strong><small>Police-checked &amp; insured team</small></div></div>
     <div class="stat"><span class="stat__icon">${icons.calendar}</span><div><strong>Set-day</strong><small>Routes, reminders &amp; photos</small></div></div>
   </div>
 </div>
@@ -55,7 +55,7 @@ export default ({ assetHash }) => {
       <h2>Lawn mowing in Ipswich that runs like clockwork</h2>
       <p>Beg Your Garden is a local, police-checked team based in Raceview, QLD 4305. We give Ipswich families, shift workers, landlords and DVA and NDIS clients a simple, set-and-forget path to a tidy, healthy lawn: fixed route days by suburb, a reminder before every visit, and a quick wrap-up with photos after.</p>
       <p>Alongside mowing we handle hedge reduction, gardening, mulch laying, weed control and fertilising, pressure cleaning, green waste and rubbish removal, sprinkler installation and irrigation, so one team keeps the whole property to one standard.</p>
-      <div class="btn-row" style="margin-top:22px"><a class="btn btn--navy" href="/about/">More about us ${icons.arrow}</a><a class="link-arrow" href="/services/">All nine services ${icons.arrow}</a></div>
+      <div class="btn-row" style="margin-top:22px"><a class="btn btn--navy" href="/about/">More about us ${icons.arrow}</a><a class="link-arrow" href="/services/">All services ${icons.arrow}</a></div>
     </div>
   </div>
 </section>
@@ -65,7 +65,7 @@ export default ({ assetHash }) => {
     <div class="section-head center reveal">
       <span class="eyebrow">Services</span>
       <h2>Lawn mowing, garden maintenance &amp; outdoor services across Ipswich</h2>
-      <p class="lede">Nine services, one scheduled plan. Each page covers what's included, the suburbs we run it in, and what to expect on the day.</p>
+      <p class="lede">One team for the whole yard. Each page covers what's included, the suburbs we run it in, and what to expect on the day.</p>
     </div>
     ${servicesGrid()}
     <p class="center" style="margin-top:28px;color:var(--muted)">Lawn mowing · Hedge reduction · Gardening · Pressure cleaning · Rubbish removal · Mulch laying · Weed control · Sprinkler installation · Irrigation</p>
@@ -112,7 +112,7 @@ export default ({ assetHash }) => {
       <span class="eyebrow">Pricing</span>
       <h2>How much does lawn mowing cost in Ipswich?</h2>
       <p>Every yard is different, and so are our clients' needs. We're not the local “cut-and-go” outfit: the price covers a reliable scheduled visit from a police-checked, Blue Card-certified, fully insured team, with communication you can count on.</p>
-      <p>Most residential lawns in Ipswich fall between a set price per visit based on lawn size and access. We quote from a quick estimate, confirm it on site, and the price includes mowing, edging, whipper-snipping, blow-down and clippings. Fertilising, weed control, hedging and the rest are added to the plan at the rates we quote up front.</p>
+      <p>Every lawn is quoted at a set price per visit based on lawn size and access. We quote from a quick estimate, confirm it on site, and the price includes mowing, edging, whipper-snipping, blow-down and clippings. Fertilising, weed control, hedging and the rest are added to the plan at the rates we quote up front. For typical Ipswich price ranges, read <a href="/blog/how-much-does-lawn-mowing-cost-ipswich/">how much lawn mowing costs in Ipswich</a>.</p>
       <div class="btn-row" style="margin-top:22px"><a class="btn" href="/contact/#quote">Get my lawn mowing price ${icons.arrow}</a><a class="link-arrow" href="/services/lawn-mowing/">What's included ${icons.arrow}</a></div>
     </div>
     <div class="reveal reveal--right">
@@ -137,11 +137,12 @@ export default ({ assetHash }) => {
   <div class="container">
     <div class="section-head center reveal">
       <span class="eyebrow">Reviews</span>
-      <h2>What Ipswich customers say about our lawn mowing</h2>
+      <h2>What customers say about lawn mowing in Ipswich</h2>
       <p style="margin-top:8px">${ratingBadge()}</p>
     </div>
   </div>
   <div class="container reveal">${reviewsWidget()}</div>
+  <div class="container"><div class="grid grid-3 stagger" style="margin-top:28px">${[reviews[3], reviews[6], reviews[2]].map(reviewCard).join('')}</div></div>
 </section>
 
 <section class="section" id="areas">
@@ -149,7 +150,7 @@ export default ({ assetHash }) => {
     <div class="section-head reveal">
       <span class="eyebrow">Areas we service</span>
       <h2>Lawn mowing across Ipswich City &amp; the Springfield corridor</h2>
-      <p class="lede">Raceview is home base. From there, set-day routes cover the city, Springfield and the rural fringe, 84 suburbs in all.</p>
+      <p class="lede">Raceview is home base. From there, set-day routes cover the city, Springfield and the rural fringe, ${suburbs.length} suburbs in all.</p>
     </div>
     ${areasSection({ compact: true })}
     <p style="margin-top:24px"><a class="link-arrow" href="/areas/">See every suburb we cover ${icons.arrow}</a></p>

@@ -29,7 +29,6 @@ ${pageHero({ h1: 'Lawn Mowing Ripley: Friday Route, Sharp Edges, Set-and-Forget 
       <p>The Friday route covers Ripley Town Centre estates, South Ripley, Deebing Heights, White Rock and the Spring Mountain side. Larger blocks toward the rural edge, and small acreage around Peak Crossing and Purga, are quoted on site for the wider-cut mower and a brushcutter for the rough edges.</p>
       <h2>Add garden care to your Ripley lawn plan</h2>
       <p>Hedge trimming for lilly pilly screens, mulch for new garden beds, bindi and weed control in autumn, fertilising in spring, and pressure cleaning of the driveway before a rental inspection. Most Ripley clients start with scheduled mowing and add the rest as the garden grows in.</p>
-      <div class="callout">${esc('Beg Your Garden runs scheduled, set-day routes across Ipswich so regular clients always get their visit on time. One-off garden clean-ups and pre-sale tidy-ups are quoted separately.')}</div>
       <h2>From a Ripley customer</h2>
       ${reviewCard(reviews[2])}
       <h2>Lawn mowing Ripley FAQs</h2>

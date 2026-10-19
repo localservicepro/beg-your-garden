@@ -24,7 +24,7 @@ export default ({ assetHash }) => {
   // ---- /services/ index (existing URL kept) ----
   const indexCrumbs = [{ name: 'Home', href: '/' }, { name: 'Services', href: '/services/' }];
   const indexBody = `
-${pageHero({ h1: 'Lawn &amp; Garden Services in Ipswich', lede: 'Nine services across six pages: lawn mowing, hedge reduction and gardening, mulch laying, weed control and fertilising, pressure cleaning, rubbish removal, sprinkler installation and irrigation. All on a set schedule, all to the same standard.', crumbs: indexCrumbs, image: 'front-yard-mulch-garden-bed-ipswich-1000', imageAlt: 'Mown front lawn and mulched garden bed in Ipswich' })}
+${pageHero({ h1: 'Lawn &amp; Garden Services in Ipswich', lede: 'Lawn mowing, hedge reduction and gardening, mulch laying, weed control and fertilising, pressure cleaning, rubbish removal, sprinkler installation and irrigation. One local team, all to the same standard.', crumbs: indexCrumbs, image: 'front-yard-mulch-garden-bed-ipswich-1000', imageAlt: 'Mown front lawn and mulched garden bed in Ipswich' })}
 <section class="section">
   <div class="container">
     ${servicesGrid()}
@@ -33,9 +33,9 @@ ${pageHero({ h1: 'Lawn &amp; Garden Services in Ipswich', lede: 'Nine services a
 <section class="section section--off">
   <div class="container split">
     <div class="reveal">
-      <span class="eyebrow">All nine services</span>
+      <span class="eyebrow">All services</span>
       <h2>Which page covers which job</h2>
-      <p>Some services share a page because they're done on the same visit by the same crew. Here's the full list from the brief and where each one lives.</p>
+      <p>Some services share a page because they're done on the same visit by the same crew. Here's the full list and where each one lives.</p>
       <ul class="check-list" style="margin-top:18px">${serviceList.map((s) => { const p = services.find((x) => x.slug === s.page); return `<li><span><strong>${esc(s.name)}</strong> — <a href="/services/${p.slug}/">${esc(p.name)}</a></span></li>`; }).join('')}</ul>
     </div>
     <div class="reveal reveal--right">
@@ -65,17 +65,17 @@ ${pageHero({ h1: s.h1, lede: s.citable, crumbs, image: s.image, imageAlt: s.imag
   <div class="container layout-2col">
     <article class="prose">
       ${s.intro}
-      <div class="callout"><strong>Scheduled, not sporadic.</strong> ${esc(s.name)} is built into a set-day plan so it happens at the right time of year, with a reminder before and a photo update after.</div>
+      ${s.oneOff ? '' : `<div class="callout"><strong>Scheduled, not sporadic.</strong> ${esc(s.name)} is built into a set-day plan so it happens at the right time of year, with a reminder before and a photo update after.</div>`}
       ${s.sections.map((sec) => `<h2>${esc(sec.h2)}</h2>${sec.html}`).join('\n')}
       <h2>${esc(s.name)} FAQs</h2>
       ${faqBlock(s.faqs, { id: `faq-${s.slug}` })}
       <h2>Related services in Ipswich</h2>
       <div class="grid grid-2">${related.map((r) => serviceCard(r)).join('')}</div>
     </article>
-    ${asideCard({ related: s.related })}
+    ${asideCard({ related: s.related, label: `Get ${/^[aeiou]/i.test(s.ctaName || s.name) ? 'an' : 'a'} ${s.ctaName || s.name.toLowerCase()} quote`, oneOff: !!s.oneOff })}
   </div>
 </section>
-${ctaBand({ heading: `<em>Leaf it to us.</em> Book ${esc(s.name.toLowerCase())} in Ipswich.`, sub: `Send a few details and we'll quote ${s.name.toLowerCase()} for your property and let you know the route day for your suburb.` })}`;
+${ctaBand({ heading: `<em>Leaf it to us.</em> Book ${esc(s.name.toLowerCase())} in Ipswich.`, sub: s.oneOff ? `Send a few details and a photo and we'll quote ${s.name.toLowerCase()} for your property and confirm a date.` : `Send a few details and we'll quote ${s.name.toLowerCase()} for your property and let you know the route day for your suburb.` })}`;
     pages.push({
       path: `/services/${s.slug}/`,
       priority: '0.9',

@@ -104,11 +104,11 @@ export const serviceList = [
   { name: 'Irrigation', page: 'irrigation' },
 ];
 
-const quoteNote = 'Beg Your Garden runs scheduled, set-day routes across Ipswich so regular clients always get their visit on time. One-off garden clean-ups and pre-sale tidy-ups are quoted separately.';
+const quoteNote = 'Beg Your Garden runs scheduled, set-day routes across Ipswich so regular clients always get their visit on time.';
 
 export const services = [
   {
-    slug: 'lawn-mowing',
+    slug: 'lawn-mowing', ctaName: 'lawn mowing',
     name: 'Lawn Mowing',
     navDescriptor: 'Redbank Plains, Springfield Lakes & Ripley',
     short: 'Scheduled, set-day lawn mowing with sharp edges, verge included and a reminder before every visit.',
@@ -147,7 +147,7 @@ export const services = [
     related: ['weed-control-fertilising', 'garden-maintenance'],
   },
   {
-    slug: 'garden-maintenance',
+    slug: 'garden-maintenance', ctaName: 'garden maintenance',
     name: 'Garden Maintenance & Hedge Trimming',
     navDescriptor: 'Hedging, mulching & clean-ups across Ipswich',
     short: 'Hedge reduction and trimming, mulch laying, weeding and garden clean-ups on a set schedule.',
@@ -184,14 +184,14 @@ export const services = [
     related: ['lawn-mowing', 'rubbish-removal'],
   },
   {
-    slug: 'weed-control-fertilising',
+    slug: 'weed-control-fertilising', ctaName: 'weed control',
     name: 'Lawn Fertilising & Weed Control',
     navDescriptor: 'Thick, green, bindi-free lawns in Ipswich',
-    short: 'ChemCert AQF3 accredited, pet-safe treatments for bindis, broadleaf weeds and tired, patchy turf.',
+    short: 'ChemCert AQF3 accredited treatments for bindis, broadleaf weeds and tired, patchy turf, applied to label directions.',
     icon: 'spray',
     h1: 'Weed Control & Lawn Fertilising in Ipswich — Thick, Green, Bindi-Free Lawns',
     title: 'Weed Control & Lawn Fertilising Ipswich | Beg Your Garden',
-    description: 'Lawn fertilising & weed control in Ipswich. ChemCert AQF3 accredited, pet-safe treatments for thick, green, bindi-free lawns. Get a free quote today!',
+    description: 'Lawn fertilising & weed control in Ipswich. ChemCert AQF3 accredited treatments, applied to label directions, for thick, green, bindi-free lawns. Free quote!',
     keyword: 'Weed Control Ipswich',
     image: 'weed-control-ppe-spraying-ipswich',
     imageAlt: 'Lawn fertilising and weed control Ipswich: Beg Your Garden technician in PPE ready for herbicide application',
@@ -209,7 +209,7 @@ export const services = [
 <li>Selective products matched to your grass type so the lawn isn't damaged</li>
 </ul>` },
       { h2: 'Lawn fertilising programs', html: `<p>A slow-release granular feed in early spring, a boost in summer and a potassium-rich autumn application set the lawn up for winter. We match the product to your soil and grass, water it in or time it with rain, and note what was applied on your service report. Clients on DVA and NDIS plans get the same written notes after every treatment.</p>` },
-      { h2: 'Safe for kids, pets and the people next door', html: `<p>Every product we apply is professional-grade, registered for home lawns and applied at label rates by a ChemCert AQF3 accredited operator in full PPE. Once dry, treated areas are safe for pets and children. We tell you before we spray, mark the lawn, and avoid windy days so nothing drifts into your veggie patch or the neighbour's.</p>` },
+      { h2: 'Registered products, applied to the label', html: `<p>We use registered products according to label directions and will tell you about any re-entry period before people and pets return to treated areas. Every application is made by a ChemCert AQF3 accredited operator in full PPE. We tell you before we spray, mark the lawn, and avoid windy days so nothing drifts into your veggie patch or the neighbour's.</p>` },
       { h2: 'Part of your lawn plan', html: `<p>${quoteNote} Fertilising and weed control is usually added to a scheduled lawn mowing plan as a seasonal program, so it goes on at the right time without you having to remember.</p>` },
     ],
     faqs: [
@@ -221,14 +221,14 @@ export const services = [
     related: ['lawn-mowing', 'irrigation'],
   },
   {
-    slug: 'pressure-cleaning',
+    slug: 'pressure-cleaning', oneOff: true, ctaName: 'pressure cleaning',
     name: 'Pressure Cleaning & House Washing',
     navDescriptor: 'Driveways, paths & exteriors across Ipswich',
     short: 'Driveways, paths, patios and exterior walls brought back to clean with the right pressure for each surface.',
     icon: 'nozzle',
     h1: 'House Washing & Pressure Cleaning in Ipswich — Driveways, Paths & Exteriors',
     title: 'House Washing Ipswich | Pressure Cleaning | Beg Your Garden',
-    description: 'House washing & pressure cleaning in Ipswich for driveways, paths, patios & exterior walls. Local, insured, set-day scheduling. Get a free quote today!',
+    description: 'House washing & pressure cleaning in Ipswich for driveways, paths, patios & exterior walls. Local, insured, clear quotes. Get a free quote today!',
     keyword: 'House Washing Ipswich',
     image: 'pressure-cleaning-driveway-ipswich-generated',
     imageAlt: 'Pressure cleaning a concrete driveway in Ipswich, half cleaned to show the difference',
@@ -259,7 +259,7 @@ export const services = [
     related: ['garden-maintenance', 'rubbish-removal'],
   },
   {
-    slug: 'rubbish-removal',
+    slug: 'rubbish-removal', oneOff: true, ctaName: 'rubbish removal',
     name: 'Green Waste & Rubbish Removal',
     navDescriptor: 'Clippings, prunings & yard clean-ups taken away',
     short: 'Clippings, prunings, branches and overgrown-yard rubbish loaded, taken away and disposed of properly.',
@@ -298,7 +298,7 @@ export const services = [
     related: ['garden-maintenance', 'lawn-mowing'],
   },
   {
-    slug: 'irrigation',
+    slug: 'irrigation', oneOff: true, ctaName: 'irrigation',
     name: 'Irrigation & Sprinkler Installation',
     navDescriptor: 'Water-wise systems for lawns & garden beds',
     short: 'Pop-up sprinklers, drip lines and timers installed and maintained so your lawn stays green through an Ipswich summer.',
@@ -337,7 +337,7 @@ export const services = [
 ];
 
 export const homeFaqs = [
-  { q: 'How much does lawn mowing cost in Ipswich?', a: 'Most residential lawns in Ipswich fall between a set price per visit based on lawn size and access. Beg Your Garden quotes from a quick estimate online, then confirms on site — there are no surprise extras for edging, blowing or clippings.' },
+  { q: 'How much does lawn mowing cost in Ipswich?', a: 'Every lawn is quoted at a set price per visit based on lawn size and access. Beg Your Garden quotes from a quick estimate online, then confirms on site — there are no surprise extras for edging, blowing or clippings.' },
   { q: 'Do you offer one-off lawn mowing in Ipswich, or only regular service?', a: 'Beg Your Garden runs scheduled, set-day routes across Ipswich so regular clients always get their visit on time. One-off garden clean-ups and pre-sale tidy-ups are quoted separately.' },
   { q: 'Which Ipswich suburbs do you service for lawn mowing?', a: 'Raceview, Ripley, Springfield Lakes, Redbank Plains, Brassall, Booval, Bundamba, Yamanto, Silkstone, Flinders View, Karalee, Collingwood Park, Goodna and surrounding suburbs across Ipswich City.' },
   { q: 'Do you do NDIS or DVA lawn mowing in Ipswich?', a: 'Yes. Beg Your Garden provides ongoing lawn and garden maintenance for DVA clients and NDIS participants across Ipswich, with written service notes after every visit.' },

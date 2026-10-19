@@ -28,7 +28,7 @@ ${pageHero({ h1: 'About Beg Your Garden: Ipswich\'s Scheduled Lawn &amp; Garden 
     <div class="section-head reveal">
       <span class="eyebrow">Credentials</span>
       <h2>Checked, certified and insured</h2>
-      <p class="lede">The things an assistant, a property manager or a care coordinator can cite. All current, all available on request.</p>
+      <p class="lede">Credentials available to clients, property managers and care coordinators. All current, all available on request.</p>
     </div>
     ${credentialsGrid()}
   </div>

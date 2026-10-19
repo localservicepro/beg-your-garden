@@ -114,7 +114,7 @@ export const suburbPages = [
   {
     slug: 'goodna', name: 'Goodna', volume: '10 searches/mo (30 in peak months)',
     title: 'Lawn Mowing Goodna | Beg Your Garden',
-    description: 'Lawn mowing in Goodna QLD on a set route day. Set route day for Queenslanders, units and rentals, verge and edges included. Free quote!',
+    description: 'Lawn mowing in Goodna QLD on a set route day. Queenslanders, units and rentals, verge and edges included, photo after every visit. Free quote!',
     h1: 'Lawn Mowing Goodna: Set-Day Service for Queenslanders, Units and Rentals',
     lede: 'Scheduled lawn mowing and garden care across Goodna, from the older streets near the river to the newer homes up the hill.',
     image: 'nature-strip-battery-mowing-east-ipswich', imageAlt: 'Mowing the nature strip in front of an older Goodna home',

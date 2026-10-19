@@ -18,7 +18,6 @@ ${pageHero({ h1: s.h1, lede: s.lede, crumbs, image: s.image, imageAlt: s.imageAl
     <article class="prose">
       ${s.intro.map((t) => `<p>${esc(t)}</p>`).join('\n      ')}
       ${sections}
-      <div class="callout">Beg Your Garden runs scheduled, set-day routes across Ipswich so regular clients always get their visit on time. One-off clean-ups and pre-sale tidy-ups are quoted separately.</div>
       ${s.review != null ? `<h2>${reviews[s.review].suburb === s.name ? `From a ${esc(s.name)} customer` : `From a customer in ${esc(reviews[s.review].suburb)}, just up the road`}</h2>${reviewCard(reviews[s.review])}` : ''}
       <h2>Lawn mowing ${esc(s.name)} FAQs</h2>
       ${faqBlock(s.faqs, { id: `faq-${s.slug}` })}
