@@ -49,7 +49,7 @@ tools/optimise-images.py   image pipeline (WebP, resize, logo crops, favicons)
 | `/services/irrigation/` | irrigation ipswich (sprinkler installation + irrigation) |
 | `/about/`, `/our-work/`, `/areas/`, `/contact/`, `/lawn-mowing-ripley/` | kept from the old site / supporting pages |
 | `/lawn-mowing-redbank-plains/`, `-springfield-lakes/`, `-springfield/`, `-collingwood-park/`, `-goodna/`, `-brassall/`, `-augustine-heights/`, `-silkstone/`, `-leichhardt/`, `-riverview/` | suburb pages chosen from live search volume (see below) |
-| `/blog/` + 8 posts | lawn & garden guides chosen from live search volume (see below) |
+| `/blog/` + 9 posts | lawn & garden guides chosen from live search volume (see below) |
 | `/thank-you/` | form redirect target (noindex) |
 | `/privacy-policy/`, `/terms-and-conditions/` | legal (draft copy for client review) |
 
@@ -116,6 +116,7 @@ Blog posts (`src/data/blog.js`), each with FAQ + BlogPosting schema and a link t
 | Get rid of weeds without killing the grass | 140 · "killing weeds in buffalo lawn" 1,000 · "how to get rid of nut grass" 210 |
 | Winter lawn care in South East Queensland | "lawn care in winter" 140 (390 in Jun–Jul) |
 | How much mulch do I need | 210 · "mulch types" 480 |
+| When to prune hedges in Queensland | "when to prune hedges" 110 (KD 5) |
 
 The price guide in the cost post is a general Ipswich market range, not Beg Your Garden's price list; adjust in `src/data/blog.js` if needed.
 To add a post, append to `posts` in `src/data/blog.js` and rebuild; the index, homepage strip, sitemap and schema update automatically.
