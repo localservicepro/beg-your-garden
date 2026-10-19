@@ -86,7 +86,7 @@ whole form as JSON to `/api/quote` (`api/quote.js`, a Vercel serverless function
 1. upserts the contact in GoHighLevel via the v2 API (`/contacts/upsert`) using a Private Integration Token,
    mapping `property_address` to `address1` and `property_size`, `service_needed`, `job_notes` to custom fields;
 2. attaches each photo to the contact's "Job Photos" file-upload custom field (`GHL_JOB_PHOTOS_FIELD_ID`), via
-   `/forms/upload-custom-files`, falling back to `/locations/{id}/customFields/upload` + contact update, and as a last
+   `/forms/upload-custom-files` (the field ID is taken from `GHL_JOB_PHOTOS_FIELD_ID` or looked up by key), falling back to `/locations/{id}/customFields/upload` + contact update, and as a last
    resort to the Media Library (`/medias/upload-file`) with links in the note;
 3. adds a note on the contact listing the service, size, address, notes and the photos;
 4. tags the contact (default `website-quote`).
@@ -97,7 +97,7 @@ Environment variables to set in the Vercel project (Settings → Environment Var
 |---|---|---|
 | `GHL_PIT_TOKEN` | yes | Private Integration Token from the sub-account (Settings → Private Integrations). Scopes: `contacts.write`, `contacts.readonly`, `medias.write`. |
 | `GHL_LOCATION_ID` | yes | The sub-account / location ID. |
-| `GHL_JOB_PHOTOS_FIELD_ID` | recommended | ID of a contact custom field of type File Upload (e.g. "Job Photos"). Photos land in this field on the contact record. |
+| `GHL_JOB_PHOTOS_FIELD_ID` | no | ID of the contact's File Upload custom field. When unset the function finds it by key (`contact.add_photos`, override with `GHL_JOB_PHOTOS_FIELD_KEY`) through `GET /locations/{id}/customFields`, which needs the `locations/customFields.readonly` scope on the token. |
 | `GHL_CUSTOM_FIELDS` | no | JSON mapping form names to custom field IDs, e.g. `{"property_size":"...","service_needed":"...","job_notes":"..."}`. Without it the fields are sent by key (`property_size`, `service_needed`, `job_notes`), which works when the custom fields were created with those unique keys. |
 | `GHL_TAG` | no | Tag added to the contact (default `website-quote`). |
 

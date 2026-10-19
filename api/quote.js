@@ -5,8 +5,10 @@
 // Environment variables (Vercel project settings):
 //   GHL_PIT_TOKEN      Private Integration Token (scopes: contacts.write, contacts.readonly, medias.write)
 //   GHL_LOCATION_ID    Sub-account (location) ID the contacts belong to
-//   GHL_JOB_PHOTOS_FIELD_ID  ID of the contact's "Job Photos" file-upload custom field. Photos are attached there.
-//                      If unset (or the attach fails) photos go to the Media Library and a note links to them.
+//   GHL_JOB_PHOTOS_FIELD_ID  optional: ID of the contact's file-upload custom field ("Add Photos"). When unset, the
+//                      function looks the ID up by key (GHL_JOB_PHOTOS_FIELD_KEY, default contact.add_photos) via
+//                      GET /locations/{id}/customFields (scope locations/customFields.readonly) and caches it.
+//                      If no field is found (or the attach fails) photos go to the Media Library and a note links to them.
 //   GHL_CUSTOM_FIELDS  optional JSON: {"property_size":"<fieldId>","service_needed":"<fieldId>","job_notes":"<fieldId>"}
 //                      When omitted, custom fields are sent by key (property_size, service_needed, job_notes).
 //   GHL_TAG            optional tag added to the contact (default: website-quote)
@@ -86,6 +88,22 @@ async function uploadPhoto(photo, locationId, contactLabel) {
   return { name: photo.name, url: out && (out.url || out.fileUrl || (out.file && out.file.url)) || null, id: out && (out.fileId || out.id || (out.file && out.file.id)) || null };
 }
 
+// Resolve the file-upload custom field ID: env override, else look it up by key and cache for the function's lifetime.
+let cachedFieldId = null, cachedFieldKey = null;
+async function resolvePhotoFieldId(locationId) {
+  if (process.env.GHL_JOB_PHOTOS_FIELD_ID) return process.env.GHL_JOB_PHOTOS_FIELD_ID;
+  const wantKey = (process.env.GHL_JOB_PHOTOS_FIELD_KEY || 'contact.add_photos').toLowerCase();
+  if (cachedFieldId && cachedFieldKey === wantKey) return cachedFieldId;
+  const out = await ghl(`/locations/${encodeURIComponent(locationId)}/customFields?model=contact`, { method: 'GET' });
+  const list = (out && (out.customFields || out.fields)) || [];
+  const norm = (k) => String(k || '').toLowerCase().replace(/^\{\{|\}\}$/g, '');
+  const hit = list.find((f) => norm(f.fieldKey) === wantKey || norm(f.fieldKey) === wantKey.replace(/^contact\./, '') || (f.name || '').toLowerCase() === 'add photos')
+    || list.find((f) => /file/i.test(f.dataType || '') );
+  if (!hit) throw new Error(`No file-upload custom field matching ${wantKey}`);
+  cachedFieldId = hit.id; cachedFieldKey = wantKey;
+  return hit.id;
+}
+
 // Attach photos to a file-upload custom field on the contact.
 // 1) /forms/upload-custom-files?contactId&locationId with each file under the field id (what the form builder uses)
 // 2) fallback: /locations/{id}/customFields/upload (id = field id) then PUT the contact with the returned file map
@@ -134,7 +152,8 @@ export default async function handler(req, res) {
     const contact = await upsertContact(f, locationId, tag);
     const contactId = contact && contact.id;
     let uploaded = []; const failed = []; let photoMethod = null;
-    const fieldId = process.env.GHL_JOB_PHOTOS_FIELD_ID;
+    let fieldId = null;
+    if (photos.length && contactId) { try { fieldId = await resolvePhotoFieldId(locationId); } catch (e) { console.error('photo field lookup failed', e.message); } }
     if (photos.length && fieldId && contactId) {
       try { const r = await attachToField(photos, contactId, locationId, fieldId); uploaded = r.files; photoMethod = r.method; }
       catch (e) { console.error('custom field attach failed, falling back to media library', e.message); }
@@ -156,7 +175,7 @@ export default async function handler(req, res) {
     if (contactId) { try { await addNote(contactId, lines.join('\n')); } catch (e) { console.error('note failed', e.message); } }
     if (failed.length) console.error('photo upload failures', JSON.stringify(failed));
     res.statusCode = 200;
-    return res.end(JSON.stringify({ ok: true, contactId: contactId || null, photos: uploaded.length, photosFailed: failed.length, photoMethod }));
+    return res.end(JSON.stringify({ ok: true, contactId: contactId || null, photos: uploaded.length, photosFailed: failed.length, photoMethod, photoFieldId: fieldId || null }));
   } catch (e) {
     console.error('quote handler failed', e.message, e.body ? JSON.stringify(e.body).slice(0, 500) : '');
     res.statusCode = 502;
