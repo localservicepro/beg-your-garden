@@ -32,7 +32,7 @@ chars, description ≤ 160 chars, alt text, valid JSON-LD, the tracking script, 
 
 1. `git fetch origin main && git checkout -B seo/research-YYYY-MM origin/main` (today's year-month).
 2. Re-pull volume and difficulty for every keyword in `keywords.json` (money keywords, suburbs, blog topics) and
-   for `lawn mowing {suburb}` across all 84 suburbs in `src/data/site.js`. Append this month to each `history`
+   for `lawn mowing {suburb}` across every suburb listed in `src/data/site.js`. Append this month to each `history`
    and update `volume` / `difficulty`. Pull current organic position for the money keywords and record it under
    `rankings` with the date.
 3. Decide, using `thresholds` in `keywords.json`:

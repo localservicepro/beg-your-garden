@@ -128,7 +128,7 @@ export function header({ onDark = true } = {}) {
         <div class="dropdown-panel dropdown-panel--areas" id="areas-menu" role="menu">
           <a class="dd-item is-all" role="menuitem" href="/areas/">
             <span class="dd-icon">${icons.pin}</span>
-            <span class="dd-text"><strong>All Service Areas</strong><em>${suburbs.length} suburbs across Ipswich City &amp; Springfield</em></span>
+            <span class="dd-text"><strong>All Service Areas</strong><em>80+ suburbs across Ipswich City &amp; Springfield</em></span>
           </a>${areaItems}
         </div>
       </div>

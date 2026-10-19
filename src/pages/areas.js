@@ -29,7 +29,7 @@ export default ({ assetHash }) => {
 </div>`).join('');
 
   const body = `
-${pageHero({ h1: 'Lawn Mowing &amp; Garden Care Service Areas Across Ipswich &amp; Springfield', lede: `Beg Your Garden is based in ${site.suburb} QLD ${site.postcode} and runs set-day lawn and garden routes across ${suburbs.length} suburbs of Ipswich City and the Springfield corridor.`, crumbs, image: 'street-verge-mowing-raceview', imageAlt: 'Street verge mowing in Raceview, Ipswich' })}
+${pageHero({ h1: 'Lawn Mowing &amp; Garden Care Service Areas Across Ipswich &amp; Springfield', lede: `Beg Your Garden is based in ${site.suburb} QLD ${site.postcode} and runs set-day lawn and garden routes across 80+ suburbs of Ipswich City and the Springfield corridor.`, crumbs, image: 'street-verge-mowing-raceview', imageAlt: 'Street verge mowing in Raceview, Ipswich' })}
 <section class="section">
   <div class="container">
     <div class="section-head reveal"><span class="eyebrow">Route days</span><h2>Where we mow, and when</h2><p class="lede">Green chips are route suburbs we're in every cycle. Every other suburb on this page is inside our service area and joins the nearest route day.</p></div>
@@ -44,7 +44,7 @@ ${pageHero({ h1: 'Lawn Mowing &amp; Garden Care Service Areas Across Ipswich &am
 </section>
 <section class="section section--off">
   <div class="container">
-    <div class="section-head reveal"><span class="eyebrow">All ${suburbs.length} suburbs</span><h2>Lawn mowing, garden maintenance &amp; outdoor services by area</h2></div>
+    <div class="section-head reveal"><span class="eyebrow">80+ suburbs</span><h2>Lawn mowing, garden maintenance &amp; outdoor services by area</h2></div>
     <div class="grid" style="gap:36px">${groupHtml}</div>
   </div>
 </section>
@@ -69,6 +69,6 @@ ${ctaBand({ heading: '<em>Leaf it to us,</em> wherever you are in Ipswich.', sub
   return [{
     path: '/areas/',
     priority: '0.8',
-    html: page({ title: 'Lawn Mowing Service Areas Ipswich | Beg Your Garden', description: `Lawn mowing & garden care across ${suburbs.length} Ipswich & Springfield suburbs: Raceview, Ripley, Springfield Lakes, Redbank Plains, Brassall & more. Free quote!`, path: '/areas/', body, schema: [breadcrumbSchema(crumbs), faqSchema(areaFaqs)], assetHash }),
+    html: page({ title: 'Lawn Mowing Service Areas Ipswich | Beg Your Garden', description: `Lawn mowing & garden care across 80+ Ipswich & Springfield suburbs: Raceview, Ripley, Springfield Lakes, Redbank Plains, Brassall & more. Free quote!`, path: '/areas/', body, schema: [breadcrumbSchema(crumbs), faqSchema(areaFaqs)], assetHash }),
   }];
 };

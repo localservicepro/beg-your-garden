@@ -38,7 +38,7 @@ export default ({ assetHash }) => {
 <div class="container trust">
   <div class="trust__box stagger">
     <div class="stat"><span class="stat__icon">${icons.star}</span><div><strong><span data-count="4.9">4.9</span>★</strong><small>Google rating, ${site.reviewCount} reviews</small></div></div>
-    <div class="stat"><span class="stat__icon">${icons.pin}</span><div><strong><span data-count="${suburbs.length}" data-suffix="+">${suburbs.length}+</span></strong><small>Ipswich &amp; Springfield suburbs</small></div></div>
+    <div class="stat"><span class="stat__icon">${icons.pin}</span><div><strong><span data-count="80" data-suffix="+">80+</span></strong><small>Ipswich &amp; Springfield suburbs</small></div></div>
     <div class="stat"><span class="stat__icon">${icons.shield}</span><div><strong><span data-count="100" data-suffix="%">100%</span></strong><small>Police-checked &amp; insured team</small></div></div>
     <div class="stat"><span class="stat__icon">${icons.calendar}</span><div><strong>Set-day</strong><small>Routes, reminders &amp; photos</small></div></div>
   </div>
@@ -150,7 +150,7 @@ export default ({ assetHash }) => {
     <div class="section-head reveal">
       <span class="eyebrow">Areas we service</span>
       <h2>Lawn mowing across Ipswich City &amp; the Springfield corridor</h2>
-      <p class="lede">Raceview is home base. From there, set-day routes cover the city, Springfield and the rural fringe, ${suburbs.length} suburbs in all.</p>
+      <p class="lede">Raceview is home base. From there, set-day routes cover the city, Springfield and the rural fringe, 80+ suburbs in all.</p>
     </div>
     ${areasSection({ compact: true })}
     <p style="margin-top:24px"><a class="link-arrow" href="/areas/">See every suburb we cover ${icons.arrow}</a></p>
