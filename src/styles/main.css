@@ -473,6 +473,8 @@ strong { font-weight: 600; }
   .quote-modal .field textarea { min-height: 64px; height: 64px; }
   .quote-modal .dropzone { min-height: 0; padding: 8px 10px; }
   .quote-modal .dropzone span br { display: none; }
+  .quote-modal .dropzone strong { margin-right: 6px; }
+  .quote-modal .dropzone strong::after { content: " ·"; color: var(--muted); font-weight: 400; }
   .quote-modal__head { margin-bottom: 8px; }
   .quote-modal__head h2 { font-size: 1.25rem; }
   .quote-modal__head p { font-size: .86rem; }
