@@ -97,7 +97,7 @@ Environment variables to set in the Vercel project (Settings → Environment Var
 |---|---|---|
 | `GHL_PIT_TOKEN` | yes | Private Integration Token from the sub-account (Settings → Private Integrations). Scopes: `contacts.write`, `contacts.readonly`, `medias.write`. |
 | `GHL_LOCATION_ID` | yes | The sub-account / location ID. |
-| `GHL_JOB_PHOTOS_FIELD_ID` | no | ID of the contact's File Upload custom field. When unset the function finds it by key (`contact.add_photos`, override with `GHL_JOB_PHOTOS_FIELD_KEY`) through `GET /locations/{id}/customFields`, which needs the `locations/customFields.readonly` scope on the token. |
+| `GHL_JOB_PHOTOS_FIELD_ID` | no | ID of the contact's File Upload custom field. When unset the function finds it by key (`contact.job_photos`, override with `GHL_JOB_PHOTOS_FIELD_KEY`) through `GET /locations/{id}/customFields`, which needs the `locations/customFields.readonly` scope on the token. |
 | `GHL_CUSTOM_FIELDS` | no | JSON mapping form names to custom field IDs, e.g. `{"property_size":"...","service_needed":"...","job_notes":"..."}`. Without it the fields are sent by key (`property_size`, `service_needed`, `job_notes`), which works when the custom fields were created with those unique keys. |
 | `GHL_TAG` | no | Tag added to the contact (default `website-quote`). |
 

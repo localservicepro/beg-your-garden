@@ -6,7 +6,7 @@
 //   GHL_PIT_TOKEN      Private Integration Token (scopes: contacts.write, contacts.readonly, medias.write)
 //   GHL_LOCATION_ID    Sub-account (location) ID the contacts belong to
 //   GHL_JOB_PHOTOS_FIELD_ID  optional: ID of the contact's file-upload custom field ("Add Photos"). When unset, the
-//                      function looks the ID up by key (GHL_JOB_PHOTOS_FIELD_KEY, default contact.add_photos) via
+//                      function looks the ID up by key (GHL_JOB_PHOTOS_FIELD_KEY, default contact.job_photos) via
 //                      GET /locations/{id}/customFields (scope locations/customFields.readonly) and caches it.
 //                      If no field is found (or the attach fails) photos go to the Media Library and a note links to them.
 //   GHL_CUSTOM_FIELDS  optional JSON: {"property_size":"<fieldId>","service_needed":"<fieldId>","job_notes":"<fieldId>"}
@@ -92,12 +92,12 @@ async function uploadPhoto(photo, locationId, contactLabel) {
 let cachedFieldId = null, cachedFieldKey = null;
 async function resolvePhotoFieldId(locationId) {
   if (process.env.GHL_JOB_PHOTOS_FIELD_ID) return process.env.GHL_JOB_PHOTOS_FIELD_ID;
-  const wantKey = (process.env.GHL_JOB_PHOTOS_FIELD_KEY || 'contact.add_photos').toLowerCase();
+  const wantKey = (process.env.GHL_JOB_PHOTOS_FIELD_KEY || 'contact.job_photos').toLowerCase();
   if (cachedFieldId && cachedFieldKey === wantKey) return cachedFieldId;
   const out = await ghl(`/locations/${encodeURIComponent(locationId)}/customFields?model=contact`, { method: 'GET' });
   const list = (out && (out.customFields || out.fields)) || [];
   const norm = (k) => String(k || '').toLowerCase().replace(/^\{\{|\}\}$/g, '');
-  const hit = list.find((f) => norm(f.fieldKey) === wantKey || norm(f.fieldKey) === wantKey.replace(/^contact\./, '') || (f.name || '').toLowerCase() === 'add photos')
+  const hit = list.find((f) => norm(f.fieldKey) === wantKey || norm(f.fieldKey) === wantKey.replace(/^contact\./, '') || (f.name || '').toLowerCase() === 'job photos')
     || list.find((f) => /file/i.test(f.dataType || '') );
   if (!hit) throw new Error(`No file-upload custom field matching ${wantKey}`);
   cachedFieldId = hit.id; cachedFieldKey = wantKey;
