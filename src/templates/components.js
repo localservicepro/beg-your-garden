@@ -260,7 +260,7 @@ export function quoteModal() {
     <div class="quote-modal__head">
       <span class="eyebrow">Free quote</span>
       <h2 id="quote-modal-title">Get a free quote</h2>
-      <p>Tell us about the job and we'll come back within one business day with a price. Add a photo if you have one.</p>
+      <p>A price within one business day. Add a photo of the job if you have one.</p>
     </div>
     ${quoteForm({ id: 'modal-quote', compact: true })}
   </div>
