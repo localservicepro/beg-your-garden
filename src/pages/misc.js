@@ -8,6 +8,7 @@ export default ({ assetHash }) => {
   <div class="container" style="max-width:640px">
     <div class="tick">${icons.check}</div>
     <h1 data-thank-you-name>Thanks, your request is in!</h1>
+    <p class="form__status" data-thank-you-photos></p>
     <p class="lede" style="margin-inline:auto">We've got your details and will come back within one business day with a price and the route day for your suburb. If it's urgent, call us on <a href="tel:${site.phoneRaw}">${site.phone}</a>.</p>
     <div class="btn-row" style="justify-content:center;margin-top:24px">
       <a class="btn" href="/">Back to home ${icons.arrow}</a>

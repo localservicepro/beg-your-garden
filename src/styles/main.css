@@ -421,6 +421,19 @@ strong { font-weight: 600; }
 .chip { display: inline-block; padding: 8px 14px; border-radius: var(--r-pill); background: #fff; border: 1px solid var(--line); font-size: .88rem; color: var(--ink-2); text-decoration: none; transition: border-color var(--t-fast), color var(--t-fast), background var(--t-fast), transform var(--t) var(--ease-out); }
 .chip:hover { border-color: var(--green); color: var(--green-700); background: var(--green-50); transform: translateY(-2px); }
 .chip--route { background: var(--green-50); border-color: var(--green-100); color: var(--green-700); font-weight: 600; }
+.field--photos label em { font-style: normal; font-weight: 500; color: var(--muted); }
+.photos-input { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
+.dropzone { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 2px dashed var(--line-2); border-radius: var(--r); background: var(--offwhite); cursor: pointer; font-size: .9rem; color: var(--ink-2); transition: border-color var(--t-fast), background var(--t-fast); }
+.dropzone:hover, .photos-input:focus-visible + .photo-previews, .dropzone.is-over { border-color: var(--green); background: var(--green-50); }
+.dropzone svg { width: 28px; height: 28px; flex: none; stroke: var(--green); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.dropzone strong { color: var(--navy-900); }
+.photo-previews { display: flex; flex-wrap: wrap; gap: 10px; }
+.photo-previews:empty { display: none; }
+.photo-previews figure { position: relative; margin: 0; width: 84px; height: 84px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--navy-50); }
+.photo-previews img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-previews button { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: rgba(16, 21, 59, .8); color: #fff; font-size: 16px; line-height: 1; cursor: pointer; }
+.photo-previews figcaption { position: absolute; left: 0; right: 0; bottom: 0; font-size: .62rem; padding: 2px 4px; background: rgba(16, 21, 59, .7); color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.form__status.is-error { background: #FDECEC; color: #9B1C1C; }
 /* ---------- blog + suburb cards ---------- */
 .post-card, .suburb-card { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; color: var(--ink); text-decoration: none; transition: transform var(--t) var(--ease-out), box-shadow var(--t) var(--ease-out), border-color var(--t); }
 .post-card:hover, .suburb-card:hover { transform: translateY(-6px); box-shadow: var(--shadow); border-color: transparent; color: var(--ink); }

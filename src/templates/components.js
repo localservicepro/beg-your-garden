@@ -240,6 +240,12 @@ export function quoteForm({ id = 'quote-form', compact = false, defaultService =
       </select></div>
   </div>
   <div class="field"><label for="${id}-notes">Job notes</label><textarea id="${id}-notes" name="job_notes" rows="${compact ? 3 : 4}" placeholder="Tell us about the lawn or garden, access, pets, and how often you'd like visits."></textarea></div>
+  <div class="field field--photos">
+    <label for="${id}-photos">Photos of the lawn or job <em>(optional, up to 5)</em></label>
+    <label class="dropzone" for="${id}-photos">${icons.camera}<span><strong>Add photos</strong><br>Tap to take a photo or choose from your gallery. We shrink them before sending.</span></label>
+    <input id="${id}-photos" class="photos-input" name="photos" type="file" accept="image/*" multiple>
+    <div class="photo-previews" aria-live="polite"></div>
+  </div>
   <button class="btn btn--lg" type="submit">Request my free quote ${icons.arrow}</button>
   <p class="form__status" role="status" aria-live="polite"></p>
   <p class="form__note">No obligation. We reply within one business day, usually sooner.</p>

@@ -76,8 +76,35 @@ Quote forms (`data-quote-form`) use these field names so the CRM mapping is dire
 | Service Needed | `service_needed` (dropdown: nine services + Other) | `{{contact.service_needed}}` |
 | Job Notes | `job_notes` | `{{contact.job_notes}}` |
 
-On submit the page lets the tracking script capture the submission, then redirects to `/thank-you/`.
-There is no form endpoint of our own.
+On submit the page posts to `/api/quote` (see below), lets the tracking script capture the submission, then redirects to `/thank-you/`.
+
+### Photo upload and the CRM API (Vercel function)
+
+The quote form accepts up to five photos. The browser shrinks each one to 1600 px JPEG, then POSTs the
+whole form as JSON to `/api/quote` (`api/quote.js`, a Vercel serverless function). The function:
+
+1. upserts the contact in GoHighLevel via the v2 API (`/contacts/upsert`) using a Private Integration Token,
+   mapping `property_address` to `address1` and `property_size`, `service_needed`, `job_notes` to custom fields;
+2. attaches each photo to the contact's "Job Photos" file-upload custom field (`GHL_JOB_PHOTOS_FIELD_ID`), via
+   `/forms/upload-custom-files`, falling back to `/locations/{id}/customFields/upload` + contact update, and as a last
+   resort to the Media Library (`/medias/upload-file`) with links in the note;
+3. adds a note on the contact listing the service, size, address, notes and the photos;
+4. tags the contact (default `website-quote`).
+
+Environment variables to set in the Vercel project (Settings → Environment Variables):
+
+| Variable | Required | Value |
+|---|---|---|
+| `GHL_PIT_TOKEN` | yes | Private Integration Token from the sub-account (Settings → Private Integrations). Scopes: `contacts.write`, `contacts.readonly`, `medias.write`. |
+| `GHL_LOCATION_ID` | yes | The sub-account / location ID. |
+| `GHL_JOB_PHOTOS_FIELD_ID` | recommended | ID of a contact custom field of type File Upload (e.g. "Job Photos"). Photos land in this field on the contact record. |
+| `GHL_CUSTOM_FIELDS` | no | JSON mapping form names to custom field IDs, e.g. `{"property_size":"...","service_needed":"...","job_notes":"..."}`. Without it the fields are sent by key (`property_size`, `service_needed`, `job_notes`), which works when the custom fields were created with those unique keys. |
+| `GHL_TAG` | no | Tag added to the contact (default `website-quote`). |
+
+If the function is unreachable or not configured, the form still redirects to the thank-you page (the tracking
+script in `<head>` captures the text fields as before) and the thank-you page asks the customer to text the
+photos to the business number. Request bodies are capped at Vercel's 4.5 MB limit; photos over 1.5 MB after
+compression are skipped. The Netlify config does not include this function; the Vercel deployment is the target.
 
 The Closebot chat widget (`https://api.closebot.com/scripts/cb.js?source=NOaznR477jeopRlH`) is loaded once,
 async, just before `</body>` on every page from `src/templates/layout.js`.

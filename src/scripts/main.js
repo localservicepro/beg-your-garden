@@ -233,27 +233,85 @@
   });
 
   /* ---------- quote forms ----------
-     The GoHighLevel external-tracking script (loaded in <head>) captures the
-     submit event and sends the mapped contact fields to the CRM. We let that
-     listener run, then redirect to the thank-you page. */
+     Photos are shrunk in the browser, then the whole form is POSTed as JSON to
+     /api/quote (Vercel function) which upserts the contact in the CRM and uploads
+     the photos to its media library. The GoHighLevel tracking script in <head>
+     still sees the submit event for attribution. If the API is unavailable the
+     form falls back to the old behaviour: redirect to the thank-you page. */
+  const MAX_PHOTOS = 5, MAX_EDGE = 1600, JPEG_Q = 0.82;
+  const shrink = (file) => new Promise((resolve) => {
+    const done = (dataUrl) => resolve({ name: file.name || 'photo.jpg', type: 'image/jpeg', data: dataUrl });
+    const url = URL.createObjectURL(file);
+    const im = new Image();
+    im.onload = () => {
+      const r = Math.min(1, MAX_EDGE / Math.max(im.naturalWidth, im.naturalHeight));
+      const c = d.createElement('canvas'); c.width = Math.round(im.naturalWidth * r); c.height = Math.round(im.naturalHeight * r);
+      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      try { done(c.toDataURL('image/jpeg', JPEG_Q)); } catch (err) { resolve(null); }
+    };
+    im.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+    im.src = url;
+  });
+
   d.querySelectorAll('form[data-quote-form]').forEach((form) => {
-    form.addEventListener('submit', (e) => {
+    const input = form.querySelector('.photos-input');
+    const previews = form.querySelector('.photo-previews');
+    const zone = form.querySelector('.dropzone');
+    let photos = []; // [{ file, dataUrl }]
+    const status = form.querySelector('.form__status');
+    const say = (msg, isError) => { if (!status) return; status.textContent = msg; status.classList.add('show'); status.classList.toggle('is-error', !!isError); };
+    const render = () => {
+      if (!previews) return;
+      previews.innerHTML = photos.map((p, i) => `<figure><img src="${p.dataUrl}" alt=""><button type="button" data-remove="${i}" aria-label="Remove photo">×</button><figcaption>${(p.file.name || 'photo').replace(/[<>&]/g, '')}</figcaption></figure>`).join('');
+    };
+    const addFiles = async (list) => {
+      const files = Array.from(list || []).filter((f) => /^image\//.test(f.type));
+      if (!files.length) return;
+      if (photos.length + files.length > MAX_PHOTOS) say('You can attach up to ' + MAX_PHOTOS + ' photos.', true);
+      for (const f of files.slice(0, MAX_PHOTOS - photos.length)) {
+        const out = await shrink(f);
+        if (out) photos.push({ file: f, dataUrl: out.data });
+      }
+      render();
+    };
+    if (input) {
+      input.addEventListener('change', () => { addFiles(input.files); input.value = ''; });
+      previews && previews.addEventListener('click', (e) => { const b = e.target.closest('[data-remove]'); if (!b) return; photos.splice(+b.dataset.remove, 1); render(); });
+      if (zone) {
+        ['dragenter', 'dragover'].forEach((ev) => zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.add('is-over'); }));
+        ['dragleave', 'drop'].forEach((ev) => zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.remove('is-over'); }));
+        zone.addEventListener('drop', (e) => addFiles(e.dataTransfer && e.dataTransfer.files));
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (form.querySelector('.hp input') && form.querySelector('.hp input').value) return; // honeypot
       if (!form.reportValidity()) return;
       const btn = form.querySelector('button[type="submit"]');
-      if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
-      const status = form.querySelector('.form__status');
-      if (status) { status.textContent = 'Thanks — sending your request…'; status.classList.add('show'); }
+      if (btn) { btn.disabled = true; btn.textContent = photos.length ? 'Sending photos…' : 'Sending…'; }
+      say('Thanks — sending your request…');
+      const data = {};
       try {
-        const data = Object.fromEntries(new FormData(form).entries());
-        delete data.website;
+        Object.assign(data, Object.fromEntries(new FormData(form).entries()));
+        delete data.photos; delete data.website;
         window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({ event: 'quote_form_submit', form_id: form.id || 'quote', service_needed: data.service_needed || '' });
-        sessionStorage.setItem('byg_last_quote', JSON.stringify({ name: data.full_name || '', service: data.service_needed || '' }));
+        window.dataLayer.push({ event: 'quote_form_submit', form_id: form.id || 'quote', service_needed: data.service_needed || '', photos: photos.length });
       } catch (err) { /* non-fatal */ }
+      let result = { ok: false, photos: 0 };
+      try {
+        const res = await fetch('/api/quote', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...data, page: location.pathname, photos: photos.map((p) => ({ name: p.file.name, type: 'image/jpeg', data: p.dataUrl })) }),
+        });
+        result = await res.json().catch(() => ({ ok: res.ok, photos: 0 }));
+      } catch (err) { result = { ok: false, photos: 0 }; }
+      try {
+        sessionStorage.setItem('byg_last_quote', JSON.stringify({ name: data.full_name || '', service: data.service_needed || '', photosSent: result.ok ? (result.photos || 0) : 0, photosWanted: photos.length, apiOk: !!result.ok }));
+      } catch (err) { /* ignore */ }
       // Give the tracking script's own submit handler time to flush, then redirect.
-      setTimeout(() => { window.location.assign(form.dataset.redirect || '/thank-you/'); }, 600);
+      setTimeout(() => { window.location.assign(form.dataset.redirect || '/thank-you/'); }, 400);
     });
   });
 
@@ -263,6 +321,11 @@
     try {
       const last = JSON.parse(sessionStorage.getItem('byg_last_quote') || 'null');
       if (last && last.name) ty.textContent = 'Thanks, ' + last.name.split(' ')[0] + '!';
+      const tp = d.querySelector('[data-thank-you-photos]');
+      if (tp && last && last.photosWanted) {
+        if (last.photosSent) { tp.textContent = 'We received ' + last.photosSent + (last.photosSent === 1 ? ' photo' : ' photos') + ' with your request.'; tp.classList.add('show'); }
+        else { tp.textContent = 'We could not attach your photos. Please text them to 0411 638 432 and we will add them to your quote.'; tp.classList.add('show', 'is-error'); }
+      }
     } catch (err) { /* ignore */ }
   }
 
