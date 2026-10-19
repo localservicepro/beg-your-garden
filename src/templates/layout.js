@@ -1,5 +1,5 @@
 import { site, suburbs } from '../data/site.js';
-import { header, footer, esc } from './components.js';
+import { header, footer, esc, quoteModal } from './components.js';
 
 export function localBusinessSchema() {
   return {
@@ -88,6 +88,7 @@ ${header({ onDark })}
 ${body}
 </main>
 ${footer()}
+${path === '/contact/' || path === '/thank-you/' ? '' : quoteModal()}
 <script src="/assets/main.js?v=${assetHash}" defer></script>
 <script src="https://api.closebot.com/scripts/cb.js?source=NOaznR477jeopRlH" async></script>
 </body>

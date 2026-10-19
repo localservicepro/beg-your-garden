@@ -21,7 +21,7 @@ export default ({ assetHash }) => {
       <h1 class="reveal-up">Lawn Mowing Ipswich: <em>Reliable, Scheduled</em> Lawn &amp; Garden Care</h1>
       <p class="lede reveal-up">Set-day lawn mowing in Ipswich and garden care across Raceview, Ripley, Springfield Lakes and the Springfield corridor. A fixed route day for your suburb, a message before we arrive, and a photo when we're done.</p>
       <div class="btn-row reveal-up">
-        <a class="btn btn--lg" href="/contact/#quote">Get a free quote ${icons.arrow}</a>
+        <a class="btn btn--lg" href="/contact/#quote" data-quote-open>Get a free quote ${icons.arrow}</a>
         <a class="btn btn--outline-light btn--lg" href="tel:${site.phoneRaw}">${icons.phone} ${site.phone}</a>
       </div>
       <div class="hero__proof reveal-up">
@@ -113,7 +113,7 @@ export default ({ assetHash }) => {
       <h2>How much does lawn mowing cost in Ipswich?</h2>
       <p>Every yard is different, and so are our clients' needs. We're not the local “cut-and-go” outfit: the price covers a reliable scheduled visit from a police-checked, Blue Card-certified, fully insured team, with communication you can count on.</p>
       <p>Every lawn is quoted at a set price per visit based on lawn size and access. We quote from a quick estimate, confirm it on site, and the price includes mowing, edging, whipper-snipping, blow-down and clippings. Fertilising, weed control, hedging and the rest are added to the plan at the rates we quote up front. For typical Ipswich price ranges, read <a href="/blog/how-much-does-lawn-mowing-cost-ipswich/">how much lawn mowing costs in Ipswich</a>.</p>
-      <div class="btn-row" style="margin-top:22px"><a class="btn" href="/contact/#quote">Get my lawn mowing price ${icons.arrow}</a><a class="link-arrow" href="/services/lawn-mowing/">What's included ${icons.arrow}</a></div>
+      <div class="btn-row" style="margin-top:22px"><a class="btn" href="/contact/#quote" data-quote-open>Get my lawn mowing price ${icons.arrow}</a><a class="link-arrow" href="/services/lawn-mowing/">What's included ${icons.arrow}</a></div>
     </div>
     <div class="reveal reveal--right">
       ${credentialsGrid()}

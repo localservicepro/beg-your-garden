@@ -137,7 +137,7 @@ export function header({ onDark = true } = {}) {
     </nav>
     <div class="nav-actions">
       <a href="tel:${site.phoneRaw}" class="nav-phone">${icons.phone}<span>${site.phone}</span></a>
-      <a href="/contact/#quote" class="btn btn--sm">Get a Free Quote</a>
+      <a href="/contact/#quote" class="btn btn--sm" data-quote-open>Get a Free Quote</a>
       <button class="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav" type="button"><span></span><span></span><span></span></button>
     </div>
   </div>
@@ -154,7 +154,7 @@ export function header({ onDark = true } = {}) {
     <div class="m-acc" id="m-areas" data-open="false"><div><a href="/areas/">All Service Areas</a>${mobileAreas}</div></div>
     <a class="m-link" href="/blog/">Blog</a>
     <a class="m-link" href="/contact/">Contact</a>
-    <a class="btn" href="/contact/#quote">Get a Free Quote</a>
+    <a class="btn" href="/contact/#quote" data-quote-open>Get a Free Quote</a>
     <a class="m-phone" href="tel:${site.phoneRaw}">${icons.phone} Call ${site.phone}</a>
   </nav>
 </div>
@@ -252,6 +252,21 @@ export function quoteForm({ id = 'quote-form', compact = false, defaultService =
 </form>`;
 }
 
+export function quoteModal() {
+  return `
+<dialog class="quote-modal" id="quote-modal" aria-labelledby="quote-modal-title">
+  <div class="quote-modal__panel">
+    <button class="quote-modal__close" type="button" data-quote-close aria-label="Close">×</button>
+    <div class="quote-modal__head">
+      <span class="eyebrow">Free quote</span>
+      <h2 id="quote-modal-title">Get a free quote</h2>
+      <p>Tell us about the job and we'll come back within one business day with a price. Add a photo if you have one.</p>
+    </div>
+    ${quoteForm({ id: 'modal-quote', compact: true })}
+  </div>
+</dialog>`;
+}
+
 /* ---------- sections ---------- */
 export function serviceCard(s, { tag = '' } = {}) {
   return `
@@ -313,7 +328,7 @@ export function ctaBand({ heading = 'Leaf it to us.', sub = 'Tell us about your 
   <div class="container">
     <div class="reveal reveal--left"><h2>${heading}</h2><p>${esc(sub)}</p></div>
     <div class="btn-row reveal reveal--right">
-      <a class="btn btn--lg" href="/contact/#quote">Get a free quote ${icons.arrow}</a>
+      <a class="btn btn--lg" href="/contact/#quote" data-quote-open>Get a free quote ${icons.arrow}</a>
       <a class="btn btn--outline-light btn--lg" href="tel:${site.phoneRaw}">${icons.phone} ${site.phone}</a>
     </div>
   </div>
@@ -523,13 +538,13 @@ export function pageHero({ h1, lede, crumbs, image, imageAlt, plain = false, ima
 </section>`;
 }
 
-export function asideCard({ related = [], label = 'Request a quote', oneOff = false } = {}) {
+export function asideCard({ related = [], label = 'Request a quote', oneOff = false, service = '' } = {}) {
   const rel = related.map((slug) => services.find((s) => s.slug === slug)).filter(Boolean);
   return `
 <aside class="aside-card">
   <h3>Get a free quote</h3>
   <p style="color:var(--muted);font-size:.95rem">${oneOff ? 'Tell us about the job and we\'ll confirm a price and a date.' : 'Tell us about the job and we\'ll confirm a price and your route day.'}</p>
-  <a class="btn" href="/contact/#quote" style="width:100%">${esc(label)} ${icons.arrow}</a>
+  <a class="btn" href="/contact/#quote" style="width:100%" data-quote-open${service ? ` data-service="${esc(service)}"` : ''}>${esc(label)} ${icons.arrow}</a>
   <ul class="nap">
     <li>${icons.phone}<a href="tel:${site.phoneRaw}">${site.phone}</a></li>
     <li>${icons.mail}<a href="mailto:${site.email}">${site.email}</a></li>

@@ -434,6 +434,31 @@ strong { font-weight: 600; }
 .photo-previews button { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: rgba(16, 21, 59, .8); color: #fff; font-size: 16px; line-height: 1; cursor: pointer; }
 .photo-previews figcaption { position: absolute; left: 0; right: 0; bottom: 0; font-size: .62rem; padding: 2px 4px; background: rgba(16, 21, 59, .7); color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .form__status.is-error { background: #FDECEC; color: #9B1C1C; }
+/* ---------- quote modal ---------- */
+.quote-modal { border: 0; padding: 0; background: transparent; max-width: none; max-height: none; width: 100%; height: 100%; inset: 0; margin: 0; display: none; align-items: center; justify-content: center; }
+.quote-modal[open] { display: flex; }
+.quote-modal::backdrop { background: rgba(16, 21, 59, .62); backdrop-filter: blur(3px); }
+.quote-modal__panel { position: relative; width: min(560px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow: auto; background: #fff; border-radius: var(--r-lg); padding: 26px 26px 22px; box-shadow: var(--shadow-lg); animation: modalIn .28s var(--ease-out) both; overscroll-behavior: contain; }
+@keyframes modalIn { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+.quote-modal__close { position: absolute; top: 12px; right: 12px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--navy-900); font-size: 24px; line-height: 1; cursor: pointer; z-index: 2; }
+.quote-modal__close:hover { background: var(--green-50); border-color: var(--green); }
+.quote-modal__head { margin-bottom: 16px; padding-right: 44px; }
+.quote-modal__head h2 { font-size: 1.5rem; margin: 6px 0 6px; }
+.quote-modal__head p { margin: 0; color: var(--muted); font-size: .93rem; }
+.quote-modal .form { gap: 10px; }
+.quote-modal .field input, .quote-modal .field select, .quote-modal .field textarea { padding: 10px 12px; font-size: .95rem; }
+.quote-modal .field textarea { min-height: 76px; }
+.quote-modal .dropzone { padding: 10px 12px; font-size: .84rem; }
+.quote-modal .dropzone svg { width: 22px; height: 22px; }
+.quote-modal .form__note { font-size: .76rem; }
+.quote-modal .btn--lg { padding: 13px 20px; font-size: 1rem; }
+@media (max-width: 640px) {
+  .quote-modal { align-items: flex-end; }
+  .quote-modal__panel { width: 100%; max-height: 94dvh; border-radius: 22px 22px 0 0; padding: 20px 18px calc(18px + env(safe-area-inset-bottom)); animation-name: sheetIn; }
+  @keyframes sheetIn { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .quote-modal .form__row { grid-template-columns: 1fr; }
+  .quote-modal__head h2 { font-size: 1.3rem; }
+}
 /* ---------- blog + suburb cards ---------- */
 .post-card, .suburb-card { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; color: var(--ink); text-decoration: none; transition: transform var(--t) var(--ease-out), box-shadow var(--t) var(--ease-out), border-color var(--t); }
 .post-card:hover, .suburb-card:hover { transform: translateY(-6px); box-shadow: var(--shadow); border-color: transparent; color: var(--ink); }

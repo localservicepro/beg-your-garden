@@ -72,7 +72,7 @@ ${pageHero({ h1: s.h1, lede: s.citable, crumbs, image: s.image, imageAlt: s.imag
       <h2>Related services in Ipswich</h2>
       <div class="grid grid-2">${related.map((r) => serviceCard(r)).join('')}</div>
     </article>
-    ${asideCard({ related: s.related, label: `Get ${/^[aeiou]/i.test(s.ctaName || s.name) ? 'an' : 'a'} ${s.ctaName || s.name.toLowerCase()} quote`, oneOff: !!s.oneOff })}
+    ${asideCard({ related: s.related, service: ({ 'lawn-mowing': 'Lawn Mowing', 'garden-maintenance': 'Gardening', 'weed-control-fertilising': 'Weed Control', 'pressure-cleaning': 'Pressure Cleaning', 'rubbish-removal': 'Rubbish Removal', 'irrigation': 'Irrigation' })[s.slug] || '', label: `Get ${/^[aeiou]/i.test(s.ctaName || s.name) ? 'an' : 'a'} ${s.ctaName || s.name.toLowerCase()} quote`, oneOff: !!s.oneOff })}
   </div>
 </section>
 ${ctaBand({ heading: `<em>Leaf it to us.</em> Book ${esc(s.name.toLowerCase())} in Ipswich.`, sub: s.oneOff ? `Send a few details and a photo and we'll quote ${s.name.toLowerCase()} for your property and confirm a date.` : `Send a few details and we'll quote ${s.name.toLowerCase()} for your property and let you know the route day for your suburb.` })}`;

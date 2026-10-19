@@ -315,6 +315,25 @@
     });
   });
 
+  /* ---------- quote modal ---------- */
+  const qm = d.getElementById('quote-modal');
+  if (qm && typeof qm.showModal === 'function') {
+    const openModal = (src) => {
+      if (mnav && mnav.classList.contains('open')) { mnav.classList.remove('open'); burger && burger.setAttribute('aria-expanded', 'false'); }
+      qm.showModal(); d.body.style.overflow = 'hidden';
+      const svc = src && src.dataset.service; const sel = qm.querySelector('select[name="service_needed"]');
+      if (svc && sel) sel.value = svc;
+      setTimeout(() => { const f = qm.querySelector('input[name="full_name"]'); f && f.focus({ preventScroll: true }); }, 60);
+      try { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'quote_modal_open', source: (src && src.textContent.trim()) || 'link' }); } catch (err) { /* ignore */ }
+    };
+    const closeModal = () => { qm.close(); d.body.style.overflow = ''; };
+    d.querySelectorAll('[data-quote-open]').forEach((el) => el.addEventListener('click', (e) => { e.preventDefault(); openModal(el); }));
+    qm.querySelectorAll('[data-quote-close]').forEach((el) => el.addEventListener('click', closeModal));
+    qm.addEventListener('click', (e) => { if (e.target === qm) closeModal(); }); // backdrop click
+    qm.addEventListener('close', () => { d.body.style.overflow = ''; });
+    if (location.hash === '#quote') openModal(null);
+  }
+
   /* ---------- thank-you personalisation ---------- */
   const ty = d.querySelector('[data-thank-you-name]');
   if (ty) {
