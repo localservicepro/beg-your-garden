@@ -216,7 +216,7 @@ export function footer() {
 export function quoteForm({ id = 'quote-form', compact = false, defaultService = '' } = {}) {
   const opts = serviceList.map((s) => `<option value="${esc(s.name)}"${s.name === defaultService ? ' selected' : ''}>${esc(s.name)}</option>`).join('') + '<option value="Other">Other</option>';
   return `
-<form class="form" id="${id}" data-quote-form data-redirect="/thank-you/" action="/thank-you/" method="get" novalidate>
+<form class="form" id="${id}" data-quote-form data-redirect="/thank-you/" action="/thank-you/" method="get">
   <div class="hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
   <div class="field"><label for="${id}-name">Name <span>*</span></label><input id="${id}-name" name="full_name" type="text" autocomplete="name" required placeholder="Your full name"></div>
   <div class="form__row">
