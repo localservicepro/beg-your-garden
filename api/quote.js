@@ -14,6 +14,16 @@
 //                      When omitted, custom fields are sent by key (property_size, service_needed, job_notes,
 //                      partner_sharing = Yes/No, submitted_at = Brisbane date/time of the submission).
 //   GHL_TAG            optional tag added to the contact (default: website-quote)
+//   GHL_OPPORTUNITY    optional: set to "off" to skip the opportunity step (default: on)
+//   GHL_PIPELINE_ID    optional: pipeline the opportunity is upserted into. When unset the function uses
+//                      GHL_PIPELINE_NAME (matched by name) or the location's first pipeline
+//                      (GET /opportunities/pipelines, scope opportunities.readonly) and caches it.
+//   GHL_PIPELINE_STAGE_ID  optional: stage for new opportunities (default: first stage of the pipeline)
+//   GHL_OPP_JOB_PHOTOS_FIELD_ID  optional: ID of the opportunity's file-upload custom field. When unset it is looked up
+//                      by key (GHL_OPP_JOB_PHOTOS_FIELD_KEY, default opportunity.job_photos) via
+//                      GET /locations/{id}/customFields?model=opportunity. Other opportunity fields whose keys match
+//                      property_size, service_needed, job_notes, partner_sharing, submitted_at are filled too.
+//   GHL_OPP_CUSTOM_FIELDS  optional JSON mapping form names to opportunity custom field IDs (same shape as GHL_CUSTOM_FIELDS)
 //   GHL_API_VERSION    optional, default 2021-07-28
 
 const API = 'https://services.leadconnectorhq.com';
@@ -126,6 +136,78 @@ async function attachToField(photos, contactId, locationId, fieldId) {
   }
 }
 
+// ---- Opportunity: upsert into the pipeline, fill matching opportunity custom fields, attach the photos ----
+const norm = (k) => String(k || '').toLowerCase().replace(/^\{\{|\}\}$/g, '');
+const keyMatches = (fieldKey, want) => { const k = norm(fieldKey), w = norm(want); return k === w || k === w.replace(/^opportunity\./, '') || k.replace(/^opportunity\./, '') === w.replace(/^opportunity\./, ''); };
+
+let cachedPipeline = null;
+async function resolvePipeline(locationId) {
+  if (process.env.GHL_PIPELINE_ID) return { pipelineId: process.env.GHL_PIPELINE_ID, stageId: process.env.GHL_PIPELINE_STAGE_ID || null };
+  if (cachedPipeline) return cachedPipeline;
+  const out = await ghl(`/opportunities/pipelines?locationId=${encodeURIComponent(locationId)}`, { method: 'GET' });
+  const list = (out && out.pipelines) || [];
+  const wantName = (process.env.GHL_PIPELINE_NAME || '').trim().toLowerCase();
+  const hit = (wantName && list.find((p) => (p.name || '').trim().toLowerCase() === wantName)) || list[0];
+  if (!hit) throw new Error('No opportunity pipeline found for this location');
+  const stages = (hit.stages || []).slice().sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+  cachedPipeline = { pipelineId: hit.id, stageId: process.env.GHL_PIPELINE_STAGE_ID || (stages[0] ? stages[0].id : null) };
+  return cachedPipeline;
+}
+
+let cachedOppFields = null;
+async function opportunityFields(locationId) {
+  if (cachedOppFields) return cachedOppFields;
+  const out = await ghl(`/locations/${encodeURIComponent(locationId)}/customFields?model=opportunity`, { method: 'GET' });
+  cachedOppFields = ((out && (out.customFields || out.fields)) || []).filter((x) => !x.model || x.model === 'opportunity');
+  return cachedOppFields;
+}
+
+async function upsertOpportunity(f, contactId, locationId, photos, tag) {
+  const { pipelineId, stageId } = await resolvePipeline(locationId);
+  const name = `${f.service_needed} - ${clean(f.full_name, 120)}`;
+  const body = { locationId, contactId, pipelineId, name, status: 'open', source: 'Website quote form' };
+  if (stageId) body.pipelineStageId = stageId;
+  const out = await ghl('/opportunities/upsert', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const opp = (out && out.opportunity) || out;
+  const oppId = opp && opp.id;
+  if (!oppId) throw new Error('Opportunity upsert returned no id');
+
+  // Which opportunity custom fields exist? Env ID map first, else match by key.
+  let map = null;
+  try { map = process.env.GHL_OPP_CUSTOM_FIELDS ? JSON.parse(process.env.GHL_OPP_CUSTOM_FIELDS) : null; } catch { map = null; }
+  let fields = [];
+  let photoFieldId = process.env.GHL_OPP_JOB_PHOTOS_FIELD_ID || null;
+  const wantPhotoKey = process.env.GHL_OPP_JOB_PHOTOS_FIELD_KEY || 'opportunity.job_photos';
+  if (!map || (!photoFieldId && photos.length)) {
+    try { fields = await opportunityFields(locationId); } catch (e) { console.error('opportunity field lookup failed', e.message); }
+  }
+  const idFor = (key) => (map && map[key]) || (fields.find((x) => keyMatches(x.fieldKey, `opportunity.${key}`)) || {}).id || null;
+  const customFields = [];
+  for (const [key, value] of [['property_size', f.property_size], ['service_needed', f.service_needed], ['job_notes', f.job_notes], ['partner_sharing', f.partner_sharing], ['submitted_at', f.submitted_local]]) {
+    const id = value ? idFor(key) : null;
+    if (id) customFields.push({ id, field_value: value });
+  }
+  if (!photoFieldId && photos.length) {
+    const hit = fields.find((x) => keyMatches(x.fieldKey, wantPhotoKey)) || fields.find((x) => /file/i.test(x.dataType || '') && /photo/i.test(x.name || ''));
+    photoFieldId = hit ? hit.id : null;
+  }
+
+  let uploaded = [];
+  if (photos.length && photoFieldId) {
+    const fd = new FormData();
+    fd.append('id', photoFieldId); fd.append('maxFiles', String(MAX_PHOTOS));
+    for (const p of photos) fd.append(p.name, new Blob([p.buf], { type: p.type }), p.name);
+    const up = await ghl(`/locations/${encodeURIComponent(locationId)}/customFields/upload`, { method: 'POST', body: fd });
+    const files = (up && up.uploadedFiles) || {};
+    uploaded = Object.entries(files).map(([n, url]) => ({ name: n, url }));
+    if (uploaded.length) customFields.push({ id: photoFieldId, field_value: files });
+  }
+  if (customFields.length) {
+    await ghl(`/opportunities/${encodeURIComponent(oppId)}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customFields }) });
+  }
+  return { id: oppId, isNew: !!(out && out.new), photos: uploaded.length, photoFieldId, fieldsSet: customFields.length };
+}
+
 async function addNote(contactId, text) {
   return ghl(`/contacts/${contactId}/notes`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ body: text }) });
 }
@@ -169,6 +251,11 @@ export default async function handler(req, res) {
         try { uploaded.push(await uploadPhoto(p, locationId, f.full_name)); } catch (e) { failed.push({ name: p.name, error: e.message }); }
       }
     }
+    let opportunity = null, opportunityError = null;
+    if (contactId && (process.env.GHL_OPPORTUNITY || 'on').toLowerCase() !== 'off') {
+      try { opportunity = await upsertOpportunity(f, contactId, locationId, photos, tag); }
+      catch (e) { opportunityError = e.message; console.error('opportunity step failed', e.message, e.body ? JSON.stringify(e.body).slice(0, 300) : ''); }
+    }
     const lines = [
       `Website quote request (${clean(data.page, 120) || 'site'})`,
       `Submitted: ${f.submitted_local}`,
@@ -178,11 +265,12 @@ export default async function handler(req, res) {
       uploaded.length ? (photoMethod === 'forms/upload-custom-files' ? `Photos (${uploaded.length}) attached to the Job Photos field: ${uploaded.map((u) => u.name).join(', ')}` : `Photos (${uploaded.length}):`) : null,
       ...(photoMethod === 'forms/upload-custom-files' ? [] : uploaded.map((u) => `- ${u.url || u.name}`)),
       failed.length ? `Photos that failed to upload: ${failed.map((x) => x.name).join(', ')}` : null,
+      opportunity ? `Opportunity ${opportunity.isNew ? 'created' : 'updated'}${opportunity.photos ? ` with ${opportunity.photos} photo${opportunity.photos === 1 ? '' : 's'} on the Job Photos field` : ''}` : null,
     ].filter(Boolean);
     if (contactId) { try { await addNote(contactId, lines.join('\n')); } catch (e) { console.error('note failed', e.message); } }
     if (failed.length) console.error('photo upload failures', JSON.stringify(failed));
     res.statusCode = 200;
-    return res.end(JSON.stringify({ ok: true, contactId: contactId || null, photos: uploaded.length, photosFailed: failed.length, photoMethod, photoFieldId: fieldId || null }));
+    return res.end(JSON.stringify({ ok: true, contactId: contactId || null, photos: uploaded.length, photosFailed: failed.length, photoMethod, photoFieldId: fieldId || null, opportunity, opportunityError }));
   } catch (e) {
     console.error('quote handler failed', e.message, e.body ? JSON.stringify(e.body).slice(0, 500) : '');
     res.statusCode = 502;
