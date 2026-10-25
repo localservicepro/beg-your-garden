@@ -259,6 +259,18 @@
     const previews = form.querySelector('.photo-previews');
     const zone = form.querySelector('.dropzone');
     let photos = []; // [{ file, dataUrl }]
+    // Hidden fields the CRM tracking script captures with the submit event: consent (Yes/No) and submission time.
+    // Kept current on every change so they are correct whichever phase the tracking script reads the form in.
+    const hidden = (name) => form.querySelector('input[type="hidden"][name="' + name + '"]');
+    const consentBox = form.querySelector('input[name="partner_sharing_tick"]');
+    const syncMeta = () => {
+      const now = new Date();
+      if (hidden('partner_sharing')) hidden('partner_sharing').value = consentBox && consentBox.checked ? 'Yes' : 'No';
+      if (hidden('submitted_at')) hidden('submitted_at').value = now.toISOString();
+      if (hidden('submitted_local')) hidden('submitted_local').value = now.toLocaleString('en-AU', { timeZone: 'Australia/Brisbane', dateStyle: 'medium', timeStyle: 'short' }) + ' AEST';
+    };
+    syncMeta();
+    form.addEventListener('input', syncMeta); form.addEventListener('change', syncMeta);
     const status = form.querySelector('.form__status');
     const say = (msg, isError) => { if (!status) return; status.textContent = msg; status.classList.add('show'); status.classList.toggle('is-error', !!isError); };
     const render = () => {
@@ -293,9 +305,12 @@
       if (btn) { btn.disabled = true; btn.textContent = photos.length ? 'Sending photos…' : 'Sending…'; }
       say('Thanks — sending your request…');
       const data = {};
+      syncMeta();
+      const partner = hidden('partner_sharing').value === 'Yes' ? 'Yes' : 'No';
       try {
         Object.assign(data, Object.fromEntries(new FormData(form).entries()));
-        delete data.photos; delete data.website;
+        delete data.photos; delete data.website; delete data.partner_sharing_tick;
+        data.partner_sharing = partner;
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({ event: 'quote_form_submit', form_id: form.id || 'quote', service_needed: data.service_needed || '', photos: photos.length });
       } catch (err) { /* non-fatal */ }
@@ -308,7 +323,7 @@
         result = await res.json().catch(() => ({ ok: res.ok, photos: 0 }));
       } catch (err) { result = { ok: false, photos: 0 }; }
       try {
-        sessionStorage.setItem('byg_last_quote', JSON.stringify({ name: data.full_name || '', service: data.service_needed || '', photosSent: result.ok ? (result.photos || 0) : 0, photosWanted: photos.length, apiOk: !!result.ok }));
+        sessionStorage.setItem('byg_last_quote', JSON.stringify({ name: data.full_name || '', service: data.service_needed || '', photosSent: result.ok ? (result.photos || 0) : 0, photosWanted: photos.length, apiOk: !!result.ok, partner: partner === 'Yes' }));
       } catch (err) { /* ignore */ }
       // Give the tracking script's own submit handler time to flush, then redirect.
       setTimeout(() => { window.location.assign(form.dataset.redirect || '/thank-you/'); }, 400);
@@ -340,6 +355,13 @@
     try {
       const last = JSON.parse(sessionStorage.getItem('byg_last_quote') || 'null');
       if (last && last.name) ty.textContent = 'Thanks, ' + last.name.split(' ')[0] + '!';
+      const lede = d.querySelector('[data-thank-you-lede]');
+      if (lede && last) {
+        const email = lede.dataset.email || '';
+        lede.innerHTML = last.partner
+          ? 'Thanks! We\'ll be in touch soon. If we can\'t help, we may pass your details to a trusted local business, as you agreed. Changed your mind? Email <a href="mailto:' + email + '">' + email + '</a>.'
+          : 'Thanks! We\'ll be in touch soon. Your details stay with us and won\'t be shared.';
+      }
       const tp = d.querySelector('[data-thank-you-photos]');
       if (tp && last && last.photosWanted) {
         if (last.photosSent) { tp.textContent = 'We received ' + last.photosSent + (last.photosSent === 1 ? ' photo' : ' photos') + ' with your request.'; tp.classList.add('show'); }

@@ -9,8 +9,10 @@
 //                      function looks the ID up by key (GHL_JOB_PHOTOS_FIELD_KEY, default contact.job_photos) via
 //                      GET /locations/{id}/customFields (scope locations/customFields.readonly) and caches it.
 //                      If no field is found (or the attach fails) photos go to the Media Library and a note links to them.
-//   GHL_CUSTOM_FIELDS  optional JSON: {"property_size":"<fieldId>","service_needed":"<fieldId>","job_notes":"<fieldId>"}
-//                      When omitted, custom fields are sent by key (property_size, service_needed, job_notes).
+//   GHL_CUSTOM_FIELDS  optional JSON mapping form names to custom field IDs, e.g.
+//                      {"property_size":"…","service_needed":"…","job_notes":"…","partner_sharing":"…","submitted_at":"…"}
+//                      When omitted, custom fields are sent by key (property_size, service_needed, job_notes,
+//                      partner_sharing = Yes/No, submitted_at = Brisbane date/time of the submission).
 //   GHL_TAG            optional tag added to the contact (default: website-quote)
 //   GHL_API_VERSION    optional, default 2021-07-28
 
@@ -68,11 +70,11 @@ async function upsertContact(f, locationId, tag) {
   let map = null;
   try { map = process.env.GHL_CUSTOM_FIELDS ? JSON.parse(process.env.GHL_CUSTOM_FIELDS) : null; } catch { map = null; }
   const cf = (key, value) => (value ? (map && map[key] ? { id: map[key], field_value: value } : { key, field_value: value }) : null);
-  const customFields = [cf('property_size', f.property_size), cf('service_needed', f.service_needed), cf('job_notes', f.job_notes)].filter(Boolean);
+  const customFields = [cf('property_size', f.property_size), cf('service_needed', f.service_needed), cf('job_notes', f.job_notes), cf('partner_sharing', f.partner_sharing), cf('submitted_at', f.submitted_local)].filter(Boolean);
   const body = {
     locationId, firstName, lastName, name: clean(f.full_name, 120),
     email: clean(f.email, 160), phone: clean(f.phone, 40), address1: clean(f.property_address, 200),
-    source: 'Website quote form', tags: [tag], customFields,
+    source: 'Website quote form', tags: [tag, f.partner_sharing === 'Yes' ? 'partner-sharing-yes' : 'partner-sharing-no'], customFields,
   };
   const out = await ghl('/contacts/upsert', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   return out && out.contact ? out.contact : out;
@@ -140,6 +142,9 @@ export default async function handler(req, res) {
     full_name: clean(data.full_name, 120), email: clean(data.email, 160), phone: clean(data.phone, 40),
     property_address: clean(data.property_address, 200), property_size: clean(data.property_size, 60),
     service_needed: clean(data.service_needed, 80), job_notes: clean(data.job_notes, 2000),
+    partner_sharing: clean(data.partner_sharing, 3) === 'Yes' ? 'Yes' : 'No',
+    submitted_at: new Date().toISOString(),
+    submitted_local: new Date().toLocaleString('en-AU', { timeZone: 'Australia/Brisbane', dateStyle: 'medium', timeStyle: 'short' }) + ' AEST',
   };
   if (!f.full_name || !f.email || !f.phone || !f.property_address || !f.service_needed) { res.statusCode = 422; return res.end(JSON.stringify({ ok: false, error: 'Missing required fields' })); }
 
@@ -166,6 +171,8 @@ export default async function handler(req, res) {
     }
     const lines = [
       `Website quote request (${clean(data.page, 120) || 'site'})`,
+      `Submitted: ${f.submitted_local}`,
+      `Partner sharing: ${f.partner_sharing}`,
       `Service: ${f.service_needed}`, f.property_size ? `Property size: ${f.property_size}` : null,
       `Address: ${f.property_address}`, f.job_notes ? `Notes: ${f.job_notes}` : null,
       uploaded.length ? (photoMethod === 'forms/upload-custom-files' ? `Photos (${uploaded.length}) attached to the Job Photos field: ${uploaded.map((u) => u.name).join(', ')}` : `Photos (${uploaded.length}):`) : null,

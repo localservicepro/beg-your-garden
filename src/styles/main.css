@@ -436,6 +436,11 @@ strong { font-weight: 600; }
 .photo-previews button { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: rgba(16, 21, 59, .8); color: #fff; font-size: 16px; line-height: 1; cursor: pointer; }
 .photo-previews figcaption { position: absolute; left: 0; right: 0; bottom: 0; font-size: .62rem; padding: 2px 4px; background: rgba(16, 21, 59, .7); color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .form__status.is-error { background: #FDECEC; color: #9B1C1C; }
+.consent { display: grid; grid-template-columns: 22px 1fr; gap: 12px; align-items: start; font-size: .84rem; line-height: 1.5; color: var(--ink-2); cursor: pointer; }
+.consent input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--green); cursor: pointer; }
+.consent a { color: var(--green-700); }
+.quote-modal .consent { grid-column: 1 / -1; font-size: .8rem; }
+.quote-modal .form .consent { margin-top: 2px; }
 /* ---------- quote modal ---------- */
 .quote-modal { border: 0; padding: 0; background: transparent; max-width: none; max-height: none; width: 100%; height: 100%; inset: 0; margin: 0; display: none; align-items: center; justify-content: center; }
 .quote-modal[open] { display: flex; }

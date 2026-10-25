@@ -75,6 +75,13 @@ Quote forms (`data-quote-form`) use these field names so the CRM mapping is dire
 | Property Size | `property_size` | `{{contact.property_size}}` |
 | Service Needed | `service_needed` (dropdown: nine services + Other) | `{{contact.service_needed}}` |
 | Job Notes | `job_notes` | `{{contact.job_notes}}` |
+| Referral tick box (optional) | `partner_sharing` = `Yes`/`No` | `{{contact.partner_sharing}}` |
+| Submission time (set by script) | `submitted_at` (ISO) and `submitted_local` (Brisbane) | `{{contact.submitted_at}}` |
+
+The referral tick box is unticked by default and optional. The thank-you page shows a different message depending on it,
+the contact is tagged `partner-sharing-yes` or `partner-sharing-no`, and the note on the contact starts with the
+submission time and "Partner sharing: Yes/No". To show it in the internal enquiry email, add `Partner sharing:
+{{contact.partner_sharing}}` to that email template in the CRM.
 
 On submit the page posts to `/api/quote` (see below), lets the tracking script capture the submission, then redirects to `/thank-you/`.
 

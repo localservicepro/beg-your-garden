@@ -205,7 +205,7 @@ export function footer() {
     </div>
     <div class="footer-suburbs"><strong>Ipswich &amp; Springfield service area:</strong> ${suburbs.map(esc).join(' · ')}</div>
     <div class="footer-bottom">
-      <span>© ${new Date().getFullYear()} ${esc(site.name)}. All rights reserved. ABN available on request.</span>
+      <span>© ${new Date().getFullYear()} ${esc(site.name)}. All rights reserved. ABN ${esc(site.abn)}.</span>
       <span><a href="/privacy-policy/">Privacy Policy</a> · <a href="/terms-and-conditions/">Terms &amp; Conditions</a> · <a href="/sitemap.xml">Sitemap</a></span>
     </div>
   </div>
@@ -246,9 +246,16 @@ export function quoteForm({ id = 'quote-form', compact = false, defaultService =
     <input id="${id}-photos" class="photos-input" name="photos" type="file" accept="image/*" multiple>
     <div class="photo-previews" aria-live="polite"></div>
   </div>
+  <label class="consent" for="${id}-partner">
+    <input id="${id}-partner" name="partner_sharing_tick" type="checkbox" value="Yes">
+    <span>If we can't help you (e.g. you're outside our area, we're fully booked, or you need a service we don't offer), are you happy for us to pass your name, phone, email and suburb to a trusted local business who can? We may receive a referral fee. You can opt out anytime by emailing <a href="mailto:${site.email}">${site.email}</a>.</span>
+  </label>
+  <input type="hidden" name="partner_sharing" value="No">
+  <input type="hidden" name="submitted_at" value="">
+  <input type="hidden" name="submitted_local" value="">
   <button class="btn btn--lg" type="submit">Request my free quote ${icons.arrow}</button>
   <p class="form__status" role="status" aria-live="polite"></p>
-  <p class="form__note">No obligation. We reply within one business day, usually sooner.</p>
+  <p class="form__note">By submitting, you agree to ${esc(site.name)} contacting you about your enquiry. We'll only share your details if you've ticked the box above. <a href="/privacy-policy/">Privacy policy</a></p>
 </form>`;
 }
 

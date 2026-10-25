@@ -9,7 +9,7 @@ export default ({ assetHash }) => {
     <div class="tick">${icons.check}</div>
     <h1 data-thank-you-name>Thanks, your request is in!</h1>
     <p class="form__status" data-thank-you-photos></p>
-    <p class="lede" style="margin-inline:auto">We've got your details and will come back within one business day with a price and the route day for your suburb. If it's urgent, call us on <a href="tel:${site.phoneRaw}">${site.phone}</a>.</p>
+    <p class="lede" style="margin-inline:auto" data-thank-you-lede data-email="${site.email}">Thanks! We'll be in touch soon. If it's urgent, call us on <a href="tel:${site.phoneRaw}">${site.phone}</a>.</p>
     <div class="btn-row" style="justify-content:center;margin-top:24px">
       <a class="btn" href="/">Back to home ${icons.arrow}</a>
       <a class="btn btn--ghost" href="/our-work/">See our work</a>
@@ -33,14 +33,16 @@ export default ({ assetHash }) => {
   const privacy = `
 ${pageHero({ h1: 'Privacy Policy', plain: true, crumbs: [{ name: 'Home', href: '/' }, { name: 'Privacy Policy', href: '/privacy-policy/' }] })}
 <section class="section"><div class="container legal">
-<p><em>Last updated: October 2026.</em></p>
-<p>${site.name} (“we”, “us”) respects your privacy and handles personal information in line with the Australian Privacy Principles under the Privacy Act 1988 (Cth). This policy explains what we collect through this website and how it is used.</p>
+<p><em>Last updated: 25 October 2026.</em></p>
+<p>${site.name} (ABN ${site.abn}) (“we”, “us”) respects your privacy and handles personal information in line with the Australian Privacy Principles under the Privacy Act 1988 (Cth). This policy explains what we collect through this website and how it is used.</p>
 <h2>What we collect</h2>
-<p>When you request a quote we collect the details you enter in the form: your name, email address, phone number, property address, property size, the service you need and any job notes. If you call or email us we keep the contact details and notes needed to quote and deliver the service.</p>
+<p>When you request a quote we collect the details you enter in the form: your name, email address, phone number, property address, property size, the service you need, any job notes, any photos you attach, and whether you ticked the referral tick box. If you call or email us we keep the contact details and notes needed to quote and deliver the service.</p>
 <h2>How we use it</h2>
 <p>We use your information to prepare quotes, schedule and deliver services, send reminders and service updates, and respond to your enquiries. We may also send occasional service-related messages (for example seasonal lawn care reminders); you can opt out at any time by replying or contacting us.</p>
 <h2>How it is stored and shared</h2>
 <p>Form submissions are captured by our customer relationship management system (LeadConnector / GoHighLevel) and stored securely. We do not sell your information. We share it only with service providers who help us run the business (such as our CRM and messaging platforms) and only for the purposes above, or where required by law.</p>
+<h2>Referral partners (only if you tick the box)</h2>
+<p>Our quote form has an optional tick box. If you tick it and we cannot help you (for example you are outside our service area, we are fully booked, or you need a service we do not offer), you agree that we may pass your name, phone number, email address and suburb to a trusted local business that can help. We may receive a referral fee from that business. We do not pass on your job notes or photos. If you leave the box unticked, your details stay with us and are not shared with any referral partner. We record whether the box was ticked and the date and time you submitted the form. You can withdraw this consent at any time by emailing <a href="mailto:${site.email}">${site.email}</a>, and we will not refer your details after that.</p>
 <h2>Cookies and analytics</h2>
 <p>This site may use cookies and tracking scripts to understand how visitors use it and to attribute enquiries. You can disable cookies in your browser settings; the site will still work.</p>
 <h2>Access and corrections</h2>
