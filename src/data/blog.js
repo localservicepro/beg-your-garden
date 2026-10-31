@@ -404,4 +404,56 @@ export const posts = [
       { q: 'How hard can I cut back an overgrown hedge?', a: 'It depends on the species. Many broadleaf hedges reshoot from old wood, but conifers and some natives do not. Reduce in stages across two seasons if you are unsure.' },
     ],
   },
+  {
+    slug: 'army-worm-in-lawn-ipswich',
+    title: 'Army Worm in Your Lawn: How to Spot Them and Save the Grass',
+    metaTitle: 'Army Worm in Lawn: Signs & What to Do | Beg Your Garden',
+    description: 'Lawn chewed down overnight? Army worm caterpillars hit Ipswich lawns in warm, humid weather. How to confirm them, what to do and how the lawn recovers.',
+    keyword: 'army worm lawn', volume: '"army worm lawn" 390/mo, peaking 880/mo in January. KD 0.',
+    date: '2026-10-31', readTime: 5, image: 'after-backyard-2-ipswich', imageAlt: 'Thick green back lawn in Ipswich recovering after army worm damage',
+    excerpt: 'Army worm can strip a lawn in days. Here is how to confirm them in five minutes, what to do next, and how to bring the lawn back.',
+    related: 'weed-control-fertilising',
+    body: `
+<p>If a lawn that looked fine on the weekend is chewed down to stalks by midweek, army worm is a prime suspect. These caterpillars feed at night, hide in the thatch by day, and in a bad year they move across a lawn in a wave. Ipswich sees them most often from late spring through to autumn, especially after warm, humid weather and rain, and searches for them climb through summer and peak in January.</p>
+<h2>What army worm damage looks like</h2>
+<ul>
+<li>Leaf blades chewed ragged or cut off, leaving short brown stubble rather than a neat mow line.</li>
+<li>Patches that spread over a few days, often starting at the edge nearest a garden bed, fence or driveway.</li>
+<li>Birds such as ibis, magpies and crows working over the lawn in numbers, especially in the morning.</li>
+<li>Small dark green droppings in the thatch, and caterpillars curling up when you disturb them.</li>
+</ul>
+<p>The key difference from drought or fungus is the chewed leaf and the speed. Dry stress browns whole areas evenly, and disease tends to leave circular patches without chewed blades.</p>
+<h2>Confirm it in five minutes</h2>
+<p>Do this in the evening or early morning on the edge of a damaged patch.</p>
+<ol>
+<li>Mix a squirt of dishwashing liquid into a watering can of water.</li>
+<li>Pour it over about one square metre of lawn at the edge of the damage.</li>
+<li>Wait a few minutes. Army worm caterpillars come up to the surface to escape the soapy water.</li>
+</ol>
+<p>If you count a handful per square metre, you have a problem worth acting on. A couple of caterpillars is normal and the lawn will outgrow it. Our <a href="/blog/lawn-grubs-ipswich-signs-and-treatment/">lawn grub guide</a> shows how to tell them apart from underground grubs.</p>
+<h2>What to do</h2>
+<p><strong>Treat early.</strong> Young caterpillars are far easier to control than large ones, and large ones eat the most. A registered lawn insecticide, applied to the label and watered in as directed, is the usual treatment. Read the label for re-entry times and keep children and pets off the lawn until it says it is safe.</p>
+<p><strong>Mow, but do not scalp.</strong> Keep mowing at your normal height so the lawn can keep growing. Bag or remove clippings if the infestation is heavy, so you are not spreading caterpillars around.</p>
+<p><strong>Keep the lawn watered.</strong> A stressed lawn recovers slowly. Water deeply in the morning, not a little every day.</p>
+<h2>How the lawn recovers</h2>
+<p>Warm-season grasses such as buffalo, couch and kikuyu usually come back, because army worm eats the leaf rather than killing the crown and roots. Give it a few weeks of regular watering and a light feed once new growth shows. Where the stolons are chewed right back to bare soil, patches can take longer, and our <a href="/blog/how-to-fix-a-patchy-lawn/">patchy lawn guide</a> covers repairing them.</p>
+<h2>Army worm, lawn grubs or something else?</h2>
+<p>Three problems get mixed up in Ipswich lawns. Army worm chews the leaf above ground and moves quickly. Lawn grubs, such as curl grubs and black beetle larvae, feed on roots below ground, and the turf lifts like a loose carpet when you tug it. Heat and drought stress browns the lawn evenly, with no chewing at all. Working out which one you have matters, because the wrong treatment wastes money and time. If the leaf is chewed and the soapy water test brings caterpillars up, it is army worm.</p>
+<h2>Why they appear so suddenly</h2>
+<p>Army worm moths fly in and lay eggs in bulk, and the caterpillars hatch together. That is why a lawn can look fine one weekend and be stripped by the next. Neighbouring lawns, school ovals and nature strips are often hit at the same time, so it is worth a quick look over the fence if yours is damaged.</p>
+<h2>Cutting the risk next season</h2>
+<ul>
+<li>Check the lawn after the first warm, humid spell of the season, not after the damage appears.</li>
+<li>Walk the lawn at dusk in summer and look for moths and caterpillars at the edges.</li>
+<li>Avoid over-fertilising with nitrogen in peak summer, which produces the soft, lush growth they prefer.</li>
+<li>Keep thatch under control so there is less cover to hide in.</li>
+</ul>
+<div class="callout"><strong>Not sure what is eating your lawn?</strong> We check lawns for pests as part of regular visits and can arrange treatment through our <a href="/services/weed-control-fertilising/">weed control and fertilising</a> service, applied by an accredited operator.</div>`,
+    faqs: [
+      { q: 'What does army worm damage look like on a lawn?', a: 'Chewed or cut-off leaf blades, brown stubble and patches that spread over a few days. Birds feeding on the lawn in numbers is another sign.' },
+      { q: 'How do I check for army worm?', a: 'Pour a mix of dishwashing liquid and water over a square metre at the edge of the damage in the evening or early morning. Caterpillars rise to the surface within a few minutes.' },
+      { q: 'Will my lawn recover from army worm?', a: 'Usually yes. Army worm eats the leaf, not the crown, so buffalo, couch and kikuyu typically regrow in a few weeks with regular watering and a light feed.' },
+      { q: 'When is army worm a problem in Ipswich?', a: 'Mostly from late spring through autumn, particularly after warm, humid weather and rain. Search interest peaks in January.' },
+    ],
+  },
 ];

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-14",
+  "updated": "2026-10-31",
   "source": "DataForSEO Google Ads search volume (Australia, en) + DataForSEO Labs keyword difficulty; cross-checked with Ubersuggest",
   "thresholds": {
     "new_suburb_page_min_volume": 10,
@@ -15,7 +15,7 @@
       "keyword": "lawn mowing ipswich",
       "page": "/",
       "volume": 260,
-      "difficulty": 0,
+      "difficulty": 12,
       "history": {
         "2026-10": 260
       }
@@ -363,8 +363,287 @@
       "volume": 10,
       "history": {
         "2026-10": 10
-      },
-      "note": "Google Ads monthly series: 10 in only 2 of 12 months"
+      }
+    },
+    {
+      "suburb": "Ashwell",
+      "keyword": "lawn mowing ashwell",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Barellan Point",
+      "keyword": "lawn mowing barellan point",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Basin Pocket",
+      "keyword": "lawn mowing basin pocket",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Blacksoil",
+      "keyword": "lawn mowing blacksoil",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Blackstone",
+      "keyword": "lawn mowing blackstone",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Calvert",
+      "keyword": "lawn mowing calvert",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Carole Park",
+      "keyword": "lawn mowing carole park",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Chuwar",
+      "keyword": "lawn mowing chuwar",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Coalfalls",
+      "keyword": "lawn mowing coalfalls",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Dinmore",
+      "keyword": "lawn mowing dinmore",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Ebbw Vale",
+      "keyword": "lawn mowing ebbw vale",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Ebenezer",
+      "keyword": "lawn mowing ebenezer",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Gailes",
+      "keyword": "lawn mowing gailes",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Goolman",
+      "keyword": "lawn mowing goolman",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Grandchester",
+      "keyword": "lawn mowing grandchester",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Haigslea",
+      "keyword": "lawn mowing haigslea",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Ipswich",
+      "keyword": "lawn mowing ipswich",
+      "page": null,
+      "volume": 260,
+      "difficulty": 12,
+      "history": {
+        "2026-10": 260
+      }
+    },
+    {
+      "suburb": "Ironbark",
+      "keyword": "lawn mowing ironbark",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Jeebropilly",
+      "keyword": "lawn mowing jeebropilly",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Karrabin",
+      "keyword": "lawn mowing karrabin",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Lanefield",
+      "keyword": "lawn mowing lanefield",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Lower Mount Walker",
+      "keyword": "lawn mowing lower mount walker",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Marburg",
+      "keyword": "lawn mowing marburg",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Moores Pocket",
+      "keyword": "lawn mowing moores pocket",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Mount Forbes",
+      "keyword": "lawn mowing mount forbes",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Mount Marrow",
+      "keyword": "lawn mowing mount marrow",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Mount Mort",
+      "keyword": "lawn mowing mount mort",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Mount Walker West",
+      "keyword": "lawn mowing mount walker west",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Muirlea",
+      "keyword": "lawn mowing muirlea",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Mutdapilly",
+      "keyword": "lawn mowing mutdapilly",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "New Chum",
+      "keyword": "lawn mowing new chum",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
     },
     {
       "suburb": "Newtown",
@@ -373,18 +652,133 @@
       "volume": 10,
       "history": {
         "2026-10": 10
-      },
-      "note": "Google Ads monthly series: 10 in 9 of last 12 months"
+      }
     },
     {
-      "suburb": "Woodend",
-      "keyword": "lawn mowing woodend",
+      "suburb": "North Booval",
+      "keyword": "lawn mowing north booval",
       "page": null,
-      "volume": 10,
+      "volume": 0,
       "history": {
-        "2026-10": 10
-      },
-      "note": "Google Ads monthly series: 10 in each of last 12 months"
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "North Tivoli",
+      "keyword": "lawn mowing north tivoli",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "One Mile",
+      "keyword": "lawn mowing one mile",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Peak Crossing",
+      "keyword": "lawn mowing peak crossing",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Pine Mountain",
+      "keyword": "lawn mowing pine mountain",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Purga",
+      "keyword": "lawn mowing purga",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Raceview",
+      "keyword": "lawn mowing raceview",
+      "page": "/lawn-mowing-raceview/",
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Sadliers Crossing",
+      "keyword": "lawn mowing sadliers crossing",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Swanbank",
+      "keyword": "lawn mowing swanbank",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Tallegalla",
+      "keyword": "lawn mowing tallegalla",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Thagoona",
+      "keyword": "lawn mowing thagoona",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "The Bluff",
+      "keyword": "lawn mowing the bluff",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Tivoli",
+      "keyword": "lawn mowing tivoli",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "West Ipswich",
+      "keyword": "lawn mowing west ipswich",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
     },
     {
       "suburb": "White Rock",
@@ -393,8 +787,43 @@
       "volume": 10,
       "history": {
         "2026-10": 10
-      },
-      "note": "Google Ads monthly series: 10 in 4 of last 12 months"
+      }
+    },
+    {
+      "suburb": "Willowbank",
+      "keyword": "lawn mowing willowbank",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Woodend",
+      "keyword": "lawn mowing woodend",
+      "page": null,
+      "volume": 10,
+      "history": {
+        "2026-10": 10
+      }
+    },
+    {
+      "suburb": "Woolshed",
+      "keyword": "lawn mowing woolshed",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
+    },
+    {
+      "suburb": "Wulkuraka",
+      "keyword": "lawn mowing wulkuraka",
+      "page": null,
+      "volume": 0,
+      "history": {
+        "2026-10": 0
+      }
     }
   ],
   "blog_topics": [
@@ -419,10 +848,10 @@
     {
       "keyword": "how much does lawn mowing cost",
       "post": "/blog/how-much-does-lawn-mowing-cost-ipswich/",
-      "volume": 260,
+      "volume": 210,
       "difficulty": 0,
       "history": {
-        "2026-10": 260
+        "2026-10": 210
       }
     },
     {
@@ -456,48 +885,49 @@
       "keyword": "lawn care in winter",
       "post": "/blog/winter-lawn-care-south-east-queensland/",
       "volume": 140,
+      "difficulty": 0,
       "history": {
         "2026-10": 140
-      },
-      "difficulty": 0
+      }
     },
     {
       "keyword": "how much mulch do i need",
       "post": "/blog/how-much-mulch-do-i-need/",
       "volume": 210,
+      "difficulty": 0,
       "history": {
         "2026-10": 210
-      },
-      "difficulty": 0
+      }
     },
     {
       "keyword": "when to prune hedges",
       "post": "/blog/when-to-prune-hedges-in-queensland/",
       "volume": 110,
       "difficulty": 5,
+      "note": "backlog: ties to garden maintenance service",
       "history": {
         "2026-10": 110
       }
     },
     {
       "keyword": "army worm lawn",
-      "post": null,
+      "post": "/blog/army-worm-in-lawn-ipswich/",
       "volume": 390,
-      "note": "covered inside the lawn grubs post; standalone only if it keeps growing. Oct 2026: 90/mo in Aug, seasonal (peak 880 in Jan).",
+      "note": "covered inside the lawn grubs post; standalone only if it keeps growing",
+      "difficulty": 0,
       "history": {
         "2026-10": 390
-      },
-      "difficulty": 0
+      }
     },
     {
       "keyword": "buffalo grass care",
       "post": null,
-      "volume": 50,
+      "volume": 40,
       "note": "backlog",
+      "difficulty": 0,
       "history": {
-        "2026-10": 50
-      },
-      "difficulty": 0
+        "2026-10": 40
+      }
     }
   ],
   "rankings": [
@@ -523,6 +953,62 @@
         }
       },
       "note": "Map pack position 3 on all four (behind Ipswich Lawns and Gardens and James Home Services). Site URL not in the organic top 30 for any. Remaining money keywords not checked this run. RankTitan has 9 profiles but none active, so no tracked map data."
+    },
+    {
+      "date": "2026-10-31",
+      "keyword": "lawn mowing ipswich",
+      "organic_position": null,
+      "map_pack_position": 2,
+      "note": "Google Business Profile 2nd in local pack; begyourgarden.com not seen in top ~12 organic results (Facebook page appears at #7 in one results set)"
+    },
+    {
+      "date": "2026-10-31",
+      "keyword": "lawn mowing services ipswich",
+      "organic_position": null,
+      "map_pack_position": 2,
+      "note": "Local pack #2; not in organic top ~12"
+    },
+    {
+      "date": "2026-10-31",
+      "keyword": "mowing ipswich",
+      "organic_position": null,
+      "map_pack_position": 2,
+      "note": "Local pack #2; not in organic top ~12"
+    },
+    {
+      "date": "2026-10-31",
+      "keyword": "gardener ipswich",
+      "organic_position": null,
+      "map_pack_position": null,
+      "note": "Not in local pack; a Calso listing for the business is organic #11; own site not in top ~12"
+    },
+    {
+      "date": "2026-10-31",
+      "keyword": "lawn care ipswich",
+      "organic_position": null,
+      "map_pack_position": null,
+      "note": "Not in local pack; business Facebook page organic #7; own site not in top ~12"
+    },
+    {
+      "date": "2026-10-31",
+      "keyword": "gardening services ipswich",
+      "organic_position": null,
+      "map_pack_position": 1,
+      "note": "Local pack #1; not in organic top ~12"
+    },
+    {
+      "date": "2026-10-31",
+      "keyword": "hedge trimming ipswich",
+      "organic_position": null,
+      "map_pack_position": null,
+      "note": "Not in local pack or organic top ~13"
+    },
+    {
+      "date": "2026-10-31",
+      "keyword": "pressure cleaning ipswich",
+      "organic_position": null,
+      "map_pack_position": null,
+      "note": "Not in local pack or organic top ~12"
     }
   ],
   "log": [
@@ -533,6 +1019,10 @@
     {
       "date": "2026-10-14",
       "note": "Monthly run. Volumes unchanged from baseline at the headline level (lawn mowing ipswich 260, services 90, mowing ipswich 90, gardener 40); difficulty filled in (hedge trimming 39, pressure cleaning 40, springfield lakes 41, rest 0). Added blog \"when to prune hedges\" (110/mo, KD 5, qualified under thresholds). No suburb page added: history holds only one month so the 3-month rule is not met, and none of the 84 suburb phrases rose above 10/mo. Redbank Plains 40 (peak 90 Mar). Newtown, Woodend, White Rock, Amberley show 10 with no page; flagged for a human decision. Site suburb list has 82 entries, not 84. Local Falcon not connected; RankTitan has no active profile."
+    },
+    {
+      "date": "2026-10-31",
+      "note": "Monthly refresh. Money, suburb (all 82 in site.js) and blog keywords re-pulled from DataForSEO (AU, en) with Ubersuggest cross-check on two keywords (lawn mowing ipswich 260 KD12 matches; redbank plains 50 vs 40). Volumes unchanged from baseline except 'how much does lawn mowing cost' 260 to 210 and 'buffalo grass care' 50 to 40; biggest seasonal swings in 12-month data: army worm lawn (880 Jan), lawn grubs (9,900 Jan), lawn care in winter (390 Jul). Second pass on the month: added blog post for army worm lawn (390/mo, KD 0), which met the thresholds with no existing post (hedge pruning post already added 2026-10-14). Map-pack ranks re-checked 2026-10-31 (2nd for the three mowing phrases, 1st for gardening services ipswich). No new suburb page: only one history month exists, so min-months rule not met. No meta rewrites. RankTitan: 9 profiles but none active, so no map-pack tracking; map-pack positions taken from SERP data. Local Falcon not connected."
     }
   ]
 }
