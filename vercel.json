@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run build && node .salesbrain/tag-analytics.mjs",
   "outputDirectory": "dist",
   "cleanUrls": true,
   "trailingSlash": true,
