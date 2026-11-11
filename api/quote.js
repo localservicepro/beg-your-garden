@@ -17,7 +17,8 @@
 //                      service_frequency = Weekly / Fortnightly / Monthly / Every few weeks / Flexible / Not sure).
 //                      The suburb goes to the contact's standard City field ({{contact.city}}).
 //   GHL_TAG            optional tag added to the contact (default: website-quote)
-//   GHL_OPPORTUNITY    optional: set to "off" to skip the opportunity step (default: on)
+//   GHL_OPPORTUNITY    optional: "on" makes the API create/update the opportunity too. Default off: the GHL workflow
+//                      triggered by the website-quote tag creates it.
 //   GHL_PIPELINE_ID    optional: pipeline the opportunity is upserted into. When unset the function uses
 //                      GHL_PIPELINE_NAME (matched by name) or the location's first pipeline
 //                      (GET /opportunities/pipelines, scope opportunities.readonly) and caches it.
@@ -152,7 +153,7 @@ async function upsertContact(f, locationId, tag) {
     locationId, firstName, lastName, name: clean(f.full_name, 120),
     email: clean(f.email, 160), phone: clean(f.phone, 40), address1: clean(f.property_address, 200),
     ...(f.suburb ? { city: f.suburb } : {}),
-    source: 'Website quote form', tags: [tag, f.partner_sharing === 'Yes' ? 'partner-sharing-yes' : 'partner-sharing-no', jobTag(f.job_type)].filter(Boolean), customFields,
+    source: 'Website quote form', customFields, // tags are added separately (additive), see setTags()
   };
   const send = (b) => ghl('/contacts/upsert', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
   let out;
@@ -239,7 +240,12 @@ async function opportunityFields(locationId) {
   return cachedOppFields;
 }
 
-async function upsertOpportunity(f, contactId, locationId, photos, tag) {
+// Shape of a custom field value, for logs: structure only, never the photo URLs.
+const shapeOf = (v) => Array.isArray(v) ? `array(${v.length})${v[0] && typeof v[0] === 'object' ? ' of {' + Object.keys(v[0]).join(',') + '}' : ''}`
+  : v && typeof v === 'object' ? `object(${Object.keys(v).length})${Object.values(v)[0] && typeof Object.values(v)[0] === 'object' ? ' of {' + Object.keys(Object.values(v)[0]).join(',') + '}' : ''}` : typeof v;
+const countFiles = (v) => Array.isArray(v) ? v.length : v && typeof v === 'object' ? Object.keys(v).length : v ? 1 : 0;
+
+async function upsertOpportunity(f, contactId, locationId, photos, tag, contactPhotoFieldId) {
   const { pipelineId, stageId } = await resolvePipeline(locationId);
   const name = [f.service_needed, clean(f.full_name, 120), f.suburb].filter(Boolean).join(' - ');
   const body = { locationId, contactId, pipelineId, name, status: 'open', source: 'Website quote form' };
@@ -269,20 +275,47 @@ async function upsertOpportunity(f, contactId, locationId, photos, tag) {
     photoFieldId = hit ? hit.id : null;
   }
 
-  let uploaded = [];
-  if (photos.length && photoFieldId) {
-    const fd = new FormData();
-    fd.append('id', photoFieldId); fd.append('maxFiles', String(MAX_PHOTOS));
-    for (const p of photos) fd.append(p.name, new Blob([p.buf], { type: p.type }), p.name);
-    const up = await ghl(`/locations/${encodeURIComponent(locationId)}/customFields/upload`, { method: 'POST', body: fd });
-    const files = (up && up.uploadedFiles) || {};
-    uploaded = Object.entries(files).map(([n, url]) => ({ name: n, url }));
-    if (uploaded.length) customFields.push({ id: photoFieldId, field_value: files });
-  }
+  const putFields = (cfs) => ghl(`/opportunities/${encodeURIComponent(oppId)}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customFields: cfs }) });
+  let fieldsSet = 0, fieldsError = null;
   if (customFields.length) {
-    await ghl(`/opportunities/${encodeURIComponent(oppId)}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customFields }) });
+    try { await putFields(customFields); fieldsSet = customFields.length; }
+    catch (e) { fieldsError = e.message; console.error('opportunity text fields failed', e.message); }
   }
-  return { id: oppId, isNew: !!(out && out.new), photos: uploaded.length, photoFieldId, fieldsSet: customFields.length };
+
+  // Photos: reuse exactly what GHL stored on the contact's Job Photos field (its own file format), no second upload.
+  let photoCount = 0, photoError = null;
+  if (photos.length && photoFieldId && contactPhotoFieldId) {
+    let value = null;
+    try {
+      const c = await ghl(`/contacts/${encodeURIComponent(contactId)}`, { method: 'GET' });
+      const list = (c && c.contact && c.contact.customFields) || (c && c.customFields) || [];
+      const hit = list.find((x) => x.id === contactPhotoFieldId);
+      value = hit ? (hit.value !== undefined ? hit.value : hit.field_value) : null;
+    } catch (e) { photoError = 'contact read failed: ' + e.message; }
+    if (value && countFiles(value)) {
+      try { await putFields([{ id: photoFieldId, field_value: value }]); photoCount = countFiles(value); }
+      catch (e) { photoError = e.message.slice(0, 160); console.error('opportunity photos failed', JSON.stringify({ shape: shapeOf(value), status: e.status })); }
+    } else if (!photoError) photoError = 'no photos stored on the contact field';
+  }
+  return { id: oppId, isNew: !!(out && out.new), photos: photoCount, photoFieldId, fieldsSet, fieldsError, photoError };
+}
+
+// Tags go through the add/remove tag endpoints, which never touch the contact's other tags.
+const tagCall = (contactId, method, tags) => ghl(`/contacts/${encodeURIComponent(contactId)}/tags`, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tags }) });
+const ALL_JOB_TAGS = ['job-type-one-off', 'job-type-regular', 'job-type-not-sure'];
+async function setTags(contactId, f) {
+  const partner = f.partner_sharing === 'Yes' ? 'partner-sharing-yes' : 'partner-sharing-no';
+  const job = jobTag(f.job_type);
+  // a returning customer may have answered differently last time: drop the answers that no longer apply
+  const stale = ['partner-sharing-yes', 'partner-sharing-no', ...ALL_JOB_TAGS].filter((t) => t !== partner && t !== job);
+  try { await tagCall(contactId, 'DELETE', stale); } catch (e) { /* none of them present */ }
+  await tagCall(contactId, 'POST', [partner, job].filter(Boolean));
+}
+// The workflow trigger. Added last, once the fields, photos, opportunity and note are all saved, and removed first so
+// GHL sees it as newly added every time: "Tag Added" fires for repeat enquiries from the same contact too.
+async function signalNewQuote(contactId, tag) {
+  try { await tagCall(contactId, 'DELETE', [tag]); } catch (e) { /* not present yet */ }
+  await tagCall(contactId, 'POST', [tag]);
 }
 
 async function addNote(contactId, text) {
@@ -330,6 +363,7 @@ export default async function handler(req, res) {
   try {
     const contact = await upsertContact(f, locationId, tag);
     const contactId = contact && contact.id;
+    if (contactId) { try { await setTags(contactId, f); } catch (e) { console.error('tags failed', e.message); } }
     let uploaded = []; const failed = []; let photoMethod = null;
     let fieldId = null;
     if (photos.length && contactId) { try { fieldId = await resolvePhotoFieldId(locationId); } catch (e) { console.error('photo field lookup failed', e.message); } }
@@ -344,8 +378,9 @@ export default async function handler(req, res) {
       }
     }
     let opportunity = null, opportunityError = null;
-    if (contactId && (process.env.GHL_OPPORTUNITY || 'on').toLowerCase() !== 'off') {
-      try { opportunity = await upsertOpportunity(f, contactId, locationId, photos, tag); }
+    // Opportunities are created by the GHL workflow (trigger: website-quote tag). Opt in with GHL_OPPORTUNITY=on.
+    if (contactId && (process.env.GHL_OPPORTUNITY || 'off').toLowerCase() === 'on') {
+      try { opportunity = await upsertOpportunity(f, contactId, locationId, photos, tag, photoMethod && photoMethod !== 'medias/upload-file' ? fieldId : null); }
       catch (e) { opportunityError = e.message; console.error('opportunity step failed', e.message, e.body ? JSON.stringify(e.body).slice(0, 300) : ''); }
     }
     const lines = [
@@ -365,8 +400,11 @@ export default async function handler(req, res) {
     ].filter(Boolean);
     if (contactId) { try { await addNote(contactId, lines.join('\n')); } catch (e) { console.error('note failed', e.message); } }
     if (failed.length) console.error('photo upload failures', JSON.stringify(failed));
+    let signalled = false;
+    if (contactId) { try { await signalNewQuote(contactId, tag); signalled = true; } catch (e) { console.error('workflow tag failed', e.message); } }
+    console.log('quote saved', JSON.stringify({ contactId, photos: uploaded.length, photoMethod, opportunity: opportunity && { id: opportunity.id, photos: opportunity.photos, fieldsSet: opportunity.fieldsSet, fieldsError: opportunity.fieldsError, photoError: opportunity.photoError }, opportunityError, signalled }));
     res.statusCode = 200;
-    return res.end(JSON.stringify({ ok: true, contactId: contactId || null, photos: uploaded.length, photosFailed: failed.length, photoMethod, photoFieldId: fieldId || null, opportunity, opportunityError }));
+    return res.end(JSON.stringify({ ok: true, contactId: contactId || null, photos: uploaded.length, photosFailed: failed.length, photoMethod, photoFieldId: fieldId || null, opportunity, opportunityError, signalled }));
   } catch (e) {
     console.error('quote handler failed', e.message, e.body ? JSON.stringify(e.body).slice(0, 500) : '');
     res.statusCode = 502;

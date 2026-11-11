@@ -104,13 +104,14 @@ whole form as JSON to `/api/quote` (`api/quote.js`, a Vercel serverless function
 2. attaches each photo to the contact's "Job Photos" file-upload custom field (`GHL_JOB_PHOTOS_FIELD_ID`), via
    `/forms/upload-custom-files` (the field ID is taken from `GHL_JOB_PHOTOS_FIELD_ID` or looked up by key), falling back to `/locations/{id}/customFields/upload` + contact update, and as a last
    resort to the Media Library (`/medias/upload-file`) with links in the note;
-3. upserts an opportunity for the contact in the pipeline (`/opportunities/upsert`, named "Service - Name"), fills
-   any opportunity custom fields whose keys match the form (`opportunity.property_size`, `service_needed`,
-   `job_notes`, `partner_sharing`, `submitted_at`) and attaches the same photos to the opportunity's "Job Photos"
-   file-upload field (`/locations/{id}/customFields/upload` + `PUT /opportunities/{id}`), so the photos show in the
-   opportunity details as well as on the contact. A failure here is logged and never blocks the contact/photos;
-4. adds a note on the contact listing the service, size, address, notes, the photos and the opportunity result;
-5. tags the contact (default `website-quote`).
+3. (only with `GHL_OPPORTUNITY=on`) upserts an opportunity and copies the contact's Job Photos onto it. Off by default:
+   the GHL workflow creates the opportunity;
+4. adds a note on the contact listing the service, size, address, notes and the photos;
+5. tags the contact: `partner-sharing-yes/-no` and `job-type-*` straight away, and **`website-quote` last**, once
+   everything above is saved. The API removes and re-adds `website-quote` on every enquiry, so a GHL workflow with the
+   trigger "Contact Tag: Tag Added = website-quote" fires for repeat enquiries from the same contact too, and never
+   before the fields and photos are in place. Tags are added with the add/remove tag endpoints, so a returning
+   customer's other tags are never overwritten.
 
 Environment variables to set in the Vercel project (Settings → Environment Variables):
 
@@ -125,7 +126,7 @@ Environment variables to set in the Vercel project (Settings → Environment Var
 | `TURNSTILE_SITE_KEY` | no | Cloudflare Turnstile site key (public), read at **build** time to add the invisible bot check to the quote forms. |
 | `TURNSTILE_SECRET_KEY` | no | Turnstile secret key. When set, `/api/quote` only saves submissions whose token Cloudflare verifies. Set both keys together and redeploy. |
 | `ALLOWED_ORIGINS` | no | Extra comma-separated hostnames allowed to post the form. The live domain, `www`, this project's `*.vercel.app` previews and localhost are always allowed. |
-| `GHL_OPPORTUNITY` | no | Set to `off` to skip the opportunity step entirely (default on). Needs the `opportunities.write` and `opportunities.readonly` scopes on the token. |
+| `GHL_OPPORTUNITY` | no | Set to `on` to have the API create the opportunity as well (default off: the GHL workflow creates it). Needs the `opportunities.write` and `opportunities.readonly` scopes on the token. |
 | `GHL_PIPELINE_ID` | no | Pipeline to upsert the opportunity into. When unset the function uses `GHL_PIPELINE_NAME` (matched by name) or the location's first pipeline, via `GET /opportunities/pipelines`. |
 | `GHL_PIPELINE_STAGE_ID` | no | Stage for new opportunities (default: the pipeline's first stage). |
 | `GHL_OPP_JOB_PHOTOS_FIELD_ID` | no | ID of the opportunity's File Upload custom field. When unset it is looked up by key (`opportunity.job_photos`, override with `GHL_OPP_JOB_PHOTOS_FIELD_KEY`) through `GET /locations/{id}/customFields?model=opportunity`. |
