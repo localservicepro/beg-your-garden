@@ -12,7 +12,10 @@
 //   GHL_CUSTOM_FIELDS  optional JSON mapping form names to custom field IDs, e.g.
 //                      {"property_size":"…","service_needed":"…","job_notes":"…","partner_sharing":"…","submitted_at":"…"}
 //                      When omitted, custom fields are sent by key (property_size, service_needed, job_notes,
-//                      partner_sharing = Yes/No, submitted_at = Brisbane date/time of the submission).
+//                      partner_sharing = Yes/No, submitted_at = Brisbane date/time of the submission,
+//                      job_type = One-off job / Regular ongoing service / Not sure yet,
+//                      service_frequency = Weekly / Fortnightly / Monthly / Every few weeks / Flexible / Not sure).
+//                      The suburb goes to the contact's standard City field ({{contact.city}}).
 //   GHL_TAG            optional tag added to the contact (default: website-quote)
 //   GHL_OPPORTUNITY    optional: set to "off" to skip the opportunity step (default: on)
 //   GHL_PIPELINE_ID    optional: pipeline the opportunity is upserted into. When unset the function uses
@@ -75,18 +78,46 @@ async function ghl(path, init) {
   return json;
 }
 
+// Lead-qualifying answers. Must match the values in src/templates/components.js (jobTypes, frequencies).
+const JOB_TYPES = ['One-off job', 'Regular ongoing service', 'Not sure yet'];
+const FREQUENCIES = ['Weekly', 'Fortnightly', 'Monthly / Every few weeks', 'Flexible / Not sure'];
+const pick = (v, list) => list.find((x) => x.toLowerCase() === clean(v, 80).toLowerCase()) || '';
+const jobTag = (t) => ({ 'One-off job': 'job-type-one-off', 'Regular ongoing service': 'job-type-regular', 'Not sure yet': 'job-type-not-sure' })[t] || null;
+
+// Fallback when an older cached page sends no suburb: take it from the end of the address ("..., Raceview QLD 4305").
+function suburbFromAddress(addr) {
+  const parts = clean(addr, 200).split(',').map((t) => t.trim()).filter(Boolean);
+  for (let i = parts.length - 1; i >= 1; i--) {
+    const part = parts[i].replace(/\b(australia|QLD|Queensland|NSW|VIC|SA|WA|TAS|NT|ACT)\b\.?/ig, '').replace(/\b\d{4}\b/g, '').replace(/\s+/g, ' ').trim();
+    if (!part) continue;
+    if (/\d/.test(part) || part.length > 40) break;
+    return part;
+  }
+  return '';
+}
+
 async function upsertContact(f, locationId, tag) {
   const { firstName, lastName } = splitName(f.full_name);
   let map = null;
   try { map = process.env.GHL_CUSTOM_FIELDS ? JSON.parse(process.env.GHL_CUSTOM_FIELDS) : null; } catch { map = null; }
   const cf = (key, value) => (value ? (map && map[key] ? { id: map[key], field_value: value } : { key, field_value: value }) : null);
-  const customFields = [cf('property_size', f.property_size), cf('service_needed', f.service_needed), cf('job_notes', f.job_notes), cf('partner_sharing', f.partner_sharing), cf('submitted_at', f.submitted_local)].filter(Boolean);
+  const customFields = [cf('property_size', f.property_size), cf('service_needed', f.service_needed), cf('job_notes', f.job_notes), cf('partner_sharing', f.partner_sharing), cf('submitted_at', f.submitted_local), cf('job_type', f.job_type), cf('service_frequency', f.service_frequency)].filter(Boolean);
   const body = {
     locationId, firstName, lastName, name: clean(f.full_name, 120),
     email: clean(f.email, 160), phone: clean(f.phone, 40), address1: clean(f.property_address, 200),
-    source: 'Website quote form', tags: [tag, f.partner_sharing === 'Yes' ? 'partner-sharing-yes' : 'partner-sharing-no'], customFields,
+    ...(f.suburb ? { city: f.suburb } : {}),
+    source: 'Website quote form', tags: [tag, f.partner_sharing === 'Yes' ? 'partner-sharing-yes' : 'partner-sharing-no', jobTag(f.job_type)].filter(Boolean), customFields,
   };
-  const out = await ghl('/contacts/upsert', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const send = (b) => ghl('/contacts/upsert', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
+  let out;
+  try { out = await send(body); }
+  catch (e) {
+    // A custom field the CRM rejects (wrong type, dropdown option missing) must not lose the lead:
+    // retry without custom fields. Every answer is still written to the contact note.
+    if (![400, 422].includes(e.status) || !customFields.length) throw e;
+    console.error('contact upsert rejected, retrying without custom fields', e.message);
+    out = await send({ ...body, customFields: [] });
+  }
   return out && out.contact ? out.contact : out;
 }
 
@@ -164,7 +195,7 @@ async function opportunityFields(locationId) {
 
 async function upsertOpportunity(f, contactId, locationId, photos, tag) {
   const { pipelineId, stageId } = await resolvePipeline(locationId);
-  const name = `${f.service_needed} - ${clean(f.full_name, 120)}`;
+  const name = [f.service_needed, clean(f.full_name, 120), f.suburb].filter(Boolean).join(' - ');
   const body = { locationId, contactId, pipelineId, name, status: 'open', source: 'Website quote form' };
   if (stageId) body.pipelineStageId = stageId;
   const out = await ghl('/opportunities/upsert', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -183,7 +214,7 @@ async function upsertOpportunity(f, contactId, locationId, photos, tag) {
   }
   const idFor = (key) => (map && map[key]) || (fields.find((x) => keyMatches(x.fieldKey, `opportunity.${key}`)) || {}).id || null;
   const customFields = [];
-  for (const [key, value] of [['property_size', f.property_size], ['service_needed', f.service_needed], ['job_notes', f.job_notes], ['partner_sharing', f.partner_sharing], ['submitted_at', f.submitted_local]]) {
+  for (const [key, value] of [['property_size', f.property_size], ['service_needed', f.service_needed], ['job_notes', f.job_notes], ['partner_sharing', f.partner_sharing], ['submitted_at', f.submitted_local], ['suburb', f.suburb], ['job_type', f.job_type], ['service_frequency', f.service_frequency]]) {
     const id = value ? idFor(key) : null;
     if (id) customFields.push({ id, field_value: value });
   }
@@ -224,10 +255,16 @@ export default async function handler(req, res) {
     full_name: clean(data.full_name, 120), email: clean(data.email, 160), phone: clean(data.phone, 40),
     property_address: clean(data.property_address, 200), property_size: clean(data.property_size, 60),
     service_needed: clean(data.service_needed, 80), job_notes: clean(data.job_notes, 2000),
+    suburb: clean(data.suburb, 60) || suburbFromAddress(data.property_address),
+    job_type: pick(data.job_type, JOB_TYPES),
     partner_sharing: clean(data.partner_sharing, 3) === 'Yes' ? 'Yes' : 'No',
     submitted_at: new Date().toISOString(),
     submitted_local: new Date().toLocaleString('en-AU', { timeZone: 'Australia/Brisbane', dateStyle: 'medium', timeStyle: 'short' }) + ' AEST',
   };
+  // Frequency only applies to regular work; ignore it otherwise.
+  f.service_frequency = f.job_type === 'Regular ongoing service' ? pick(data.service_frequency, FREQUENCIES) : '';
+  // Suburb, job type and frequency are enforced in the browser. They are not hard-required here so an enquiry
+  // from an older cached copy of the form is still saved rather than rejected.
   if (!f.full_name || !f.email || !f.phone || !f.property_address || !f.service_needed) { res.statusCode = 422; return res.end(JSON.stringify({ ok: false, error: 'Missing required fields' })); }
 
   const photos = (Array.isArray(data.photos) ? data.photos : []).slice(0, MAX_PHOTOS).map(decodePhoto).filter(Boolean);
@@ -260,7 +297,11 @@ export default async function handler(req, res) {
       `Website quote request (${clean(data.page, 120) || 'site'})`,
       `Submitted: ${f.submitted_local}`,
       `Partner sharing: ${f.partner_sharing}`,
-      `Service: ${f.service_needed}`, f.property_size ? `Property size: ${f.property_size}` : null,
+      `Suburb: ${f.suburb || 'not given'}`,
+      `Service: ${f.service_needed}`,
+      `Job type: ${f.job_type || 'not given'}`,
+      f.job_type === 'Regular ongoing service' ? `Frequency: ${f.service_frequency || 'not given'}` : null,
+      f.property_size ? `Property size: ${f.property_size}` : null,
       `Address: ${f.property_address}`, f.job_notes ? `Notes: ${f.job_notes}` : null,
       uploaded.length ? (photoMethod === 'forms/upload-custom-files' ? `Photos (${uploaded.length}) attached to the Job Photos field: ${uploaded.map((u) => u.name).join(', ')}` : `Photos (${uploaded.length}):`) : null,
       ...(photoMethod === 'forms/upload-custom-files' ? [] : uploaded.map((u) => `- ${u.url || u.name}`)),

@@ -213,6 +213,13 @@ export function footer() {
 }
 
 /* ---------- quote form (GoHighLevel field mapping) ---------- */
+// Lead-qualifying questions. Values are what the CRM stores, so keep them in step with api/quote.js.
+export const jobTypes = [
+  { value: 'One-off job', hint: 'e.g. garden tidy-up, initial clean' },
+  { value: 'Regular ongoing service', hint: 'e.g. weekly, fortnightly' },
+  { value: 'Not sure yet', hint: 'Happy to discuss' },
+];
+export const frequencies = ['Weekly', 'Fortnightly', 'Monthly / Every few weeks', 'Flexible / Not sure'];
 export function quoteForm({ id = 'quote-form', compact = false, defaultService = '' } = {}) {
   const opts = serviceList.map((s) => `<option value="${esc(s.name)}"${s.name === defaultService ? ' selected' : ''}>${esc(s.name)}</option>`).join('') + '<option value="Other">Other</option>';
   return `
@@ -223,7 +230,10 @@ export function quoteForm({ id = 'quote-form', compact = false, defaultService =
     <div class="field"><label for="${id}-email">Email <span>*</span></label><input id="${id}-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com"></div>
     <div class="field"><label for="${id}-phone">Phone <span>*</span></label><input id="${id}-phone" name="phone" type="tel" autocomplete="tel" required placeholder="04xx xxx xxx"></div>
   </div>
-  <div class="field"><label for="${id}-address">Property address <span>*</span></label><input id="${id}-address" name="property_address" type="text" autocomplete="street-address" required placeholder="Street, suburb (e.g. Raceview QLD 4305)"></div>
+  <div class="form__row form__row--address">
+    <div class="field"><label for="${id}-address">Property address <span>*</span></label><input id="${id}-address" name="property_address" type="text" autocomplete="street-address" required placeholder="Street address (e.g. 12 Smith St, Raceview)" data-address></div>
+    <div class="field field--suburb"><label for="${id}-suburb">Suburb <span>*</span></label><input id="${id}-suburb" name="suburb" type="text" autocomplete="address-level2" required placeholder="e.g. Raceview" list="${id}-suburb-list" data-suburb><datalist id="${id}-suburb-list">${suburbs.map((n) => `<option value="${esc(n)}">`).join('')}</datalist><small class="field__hint" data-suburb-hint hidden>Filled in from your address. Change it if it's not right.</small></div>
+  </div>
   <div class="form__row">
     <div class="field"><label for="${id}-size">Property size</label>
       <select id="${id}-size" name="property_size">
@@ -239,7 +249,19 @@ export function quoteForm({ id = 'quote-form', compact = false, defaultService =
         <option value="">Select a service…</option>${opts}
       </select></div>
   </div>
-  <div class="field"><label for="${id}-notes">Job notes</label><textarea id="${id}-notes" name="job_notes" rows="${compact ? 3 : 4}" placeholder="Tell us about the lawn or garden, access, pets, and how often you'd like visits."></textarea></div>
+  <fieldset class="choice" data-job-type>
+    <legend>What type of service are you looking for? <span>*</span></legend>
+    <div class="choice__opts">${jobTypes.map((t) => `
+      <label class="choice__opt"><input type="radio" name="job_type" value="${esc(t.value)}" required><span><strong>${esc(t.value)}</strong><small>${esc(t.hint)}</small></span></label>`).join('')}
+    </div>
+  </fieldset>
+  <div class="field field--frequency" data-frequency hidden>
+    <label for="${id}-frequency">How often would you like the service? <span>*</span></label>
+    <select id="${id}-frequency" name="service_frequency" required disabled>
+      <option value="">Select how often…</option>${frequencies.map((f) => `<option value="${esc(f)}">${esc(f)}</option>`).join('')}
+    </select>
+  </div>
+  <div class="field"><label for="${id}-notes">Job notes</label><textarea id="${id}-notes" name="job_notes" rows="${compact ? 3 : 4}" placeholder="Tell us about the lawn or garden, access, pets, or anything else we should know."></textarea></div>
   <div class="field field--photos">
     <label for="${id}-photos">Photos of the lawn or job <em>(optional, up to 5)</em></label>
     <label class="dropzone" for="${id}-photos">${icons.camera}<span><strong>Add photos</strong><br>Tap to take a photo or choose from your gallery. We shrink them before sending.</span></label>

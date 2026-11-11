@@ -72,8 +72,11 @@ Quote forms (`data-quote-form`) use these field names so the CRM mapping is dire
 | Email | `email` | `{{contact.email}}` |
 | Phone | `phone` | `{{contact.phone}}` |
 | Property Address | `property_address` | `{{contact.property_address}}` |
+| Suburb (required) | `suburb`, filled from the address until the customer types their own; datalist of service suburbs | standard City field, `{{contact.city}}` |
 | Property Size | `property_size` | `{{contact.property_size}}` |
 | Service Needed | `service_needed` (dropdown: nine services + Other) | `{{contact.service_needed}}` |
+| Job Type (required radio) | `job_type` = `One-off job` / `Regular ongoing service` / `Not sure yet` | `{{contact.job_type}}`, tag `job-type-one-off` / `-regular` / `-not-sure` |
+| Service Frequency (required only for Regular) | `service_frequency` = `Weekly` / `Fortnightly` / `Monthly / Every few weeks` / `Flexible / Not sure` | `{{contact.service_frequency}}` |
 | Job Notes | `job_notes` | `{{contact.job_notes}}` |
 | Referral tick box (optional) | `partner_sharing` = `Yes`/`No` | `{{contact.partner_sharing}}` |
 | Submission time (set by script) | `submitted_at` (ISO) and `submitted_local` (Brisbane) | `{{contact.submitted_at}}` |
@@ -82,6 +85,12 @@ The referral tick box is unticked by default and optional. The thank-you page sh
 the contact is tagged `partner-sharing-yes` or `partner-sharing-no`, and the note on the contact starts with the
 submission time and "Partner sharing: Yes/No". To show it in the internal enquiry email, add `Partner sharing:
 {{contact.partner_sharing}}` to that email template in the CRM.
+
+The frequency question is hidden and disabled until "Regular ongoing service" is picked, so it is neither required
+nor sent for one-off or not-sure jobs. The API stores the suburb in the contact's City field, sends `job_type` and
+`service_frequency` as custom fields by key (create them as single-line text fields so any value is accepted), adds
+all three to the contact note, and names the opportunity "Service - Name - Suburb". The API does not hard-require
+the three new fields, so an enquiry from an old cached copy of the form is still saved; the browser enforces them.
 
 On submit the page posts to `/api/quote` (see below), lets the tracking script capture the submission, then redirects to `/thank-you/`.
 

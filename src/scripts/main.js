@@ -271,6 +271,60 @@
     };
     syncMeta();
     form.addEventListener('input', syncMeta); form.addEventListener('change', syncMeta);
+
+    // Job type -> service frequency: only shown (and required) for "Regular ongoing service".
+    const freqWrap = form.querySelector('[data-frequency]');
+    const freqSel = freqWrap && freqWrap.querySelector('select');
+    const syncFrequency = () => {
+      if (!freqWrap || !freqSel) return;
+      const picked = form.querySelector('input[name="job_type"]:checked');
+      const regular = !!picked && /^Regular/.test(picked.value);
+      freqWrap.hidden = !regular;
+      freqSel.disabled = !regular; // disabled = skipped by validation and left out of the submission
+      if (!regular) freqSel.value = '';
+    };
+    form.querySelectorAll('input[name="job_type"]').forEach((r) => r.addEventListener('change', syncFrequency));
+    syncFrequency();
+
+    // Suburb: filled from the address (typed or browser-autofilled) until the customer types their own.
+    const addr = form.querySelector('[data-address]');
+    const sub = form.querySelector('[data-suburb]');
+    const subHint = form.querySelector('[data-suburb-hint]');
+    if (addr && sub) {
+      const known = Array.from(form.querySelectorAll('datalist option')).map((o) => o.value);
+      const titleCase = (t) => t.toLowerCase().replace(/(^|[\s'-])([a-z])/g, (m, a, b) => a + b.toUpperCase());
+      const guessSuburb = (raw) => {
+        const text = String(raw || '').replace(/\s+/g, ' ').trim();
+        if (!text) return '';
+        // 1) the last comma-separated part, minus state, postcode and country ("..., Raceview QLD 4305")
+        const parts = text.split(',').map((t) => t.trim()).filter(Boolean);
+        for (let i = parts.length - 1; i >= 1; i--) {
+          const part = parts[i].replace(/\b(australia|QLD|Queensland|NSW|VIC|SA|WA|TAS|NT|ACT)\b\.?/ig, '').replace(/\b\d{4}\b/g, '').replace(/\s+/g, ' ').trim();
+          if (!part) continue; // e.g. a trailing "QLD 4305" or "Australia"
+          if (/\d/.test(part) || part.length > 40) break; // a street line, not a suburb
+          const hit = known.find((k) => k.toLowerCase() === part.toLowerCase());
+          return hit || titleCase(part);
+        }
+        // 2) a suburb we service named anywhere in the address; the one nearest the end wins ("Ripley Rd Flinders View")
+        const low = ' ' + text.toLowerCase() + ' ';
+        let best = '', bestEnd = -1;
+        for (const k of known) {
+          const re = new RegExp('[^a-z]' + k.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '[^a-z]', 'g');
+          let m; while ((m = re.exec(low))) { const end = m.index + m[0].length; if (end > bestEnd || (end === bestEnd && k.length > best.length)) { best = k; bestEnd = end; } }
+        }
+        return best;
+      };
+      let manual = false;
+      sub.addEventListener('input', () => { manual = sub.value.trim() !== ''; if (subHint) subHint.hidden = true; });
+      const fromAddress = () => {
+        if (manual) return;
+        const g = guessSuburb(addr.value);
+        if (g && g !== sub.value) { sub.value = g; if (subHint) subHint.hidden = false; syncMeta(); }
+      };
+      addr.addEventListener('change', fromAddress);
+      addr.addEventListener('blur', fromAddress);
+      addr.addEventListener('input', () => { if (/,/.test(addr.value)) fromAddress(); });
+    }
     const status = form.querySelector('.form__status');
     const say = (msg, isError) => { if (!status) return; status.textContent = msg; status.classList.add('show'); status.classList.toggle('is-error', !!isError); };
     const render = () => {
@@ -312,7 +366,7 @@
         delete data.photos; delete data.website; delete data.partner_sharing_tick;
         data.partner_sharing = partner;
         window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({ event: 'quote_form_submit', form_id: form.id || 'quote', service_needed: data.service_needed || '', photos: photos.length });
+        window.dataLayer.push({ event: 'quote_form_submit', form_id: form.id || 'quote', service_needed: data.service_needed || '', job_type: data.job_type || '', service_frequency: data.service_frequency || '', suburb: data.suburb || '', photos: photos.length });
       } catch (err) { /* non-fatal */ }
       let result = { ok: false, photos: 0 };
       try {

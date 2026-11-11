@@ -36,7 +36,7 @@ ${pageHero({ h1: 'Privacy Policy', plain: true, crumbs: [{ name: 'Home', href: '
 <p><em>Last updated: 25 October 2026.</em></p>
 <p>${site.name} (ABN ${site.abn}) (“we”, “us”) respects your privacy and handles personal information in line with the Australian Privacy Principles under the Privacy Act 1988 (Cth). This policy explains what we collect through this website and how it is used.</p>
 <h2>What we collect</h2>
-<p>When you request a quote we collect the details you enter in the form: your name, email address, phone number, property address, property size, the service you need, any job notes, any photos you attach, and whether you ticked the referral tick box. If you call or email us we keep the contact details and notes needed to quote and deliver the service.</p>
+<p>When you request a quote we collect the details you enter in the form: your name, email address, phone number, property address and suburb, property size, the service you need, whether it is a one-off or regular job and how often, any job notes, any photos you attach, and whether you ticked the referral tick box. If you call or email us we keep the contact details and notes needed to quote and deliver the service.</p>
 <h2>How we use it</h2>
 <p>We use your information to prepare quotes, schedule and deliver services, send reminders and service updates, and respond to your enquiries. We may also send occasional service-related messages (for example seasonal lawn care reminders); you can opt out at any time by replying or contacting us.</p>
 <h2>How it is stored and shared</h2>
