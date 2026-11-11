@@ -220,6 +220,9 @@ export const jobTypes = [
   { value: 'Not sure yet', hint: 'Happy to discuss' },
 ];
 export const frequencies = ['Weekly', 'Fortnightly', 'Monthly / Every few weeks', 'Flexible / Not sure'];
+// Google address lookup on the quote form. Browser key from the Vercel env var GOOGLE_MAPS_API_KEY, read at build
+// time (restrict it to the site's domains in Google Cloud). Without it the form falls back to typed/autofilled addresses.
+const placesKey = (process.env.GOOGLE_MAPS_API_KEY || '').trim();
 export function quoteForm({ id = 'quote-form', compact = false, defaultService = '' } = {}) {
   const opts = serviceList.map((s) => `<option value="${esc(s.name)}"${s.name === defaultService ? ' selected' : ''}>${esc(s.name)}</option>`).join('') + '<option value="Other">Other</option>';
   return `
@@ -231,7 +234,7 @@ export function quoteForm({ id = 'quote-form', compact = false, defaultService =
     <div class="field"><label for="${id}-phone">Phone <span>*</span></label><input id="${id}-phone" name="phone" type="tel" autocomplete="tel" required placeholder="04xx xxx xxx"></div>
   </div>
   <div class="form__row form__row--address">
-    <div class="field"><label for="${id}-address">Property address <span>*</span></label><input id="${id}-address" name="property_address" type="text" autocomplete="street-address" required placeholder="Street address (e.g. 12 Smith St, Raceview)" data-address></div>
+    <div class="field field--address"><label for="${id}-address">Property address <span>*</span></label><input id="${id}-address" name="property_address" type="text" autocomplete="street-address" required placeholder="Street address (e.g. 12 Smith St, Raceview)" data-address${placesKey ? ` data-places-key="${esc(placesKey)}"` : ''}>${placesKey ? `<div class="addr-suggest" id="${id}-address-list" role="listbox" aria-label="Address suggestions" hidden></div>` : ''}</div>
     <div class="field field--suburb"><label for="${id}-suburb">Suburb <span>*</span></label><input id="${id}-suburb" name="suburb" type="text" autocomplete="address-level2" required placeholder="e.g. Raceview" list="${id}-suburb-list" data-suburb><datalist id="${id}-suburb-list">${suburbs.map((n) => `<option value="${esc(n)}">`).join('')}</datalist><small class="field__hint" data-suburb-hint hidden>Filled in from your address. Change it if it's not right.</small></div>
   </div>
   <div class="form__row">

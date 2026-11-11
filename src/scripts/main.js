@@ -314,16 +314,91 @@
         }
         return best;
       };
-      let manual = false;
+      let manual = false, pickedAddr = ''; // pickedAddr: an address chosen from Google; its suburb is authoritative
       sub.addEventListener('input', () => { manual = sub.value.trim() !== ''; if (subHint) subHint.hidden = true; });
       const fromAddress = () => {
-        if (manual) return;
+        if (manual || (pickedAddr && addr.value === pickedAddr)) return;
         const g = guessSuburb(addr.value);
         if (g && g !== sub.value) { sub.value = g; if (subHint) subHint.hidden = false; syncMeta(); }
       };
       addr.addEventListener('change', fromAddress);
       addr.addEventListener('blur', fromAddress);
       addr.addEventListener('input', () => { if (/,/.test(addr.value)) fromAddress(); });
+
+      // Google address lookup (Places API New). Only when the build had GOOGLE_MAPS_API_KEY; loaded on first focus.
+      const placesKey = addr.dataset.placesKey;
+      const list = placesKey && form.querySelector('.addr-suggest');
+      if (placesKey && list) {
+        let lib = null, token = null, items = [], active = -1, timer = 0, seq = 0, failed = false;
+        addr.setAttribute('role', 'combobox'); addr.setAttribute('aria-autocomplete', 'list');
+        addr.setAttribute('aria-expanded', 'false'); addr.setAttribute('aria-controls', list.id);
+        const loadPlaces = () => {
+          if (window.__bygPlaces) return window.__bygPlaces;
+          window.__bygPlaces = new Promise((resolve, reject) => {
+            window.__bygPlacesReady = () => resolve();
+            const sc = d.createElement('script');
+            sc.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(placesKey) + '&v=weekly&loading=async&callback=__bygPlacesReady';
+            sc.async = true; sc.onerror = reject; d.head.appendChild(sc);
+          }).then(() => window.google.maps.importLibrary('places'));
+          return window.__bygPlaces;
+        };
+        const close = () => { list.hidden = true; list.innerHTML = ''; items = []; active = -1; addr.setAttribute('aria-expanded', 'false'); addr.removeAttribute('aria-activedescendant'); };
+        const highlight = (i) => {
+          active = i;
+          list.querySelectorAll('[role=option]').forEach((el, k) => el.setAttribute('aria-selected', k === i ? 'true' : 'false'));
+          if (i >= 0) addr.setAttribute('aria-activedescendant', list.id + '-' + i); else addr.removeAttribute('aria-activedescendant');
+        };
+        const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        const render = () => {
+          if (!items.length) return close();
+          list.innerHTML = items.map((p, i) => '<div class="addr-suggest__item" role="option" id="' + list.id + '-' + i + '" aria-selected="false" data-i="' + i + '"><strong>' + esc(p.mainText ? p.mainText.toString() : p.text.toString()) + '</strong><span>' + esc(p.secondaryText ? p.secondaryText.toString().replace(/, Australia$/, '') : '') + '</span></div>').join('') + '<div class="addr-suggest__credit">Powered by Google</div>';
+          list.hidden = false; addr.setAttribute('aria-expanded', 'true'); active = -1;
+        };
+        const lookup = async () => {
+          const q = addr.value.trim();
+          if (q.length < 3 || failed) return close();
+          const mine = ++seq;
+          try {
+            lib = lib || await loadPlaces();
+            token = token || new lib.AutocompleteSessionToken();
+            const res = await lib.AutocompleteSuggestion.fetchAutocompleteSuggestions({
+              input: q, sessionToken: token, includedRegionCodes: ['au'], language: 'en-AU',
+              locationBias: { center: { lat: -27.62, lng: 152.80 }, radius: 40000 }, // Ipswich & Springfield
+            });
+            if (mine !== seq) return; // a newer keystroke is already in flight
+            items = (res.suggestions || []).map((x) => x.placePrediction).filter(Boolean).slice(0, 5);
+            render();
+          } catch (err) { failed = true; close(); } // bad key, quota or network: fall back to typing
+        };
+        const choose = async (i) => {
+          const pred = items[i]; if (!pred) return;
+          close();
+          addr.value = pred.text.toString().replace(/, Australia$/, '');
+          try {
+            const place = pred.toPlace();
+            await place.fetchFields({ fields: ['formattedAddress', 'addressComponents'] });
+            token = null; // the session ends with the details call
+            const comp = (type) => { const c = (place.addressComponents || []).find((x) => x.types.includes(type)); return c ? c.longText : ''; };
+            if (place.formattedAddress) addr.value = place.formattedAddress.replace(/, Australia$/, '');
+            const suburb = comp('locality') || comp('sublocality') || comp('postal_town');
+            if (suburb) { sub.value = suburb; manual = false; pickedAddr = addr.value; if (subHint) subHint.hidden = false; }
+          } catch (err) { /* keep the picked text; the suburb is parsed from it below */ }
+          if (pickedAddr !== addr.value) { pickedAddr = ''; manual = false; fromAddress(); }
+          syncMeta();
+        };
+        addr.addEventListener('focus', () => { loadPlaces().then((l) => { lib = l; addr.setAttribute('autocomplete', 'off'); }).catch(() => { failed = true; }); }, { once: true });
+        addr.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(lookup, 220); });
+        addr.addEventListener('keydown', (e) => {
+          if (list.hidden || !items.length) return;
+          if (e.key === 'ArrowDown') { e.preventDefault(); highlight((active + 1) % items.length); }
+          else if (e.key === 'ArrowUp') { e.preventDefault(); highlight(active <= 0 ? items.length - 1 : active - 1); }
+          else if (e.key === 'Enter' && active >= 0) { e.preventDefault(); choose(active); }
+          else if (e.key === 'Escape') { e.preventDefault(); close(); }
+        });
+        list.addEventListener('mousedown', (e) => e.preventDefault()); // keep focus in the input
+        list.addEventListener('click', (e) => { const el = e.target.closest('[data-i]'); if (el) choose(+el.dataset.i); });
+        addr.addEventListener('blur', () => setTimeout(close, 150));
+      }
     }
     const status = form.querySelector('.form__status');
     const say = (msg, isError) => { if (!status) return; status.textContent = msg; status.classList.add('show'); status.classList.toggle('is-error', !!isError); };

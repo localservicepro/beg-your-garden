@@ -318,6 +318,15 @@ strong { font-weight: 600; }
 .form__row--address { grid-template-columns: 1fr; }
 .field[hidden], .field__hint[hidden] { display: none !important; }
 .field__hint { font-size: .76rem; color: var(--green-700); }
+/* Google address suggestions */
+.field--address { position: relative; }
+.addr-suggest { position: absolute; z-index: 30; left: 0; right: 0; top: 100%; margin-top: 4px; background: #fff; border: 1px solid var(--line-2); border-radius: var(--r-sm); box-shadow: var(--shadow-lg); overflow: hidden; }
+.addr-suggest[hidden] { display: none; }
+.addr-suggest__item { display: block; padding: 9px 12px; cursor: pointer; font-size: .9rem; line-height: 1.35; color: var(--ink); border-bottom: 1px solid var(--line); }
+.addr-suggest__item strong { font-weight: 600; color: var(--navy-900); margin-right: 6px; }
+.addr-suggest__item span { color: var(--muted); font-size: .82rem; }
+.addr-suggest__item:hover, .addr-suggest__item[aria-selected="true"] { background: var(--green-50); }
+.addr-suggest__credit { padding: 5px 12px; font-size: .68rem; color: var(--muted); text-align: right; background: var(--offwhite); }
 .field--frequency { animation: fieldIn .22s var(--ease-out) both; }
 @keyframes fieldIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 /* job type: radio option cards (3 across when there's room, stacked on narrow screens) */
