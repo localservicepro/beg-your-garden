@@ -122,6 +122,9 @@ Environment variables to set in the Vercel project (Settings → Environment Var
 | `GHL_CUSTOM_FIELDS` | no | JSON mapping form names to custom field IDs, e.g. `{"property_size":"...","service_needed":"...","job_notes":"..."}`. Without it the fields are sent by key (`property_size`, `service_needed`, `job_notes`), which works when the custom fields were created with those unique keys. |
 | `GHL_TAG` | no | Tag added to the contact (default `website-quote`). |
 | `GOOGLE_MAPS_API_KEY` | no | Browser key for the address lookup on the quote form (Maps JavaScript API + Places API (New)). Read at **build** time and written into the page, so redeploy after adding it, and restrict it to the site's domains in Google Cloud. The script loads only when a customer clicks into the address box, suggests Australian addresses near Ipswich, and fills the suburb from Google's result. Without the key, or if Google refuses it, the form falls back to typed or browser-autofilled addresses. |
+| `TURNSTILE_SITE_KEY` | no | Cloudflare Turnstile site key (public), read at **build** time to add the invisible bot check to the quote forms. |
+| `TURNSTILE_SECRET_KEY` | no | Turnstile secret key. When set, `/api/quote` only saves submissions whose token Cloudflare verifies. Set both keys together and redeploy. |
+| `ALLOWED_ORIGINS` | no | Extra comma-separated hostnames allowed to post the form. The live domain, `www`, this project's `*.vercel.app` previews and localhost are always allowed. |
 | `GHL_OPPORTUNITY` | no | Set to `off` to skip the opportunity step entirely (default on). Needs the `opportunities.write` and `opportunities.readonly` scopes on the token. |
 | `GHL_PIPELINE_ID` | no | Pipeline to upsert the opportunity into. When unset the function uses `GHL_PIPELINE_NAME` (matched by name) or the location's first pipeline, via `GET /opportunities/pipelines`. |
 | `GHL_PIPELINE_STAGE_ID` | no | Stage for new opportunities (default: the pipeline's first stage). |
@@ -132,6 +135,27 @@ If the function is unreachable or not configured, the form still redirects to th
 script in `<head>` captures the text fields as before) and the thank-you page asks the customer to text the
 photos to the business number. Request bodies are capped at Vercel's 4.5 MB limit; photos over 1.5 MB after
 compression are skipped. The Netlify config does not include this function; the Vercel deployment is the target.
+
+### Spam protection
+
+Bot submissions are stopped in two places, because enquiries reach the CRM two ways: through `/api/quote`, and through
+the GoHighLevel tracking script, which records any quote-form submit it sees.
+
+1. **In the browser, before the tracking script.** A tiny inline script in `<head>` (`spamGuard` in
+   `src/templates/layout.js`) is registered before the tracking script, so it sees every quote-form submit first. It
+   stops the submit when the hidden honeypot field is filled, when the form is sent less than 3 seconds after the page
+   loaded, or while the optional Turnstile check is still running (the form then sends itself once the check passes).
+2. **In `/api/quote`.** Silently drops (logs `spam blocked` with the reason, returns a normal 200, sends nothing to the
+   CRM) when: the honeypot is filled; the request did not come from the site (Origin/Referer); the page's timer is
+   missing or under 3 seconds; the name contains a link; the notes contain two or more links or common spam pitches
+   (SEO, backlinks, crypto, etc.); the phone has fewer than 8 or more than 15 digits; or the email is malformed.
+   With `TURNSTILE_SECRET_KEY` set, a missing or rejected Turnstile token returns an error and the form asks the
+   person to try again or call.
+
+Cloudflare Turnstile is optional and free: create a widget at dash.cloudflare.com (Turnstile, add the live domain and
+`vercel.app`), then add `TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` in Vercel and redeploy. It runs in
+"interaction-only" mode, so most people never see it. Blocked attempts can be reviewed in the Vercel function logs
+by searching for `spam blocked`.
 
 The Closebot chat widget (`https://api.closebot.com/scripts/cb.js?source=NOaznR477jeopRlH`) is loaded once,
 async, just before `</body>` on every page from `src/templates/layout.js`.

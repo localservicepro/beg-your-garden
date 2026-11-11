@@ -254,6 +254,27 @@
     im.src = url;
   });
 
+  /* ---------- spam protection ----------
+     The inline guard in <head> calls this before the CRM tracking script sees a submit. A non-empty reason stops the
+     submission there, so bots never reach the tracking script or /api/quote. */
+  const MIN_FORM_MS = 3000;
+  const spamState = new WeakMap(); // form -> { ts: Turnstile state or null, pending }
+  window.__bygSpamCheck = (form) => {
+    const hp = form.querySelector('.hp input');
+    if (hp && hp.value) return 'honeypot';
+    if (Date.now() - (window.__bygT0 || 0) < MIN_FORM_MS) return 'too-fast';
+    const st = spamState.get(form);
+    if (st && st.ts && st.ts.active && !st.ts.token) return 'pending-check';
+    return '';
+  };
+  let turnstileP = null;
+  const loadTurnstile = () => turnstileP || (turnstileP = new Promise((resolve, reject) => {
+    window.__bygTsReady = () => resolve(window.turnstile);
+    const sc = d.createElement('script');
+    sc.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__bygTsReady';
+    sc.async = true; sc.onerror = reject; d.head.appendChild(sc);
+  }));
+
   d.querySelectorAll('form[data-quote-form]').forEach((form) => {
     const input = form.querySelector('.photos-input');
     const previews = form.querySelector('.photo-previews');
@@ -402,6 +423,29 @@
     }
     const status = form.querySelector('.form__status');
     const say = (msg, isError) => { if (!status) return; status.textContent = msg; status.classList.add('show'); status.classList.toggle('is-error', !!isError); };
+
+    // Spam protection state for this form (optional Turnstile token).
+    const spam = { ts: null, pending: false };
+    spamState.set(form, spam);
+    const slot = form.querySelector('[data-turnstile-sitekey]');
+    if (slot) {
+      spam.ts = { active: false, token: '', id: null };
+      const startTs = () => loadTurnstile().then((t) => {
+        spam.ts.active = true;
+        spam.ts.id = t.render(slot, {
+          sitekey: slot.dataset.turnstileSitekey, appearance: 'interaction-only', size: 'flexible', action: 'quote',
+          callback: (tok) => { spam.ts.token = tok; if (spam.pending) { spam.pending = false; say('Thanks — sending your request…'); form.requestSubmit(); } },
+          'expired-callback': () => { spam.ts.token = ''; try { t.reset(spam.ts.id); } catch (err) { /* ignore */ } },
+          'error-callback': () => { spam.ts.active = false; spam.ts.token = ''; }, // don't trap a real person; the server decides
+        });
+      }).catch(() => { spam.ts.active = false; });
+      form.addEventListener('focusin', startTs, { once: true });
+    }
+    form.addEventListener('byg:blocked', (e) => {
+      if (e.detail === 'pending-check') { spam.pending = true; say('One moment, running a quick security check…'); }
+      else if (e.detail === 'too-fast') say('Please check your details, then press the button again.', true);
+      else window.location.assign(form.dataset.redirect || '/thank-you/'); // honeypot: let the bot think it worked
+    });
     const render = () => {
       if (!previews) return;
       previews.innerHTML = photos.map((p, i) => `<figure><img src="${p.dataUrl}" alt=""><button type="button" data-remove="${i}" aria-label="Remove photo">×</button><figcaption>${(p.file.name || 'photo').replace(/[<>&]/g, '')}</figcaption></figure>`).join('');
@@ -431,6 +475,7 @@
       if (form.querySelector('.hp input') && form.querySelector('.hp input').value) return; // honeypot
       if (!form.reportValidity()) return;
       const btn = form.querySelector('button[type="submit"]');
+      if (btn && !btn.dataset.label) btn.dataset.label = btn.innerHTML;
       if (btn) { btn.disabled = true; btn.textContent = photos.length ? 'Sending photos…' : 'Sending…'; }
       say('Thanks — sending your request…');
       const data = {};
@@ -438,6 +483,9 @@
       const partner = hidden('partner_sharing').value === 'Yes' ? 'Yes' : 'No';
       try {
         Object.assign(data, Object.fromEntries(new FormData(form).entries()));
+        data.form_ms = Date.now() - (window.__bygT0 || Date.now()); // time on page, by the visitor's own clock
+        data.cf_token = (spam.ts && spam.ts.token) || data['cf-turnstile-response'] || '';
+        delete data['cf-turnstile-response'];
         delete data.photos; delete data.website; delete data.partner_sharing_tick;
         data.partner_sharing = partner;
         window.dataLayer = window.dataLayer || [];
@@ -451,6 +499,13 @@
         });
         result = await res.json().catch(() => ({ ok: res.ok, photos: 0 }));
       } catch (err) { result = { ok: false, photos: 0 }; }
+      if (result && result.error === 'verification') {
+        // The server could not verify the bot check. Keep the details on screen so they can try again or call.
+        if (btn) { btn.disabled = false; btn.innerHTML = btn.dataset.label || 'Request my free quote'; }
+        if (spam.ts && window.turnstile && spam.ts.id != null) { spam.ts.token = ''; try { window.turnstile.reset(spam.ts.id); } catch (err) { /* ignore */ } }
+        say('We could not complete the security check. Please press the button again, or call or text us on 0411 638 432.', true);
+        return;
+      }
       try {
         sessionStorage.setItem('byg_last_quote', JSON.stringify({ name: data.full_name || '', service: data.service_needed || '', photosSent: result.ok ? (result.photos || 0) : 0, photosWanted: photos.length, apiOk: !!result.ok, partner: partner === 'Yes' }));
       } catch (err) { /* ignore */ }

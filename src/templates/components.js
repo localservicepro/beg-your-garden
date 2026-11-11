@@ -223,6 +223,9 @@ export const frequencies = ['Weekly', 'Fortnightly', 'Monthly / Every few weeks'
 // Google address lookup on the quote form. Browser key from the Vercel env var GOOGLE_MAPS_API_KEY, read at build
 // time (restrict it to the site's domains in Google Cloud). Without it the form falls back to typed/autofilled addresses.
 const placesKey = (process.env.GOOGLE_MAPS_API_KEY || '').trim();
+// Optional Cloudflare Turnstile bot check: public site key from TURNSTILE_SITE_KEY at build time. The server verifies
+// the token when TURNSTILE_SECRET_KEY is set. Without the keys the form relies on the honeypot, timing and API checks.
+const turnstileKey = (process.env.TURNSTILE_SITE_KEY || '').trim();
 export function quoteForm({ id = 'quote-form', compact = false, defaultService = '' } = {}) {
   const opts = serviceList.map((s) => `<option value="${esc(s.name)}"${s.name === defaultService ? ' selected' : ''}>${esc(s.name)}</option>`).join('') + '<option value="Other">Other</option>';
   return `
@@ -278,6 +281,7 @@ export function quoteForm({ id = 'quote-form', compact = false, defaultService =
   <input type="hidden" name="partner_sharing" value="No">
   <input type="hidden" name="submitted_at" value="">
   <input type="hidden" name="submitted_local" value="">
+  ${turnstileKey ? `<div class="turnstile-slot" data-turnstile-sitekey="${esc(turnstileKey)}"></div>` : ''}
   <button class="btn btn--lg" type="submit">Request my free quote ${icons.arrow}</button>
   <p class="form__status" role="status" aria-live="polite"></p>
   <p class="form__note">By submitting, you agree to ${esc(site.name)} contacting you about your enquiry. We'll only share your details if you've ticked the box above. <a href="/privacy-policy/">Privacy policy</a></p>

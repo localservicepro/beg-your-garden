@@ -27,6 +27,10 @@
 //                      GET /locations/{id}/customFields?model=opportunity. Other opportunity fields whose keys match
 //                      property_size, service_needed, job_notes, partner_sharing, submitted_at are filled too.
 //   GHL_OPP_CUSTOM_FIELDS  optional JSON mapping form names to opportunity custom field IDs (same shape as GHL_CUSTOM_FIELDS)
+//   TURNSTILE_SECRET_KEY  optional: Cloudflare Turnstile secret. When set, every submission must carry a token that
+//                      Cloudflare verifies (the site key, TURNSTILE_SITE_KEY, is read at build time for the widget).
+//   ALLOWED_ORIGINS    optional: extra comma-separated hostnames allowed to post the form (the live domain, its www
+//                      variant, this project's *.vercel.app previews and localhost are always allowed)
 //   GHL_API_VERSION    optional, default 2021-07-28
 
 const API = 'https://services.leadconnectorhq.com';
@@ -94,6 +98,48 @@ function suburbFromAddress(addr) {
     return part;
   }
   return '';
+}
+
+// ---- Spam checks. A spam submission gets a normal-looking 200 so bots learn nothing; it is logged, never sent to the CRM.
+const MIN_FORM_MS = 3000;
+const SPAM_WORDS = /\b(seo|backlinks?|guest post|casino|crypto|bitcoin|forex|viagra|cialis|loan offer|web ?design services|rank (your|you) (website|site)|first page of google)\b/i;
+const LINK = /(https?:\/\/|www\.)\S+/i;
+const LINKS = /(https?:\/\/|www\.)\S+/gi; // only used with String.match, which resets it
+function originAllowed(req) {
+  const raw = (req.headers && (req.headers.origin || req.headers.referer)) || '';
+  let host = '';
+  try { host = new URL(raw).hostname.toLowerCase(); } catch { return false; }
+  const extra = (process.env.ALLOWED_ORIGINS || '').split(',').map((h) => h.trim().toLowerCase()).filter(Boolean);
+  return host === 'localhost' || host === '127.0.0.1' || /(^|\.)begyourgarden\.com$/.test(host)
+    || /^beg-your-garden[a-z0-9-]*\.vercel\.app$/.test(host) || extra.includes(host);
+}
+function spamReason(data, req) {
+  if (clean(data.website)) return 'honeypot';
+  if (!originAllowed(req)) return 'origin';
+  const ms = Number(data.form_ms);
+  if (!Number.isFinite(ms)) return 'no-timer'; // posted without running the page's script
+  if (ms < MIN_FORM_MS) return 'too-fast';
+  const name = clean(data.full_name, 200), notes = clean(data.job_notes, 4000);
+  if (LINK.test(name)) return 'link-in-name';
+  if ((notes.match(LINKS) || []).length >= 2) return 'links';
+  if (SPAM_WORDS.test(name) || SPAM_WORDS.test(notes)) return 'spam-words';
+  const digits = clean(data.phone, 40).replace(/\D/g, '');
+  if (digits.length < 8 || digits.length > 15) return 'phone';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(clean(data.email, 160))) return 'email';
+  return '';
+}
+async function turnstileOk(token, req) {
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+  if (!secret) return true;
+  if (!token) return false;
+  try {
+    const body = new URLSearchParams({ secret, response: clean(token, 2048) });
+    const ip = String((req.headers && req.headers['x-forwarded-for']) || '').split(',')[0].trim();
+    if (ip) body.set('remoteip', ip);
+    const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body });
+    const j = await r.json();
+    return !!(j && j.success);
+  } catch (e) { console.error('turnstile verify failed', e.message); return true; } // Cloudflare down: don't lose real leads
 }
 
 async function upsertContact(f, locationId, tag) {
@@ -250,7 +296,16 @@ export default async function handler(req, res) {
   let data;
   try { data = await readJson(req); } catch (e) { res.statusCode = e.status || 400; return res.end(JSON.stringify({ ok: false, error: 'Bad request' })); }
 
-  if (clean(data.website)) { res.statusCode = 200; return res.end(JSON.stringify({ ok: true, skipped: 'honeypot' })); } // bot
+  const reason = spamReason(data, req);
+  if (reason) {
+    const ip = String((req.headers && req.headers['x-forwarded-for']) || '').split(',')[0].trim();
+    console.warn('spam blocked', JSON.stringify({ reason, ip, origin: (req.headers && (req.headers.origin || req.headers.referer)) || '', name: clean(data.full_name, 60), email: clean(data.email, 80) }));
+    res.statusCode = 200; return res.end(JSON.stringify({ ok: true, skipped: 'spam' }));
+  }
+  if (!(await turnstileOk(data.cf_token, req))) {
+    console.warn('turnstile verification failed', clean(data.email, 80));
+    res.statusCode = 400; return res.end(JSON.stringify({ ok: false, error: 'verification' }));
+  }
   const f = {
     full_name: clean(data.full_name, 120), email: clean(data.email, 160), phone: clean(data.phone, 40),
     property_address: clean(data.property_address, 200), property_size: clean(data.property_size, 60),
