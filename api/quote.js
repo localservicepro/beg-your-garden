@@ -143,12 +143,52 @@ async function turnstileOk(token, req) {
   } catch (e) { console.error('turnstile verify failed', e.message); return true; } // Cloudflare down: don't lose real leads
 }
 
+// Contact custom fields the form fills, with the names a field might have been given in GHL. GHL silently ignores a key
+// that matches no field, so each one is looked up by its key OR its name and sent by ID.
+const CONTACT_FIELDS = {
+  property_address: ['property address'],
+  property_size: ['property size'],
+  service_needed: ['service needed'],
+  job_type: ['job type', 'type of service', 'service type', 'what type of service are you looking for'],
+  service_frequency: ['service frequency', 'frequency', 'how often would you like the service'],
+  job_notes: ['job notes'],
+  partner_sharing: ['partner sharing', 'referral consent'],
+  submitted_at: ['submitted at', 'submitted'],
+};
+const normName = (t) => String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+let cachedContactFields = null, cachedAt = 0;
+async function contactFieldList(locationId) {
+  if (cachedContactFields && Date.now() - cachedAt < 5 * 60 * 1000) return cachedContactFields; // new GHL fields show up within 5 min
+  const out = await ghl(`/locations/${encodeURIComponent(locationId)}/customFields?model=contact`, { method: 'GET' });
+  cachedContactFields = (out && (out.customFields || out.fields)) || []; cachedAt = Date.now();
+  return cachedContactFields;
+}
+async function contactFieldIds(locationId) {
+  let list = [];
+  try { list = await contactFieldList(locationId); } catch (e) { console.error('custom field list failed, sending by key', e.message); }
+  const ids = {};
+  for (const [key, names] of Object.entries(CONTACT_FIELDS)) {
+    const byKey = list.find((x) => normName(x.fieldKey) === normName('contact.' + key) || normName(x.fieldKey) === normName(key));
+    const byName = byKey || list.find((x) => names.includes(normName(x.name)));
+    if (byName) ids[key] = byName.id;
+  }
+  return ids;
+}
+
 async function upsertContact(f, locationId, tag) {
   const { firstName, lastName } = splitName(f.full_name);
   let map = null;
   try { map = process.env.GHL_CUSTOM_FIELDS ? JSON.parse(process.env.GHL_CUSTOM_FIELDS) : null; } catch { map = null; }
-  const cf = (key, value) => (value ? (map && map[key] ? { id: map[key], field_value: value } : { key, field_value: value }) : null);
-  const customFields = [cf('property_size', f.property_size), cf('service_needed', f.service_needed), cf('job_notes', f.job_notes), cf('partner_sharing', f.partner_sharing), cf('submitted_at', f.submitted_local), cf('job_type', f.job_type), cf('service_frequency', f.service_frequency)].filter(Boolean);
+  const found = await contactFieldIds(locationId);
+  const missing = [];
+  const cf = (key, value) => {
+    if (!value) return null;
+    const id = (map && map[key]) || found[key];
+    if (id) return { id, field_value: value };
+    missing.push(key);
+    return { key, field_value: value }; // no matching field found: GHL will ignore it
+  };
+  const customFields = [cf('property_address', f.property_address), cf('property_size', f.property_size), cf('service_needed', f.service_needed), cf('job_notes', f.job_notes), cf('partner_sharing', f.partner_sharing), cf('submitted_at', f.submitted_local), cf('job_type', f.job_type), cf('service_frequency', f.service_frequency)].filter(Boolean);
   const body = {
     locationId, firstName, lastName, name: clean(f.full_name, 120),
     email: clean(f.email, 160), phone: clean(f.phone, 40), address1: clean(f.property_address, 200),
@@ -165,7 +205,8 @@ async function upsertContact(f, locationId, tag) {
     console.error('contact upsert rejected, retrying without custom fields', e.message);
     out = await send({ ...body, customFields: [] });
   }
-  return out && out.contact ? out.contact : out;
+  const contact = out && out.contact ? out.contact : out;
+  return Object.assign({}, contact, { missingFields: missing });
 }
 
 async function uploadPhoto(photo, locationId, contactLabel) {
@@ -184,8 +225,7 @@ async function resolvePhotoFieldId(locationId) {
   if (process.env.GHL_JOB_PHOTOS_FIELD_ID) return process.env.GHL_JOB_PHOTOS_FIELD_ID;
   const wantKey = (process.env.GHL_JOB_PHOTOS_FIELD_KEY || 'contact.job_photos').toLowerCase();
   if (cachedFieldId && cachedFieldKey === wantKey) return cachedFieldId;
-  const out = await ghl(`/locations/${encodeURIComponent(locationId)}/customFields?model=contact`, { method: 'GET' });
-  const list = (out && (out.customFields || out.fields)) || [];
+  const list = await contactFieldList(locationId);
   const norm = (k) => String(k || '').toLowerCase().replace(/^\{\{|\}\}$/g, '');
   const hit = list.find((f) => norm(f.fieldKey) === wantKey || norm(f.fieldKey) === wantKey.replace(/^contact\./, '') || (f.name || '').toLowerCase() === 'job photos')
     || list.find((f) => /file/i.test(f.dataType || '') );
@@ -402,7 +442,8 @@ export default async function handler(req, res) {
     if (failed.length) console.error('photo upload failures', JSON.stringify(failed));
     let signalled = false;
     if (contactId) { try { await signalNewQuote(contactId, tag); signalled = true; } catch (e) { console.error('workflow tag failed', e.message); } }
-    console.log('quote saved', JSON.stringify({ contactId, photos: uploaded.length, photoMethod, opportunity: opportunity && { id: opportunity.id, photos: opportunity.photos, fieldsSet: opportunity.fieldsSet, fieldsError: opportunity.fieldsError, photoError: opportunity.photoError }, opportunityError, signalled }));
+    if (contact && contact.missingFields && contact.missingFields.length) console.warn('no GHL custom field found for', JSON.stringify(contact.missingFields), '- create them with these keys or names');
+    console.log('quote saved', JSON.stringify({ contactId, missingFields: (contact && contact.missingFields) || [], photos: uploaded.length, photoMethod, opportunity: opportunity && { id: opportunity.id, photos: opportunity.photos, fieldsSet: opportunity.fieldsSet, fieldsError: opportunity.fieldsError, photoError: opportunity.photoError }, opportunityError, signalled }));
     res.statusCode = 200;
     return res.end(JSON.stringify({ ok: true, contactId: contactId || null, photos: uploaded.length, photosFailed: failed.length, photoMethod, photoFieldId: fieldId || null, opportunity, opportunityError, signalled }));
   } catch (e) {

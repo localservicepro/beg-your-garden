@@ -71,7 +71,7 @@ Quote forms (`data-quote-form`) use these field names so the CRM mapping is dire
 | Name | `full_name` | `{{contact.full_name}}` |
 | Email | `email` | `{{contact.email}}` |
 | Phone | `phone` | `{{contact.phone}}` |
-| Property Address | `property_address` | `{{contact.property_address}}` |
+| Property Address | `property_address` | standard Address `{{contact.address1}}` and custom `{{contact.property_address}}` |
 | Suburb (required) | `suburb`, filled from the address until the customer types their own; datalist of service suburbs | standard City field, `{{contact.city}}` |
 | Property Size | `property_size` | `{{contact.property_size}}` |
 | Service Needed | `service_needed` (dropdown: nine services + Other) | `{{contact.service_needed}}` |
@@ -85,6 +85,10 @@ The referral tick box is unticked by default and optional. The thank-you page sh
 the contact is tagged `partner-sharing-yes` or `partner-sharing-no`, and the note on the contact starts with the
 submission time and "Partner sharing: Yes/No". To show it in the internal enquiry email, add `Partner sharing:
 {{contact.partner_sharing}}` to that email template in the CRM.
+
+`/api/quote` looks each custom field up in GHL by its key **or its name** (e.g. a field named "What type of service are
+you looking for?" still receives the job type) and sends it by ID. GHL silently ignores values for fields that don't
+exist, so any field it can't find is logged as `no GHL custom field found for [...]` in the Vercel function logs.
 
 The frequency question is hidden and disabled until "Regular ongoing service" is picked, so it is neither required
 nor sent for one-off or not-sure jobs. The API stores the suburb in the contact's City field, sends `job_type` and
