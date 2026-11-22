@@ -9,7 +9,7 @@ description, URL and FAQ string comes from that spec.
 ```bash
 npm run build     # renders src/ -> dist/ (no dependencies, Node 18+)
 npm run serve     # preview dist/ at http://localhost:4173
-npm run check     # SEO sanity checks on dist/ (one H1, title/meta length, alt text, JSON-LD, tracking script)
+npm run check     # SEO sanity checks on dist/ (one H1, title/meta length, alt text, JSON-LD, no GHL tracking script)
 npm run images    # re-generate optimised WebP images from assets/source/ (needs python3 + Pillow)
 ```
 
@@ -58,11 +58,11 @@ keep their paths (now with trailing slashes).
 
 ## Lead capture (GoHighLevel)
 
-The external tracking script is loaded in `<head>` on every page:
-
-```html
-<script src="https://app.begyourgarden.com/js/external-tracking.js" data-tracking-id="tk_e59f9b2a0c9242dda56136d98144604c"></script>
-```
+Leads reach GoHighLevel **only through `/api/quote`** (Private Integration Token). The GHL external tracking script
+was removed on purpose: it created a second, untagged "external_form" contact whenever the API path failed, which
+bypassed the `website-quote` workflow. `npm run check` fails if it is added back. Attribution it used to record is now
+sent with each quote instead: the first page of the visit, the referring site and any `utm_*`, `gclid`, `gbraid`,
+`wbraid`, `fbclid` or `msclkid` codes go into the contact note as "Came from", "Landing page" and "Referrer".
 
 Quote forms (`data-quote-form`) use these field names so the CRM mapping is direct:
 
@@ -96,7 +96,11 @@ nor sent for one-off or not-sure jobs. The API stores the suburb in the contact'
 all three to the contact note, and names the opportunity "Service - Name - Suburb". The API does not hard-require
 the three new fields, so an enquiry from an old cached copy of the form is still saved; the browser enforces them.
 
-On submit the page posts to `/api/quote` (see below), lets the tracking script capture the submission, then redirects to `/thank-you/`.
+On submit the page posts to `/api/quote` (see below), then redirects to `/thank-you/`. Because the API is the only route
+into the CRM, a failed send is retried once; if it still fails and photos were attached, the details are re-sent
+without the photos (the note and the thank-you page ask for them by text); if even that fails, the form stays filled in
+and asks the person to try again or call. Each photo is compressed in the browser until it is under ~520 KB, so five
+photos always fit inside Vercel's 4.5 MB request limit.
 
 ### Photo upload and the CRM API (Vercel function)
 
@@ -136,26 +140,27 @@ Environment variables to set in the Vercel project (Settings → Environment Var
 | `GHL_OPP_JOB_PHOTOS_FIELD_ID` | no | ID of the opportunity's File Upload custom field. When unset it is looked up by key (`opportunity.job_photos`, override with `GHL_OPP_JOB_PHOTOS_FIELD_KEY`) through `GET /locations/{id}/customFields?model=opportunity`. |
 | `GHL_OPP_CUSTOM_FIELDS` | no | JSON mapping form names to opportunity custom field IDs (same shape as `GHL_CUSTOM_FIELDS`). Without it the fields are matched by key. |
 
-If the function is unreachable or not configured, the form still redirects to the thank-you page (the tracking
-script in `<head>` captures the text fields as before) and the thank-you page asks the customer to text the
-photos to the business number. Request bodies are capped at Vercel's 4.5 MB limit; photos over 1.5 MB after
-compression are skipped. The Netlify config does not include this function; the Vercel deployment is the target.
+If the function is unreachable or not configured, the form shows an error with the phone number and keeps the details
+on screen. Photos over 1.5 MB after compression are skipped by the API. The Netlify config does not include this function; the Vercel deployment is the target.
 
 ### Spam protection
 
-Bot submissions are stopped in two places, because enquiries reach the CRM two ways: through `/api/quote`, and through
-the GoHighLevel tracking script, which records any quote-form submit it sees.
+Bot submissions are checked in two places:
 
-1. **In the browser, before the tracking script.** A tiny inline script in `<head>` (`spamGuard` in
-   `src/templates/layout.js`) is registered before the tracking script, so it sees every quote-form submit first. It
-   stops the submit when the hidden honeypot field is filled, when the form is sent less than 3 seconds after the page
-   loaded, or while the optional Turnstile check is still running (the form then sends itself once the check passes).
-2. **In `/api/quote`.** Silently drops (logs `spam blocked` with the reason, returns a normal 200, sends nothing to the
-   CRM) when: the honeypot is filled; the request did not come from the site (Origin/Referer); the page's timer is
-   missing or under 3 seconds; the name contains a link; the notes contain two or more links or common spam pitches
-   (SEO, backlinks, crypto, etc.); the phone has fewer than 8 or more than 15 digits; or the email is malformed.
-   With `TURNSTILE_SECRET_KEY` set, a missing or rejected Turnstile token returns an error and the form asks the
-   person to try again or call.
+1. **In the browser.** A tiny inline script in `<head>` (`spamGuard` in `src/templates/layout.js`) sees every
+   quote-form submit first. It stops the submit when the hidden honeypot field is filled, when the form is sent less
+   than 3 seconds after the page loaded, or while the optional Turnstile check is still running (the form then sends
+   itself once the check passes).
+2. **In `/api/quote`, in two tiers.**
+   - **Dropped** (logs `spam blocked`, returns a normal 200, nothing reaches the CRM) only for certain bots: the
+     honeypot is filled, the request did not come from the site (Origin/Referer), or it was sent in under 3 seconds.
+   - **Saved but flagged** for signs that could still be a real person: no page timer (an old cached copy of the
+     page), a link in the name, two or more links or a spam pitch (SEO, backlinks, crypto, etc.) in the notes, a
+     phone with fewer than 8 or more than 15 digits, or a malformed email. The contact is saved with the tag
+     `possible-spam` and a "POSSIBLE SPAM (reason)" line at the top of the note, and the `website-quote` workflow tag
+     is not added, so nobody is alerted. Adding `website-quote` by hand sends a genuine one through the workflow.
+   - With `TURNSTILE_SECRET_KEY` set, a missing or rejected Turnstile token returns an error and the form asks the
+     person to try again or call.
 
 Cloudflare Turnstile is optional and free: create a widget at dash.cloudflare.com (Turnstile, add the live domain and
 `vercel.app`), then add `TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` in Vercel and redeploy. It runs in
@@ -226,7 +231,7 @@ Coordinates are approximate suburb centroids; edit `mapPoints` to add, move or r
 - `img()` in `src/templates/components.js` emits `srcset`/`sizes` from every `-640/-800/-1000` variant that exists, with exact widths read from the WebP header, plus `width`/`height` for zero layout shift. Add variants by dropping files with those suffixes into `src/public/images/`.
 - The homepage hero poster is preloaded; the video's sources are attached by JS after the `load` event (and skipped under reduced motion or Data Saver) so it never competes with the first paint.
 - The animated map initialises only when it scrolls near the viewport and samples the route path once (per-frame `getPointAtLength` calls were costing seconds on load).
-- The LeadConnector review widget script is deferred; the tracking script is async.
+- The LeadConnector review widget script is deferred.
 - CSS and JS are minified with esbuild when it is installed (`npm install`); the build still works without it.
 - Hosting configs set one-year immutable caching for `/images/*` and `/assets/*` (hashed URLs).
 

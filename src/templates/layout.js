@@ -44,8 +44,8 @@ export function breadcrumbSchema(items) {
   return { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: `${site.url}${it.href}` })) };
 }
 
-// Spam guard, inlined before the CRM tracking script so its capture listener runs first. The tracking script records
-// any quote-form submit event it sees, so a bot submission has to be stopped here, not only in /api/quote.
+// Spam guard: a capture listener that sees every quote-form submit first and stops obvious bots (filled honeypot,
+// sent within 3 seconds, Turnstile still running) before anything is sent. /api/quote repeats the checks server-side.
 // main.js supplies the full check (window.__bygSpamCheck); until it loads, the honeypot and the 3-second rule apply.
 const spamGuard = `(function(){var t0=Date.now();window.__bygT0=t0;addEventListener('submit',function(e){var f=e.target;if(!f||!f.matches||!f.matches('form[data-quote-form]'))return;var hp=f.querySelector('.hp input');var r=window.__bygSpamCheck?window.__bygSpamCheck(f):(hp&&hp.value?'honeypot':(Date.now()-t0<3000?'too-fast':''));if(r){e.preventDefault();e.stopImmediatePropagation();try{f.dispatchEvent(new CustomEvent('byg:blocked',{detail:r}))}catch(x){}}},true)})();`;
 
@@ -83,9 +83,7 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow">' : '<meta name="ro
 <link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
 ${preload ? `<link rel="preload" as="image" href="${preload.href}"${preload.srcset ? ` imagesrcset="${preload.srcset}" imagesizes="${preload.sizes}"` : ''} fetchpriority="high">` : ''}
 <link rel="stylesheet" href="/assets/main.css?v=${assetHash}">
-<link rel="preconnect" href="https://app.begyourgarden.com">
 <script>${spamGuard}</script>
-<script src="${site.trackingScript.src}" data-tracking-id="${site.trackingScript.id}" async></script>
 ${json}
 </head>
 <body>

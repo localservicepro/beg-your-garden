@@ -15,7 +15,8 @@ for (const f of files) {
   const imgsNoAlt = (html.match(/<img(?![^>]*\balt=)[^>]*>/g) || []).length;
   const schemas = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g) || [];
   let schemaOk = true; for (const s of schemas) { try { JSON.parse(s.replace(/<script[^>]*>|<\/script>/g, '')); } catch { schemaOk = false; } }
-  const tracking = html.includes('external-tracking.js') && html.includes('tk_e59f9b2a0c9242dda56136d98144604c');
+  // The GHL external tracking script was removed on purpose: leads go to the CRM only through /api/quote.
+  const tracking = !html.includes('external-tracking.js');
   const nsw = /Tweed|Bilambil|Terranora|Banora|Palm Beach/i.test(html);
   const problems = [];
   if (h1 !== 1) problems.push(`h1=${h1}`);
@@ -23,7 +24,7 @@ for (const f of files) {
   if (desc.length > 160) problems.push(`desc ${desc.length}ch`);
   if (imgsNoAlt) problems.push(`${imgsNoAlt} img without alt`);
   if (!schemaOk) problems.push('bad JSON-LD');
-  if (!tracking) problems.push('tracking script missing');
+  if (!tracking) problems.push('GHL tracking script present (leads must come only from /api/quote)');
   if (nsw) problems.push('NSW place name found');
   if (problems.length) fail++;
   console.log(`${problems.length ? 'FAIL' : 'ok  '} ${rel.padEnd(44)} title=${title.length}ch desc=${desc.length}ch schema=${schemas.length} ${problems.join(', ')}`);

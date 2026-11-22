@@ -234,29 +234,48 @@
 
   /* ---------- quote forms ----------
      Photos are shrunk in the browser, then the whole form is POSTed as JSON to
-     /api/quote (Vercel function) which upserts the contact in the CRM and uploads
-     the photos to its media library. The GoHighLevel tracking script in <head>
-     still sees the submit event for attribution. If the API is unavailable the
-     form falls back to the old behaviour: redirect to the thank-you page. */
-  const MAX_PHOTOS = 5, MAX_EDGE = 1600, JPEG_Q = 0.82;
+     /api/quote (Vercel function), the only route into the CRM: it creates the
+     contact, attaches the photos, adds the note and tags. Each photo is kept
+     under PHOTO_BUDGET so five always fit inside Vercel's 4.5 MB request limit. */
+  const MAX_PHOTOS = 5;
+  const PHOTO_BUDGET = 700000; // characters of base64 data URL (~520 KB) per photo
+  const SHRINK_STEPS = [[1600, 0.8], [1400, 0.72], [1200, 0.65], [1024, 0.6], [900, 0.52], [760, 0.45]];
   const shrink = (file) => new Promise((resolve) => {
     const done = (dataUrl) => resolve({ name: file.name || 'photo.jpg', type: 'image/jpeg', data: dataUrl });
     const url = URL.createObjectURL(file);
     const im = new Image();
     im.onload = () => {
-      const r = Math.min(1, MAX_EDGE / Math.max(im.naturalWidth, im.naturalHeight));
-      const c = d.createElement('canvas'); c.width = Math.round(im.naturalWidth * r); c.height = Math.round(im.naturalHeight * r);
-      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
       URL.revokeObjectURL(url);
-      try { done(c.toDataURL('image/jpeg', JPEG_Q)); } catch (err) { resolve(null); }
+      try {
+        let out = '';
+        for (const [edge, q] of SHRINK_STEPS) { // step down until the photo fits its share of the request
+          const r = Math.min(1, edge / Math.max(im.naturalWidth, im.naturalHeight));
+          const c = d.createElement('canvas'); c.width = Math.round(im.naturalWidth * r); c.height = Math.round(im.naturalHeight * r);
+          c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+          out = c.toDataURL('image/jpeg', q);
+          if (out.length <= PHOTO_BUDGET) break;
+        }
+        done(out);
+      } catch (err) { resolve(null); }
     };
     im.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
     im.src = url;
   });
 
+  /* ---------- where the visitor came from (sent with the quote, written to the CRM note) ---------- */
+  try {
+    if (!sessionStorage.getItem('byg_src')) {
+      const q = new URLSearchParams(location.search);
+      const ref = d.referrer && new URL(d.referrer).host !== location.host ? d.referrer : '';
+      const src = { landing: (location.pathname + location.search).slice(0, 300), referrer: ref.slice(0, 300) };
+      ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'gbraid', 'wbraid', 'fbclid', 'msclkid'].forEach((k) => { if (q.get(k)) src[k] = q.get(k).slice(0, 150); });
+      sessionStorage.setItem('byg_src', JSON.stringify(src));
+    }
+  } catch (err) { /* storage blocked: no attribution */ }
+
   /* ---------- spam protection ----------
-     The inline guard in <head> calls this before the CRM tracking script sees a submit. A non-empty reason stops the
-     submission there, so bots never reach the tracking script or /api/quote. */
+     The inline guard in <head> calls this on every quote-form submit. A non-empty reason stops the submission there,
+     so obvious bots never reach /api/quote. */
   const MIN_FORM_MS = 3000;
   const spamState = new WeakMap(); // form -> { ts: Turnstile state or null, pending }
   window.__bygSpamCheck = (form) => {
@@ -280,8 +299,7 @@
     const previews = form.querySelector('.photo-previews');
     const zone = form.querySelector('.dropzone');
     let photos = []; // [{ file, dataUrl }]
-    // Hidden fields the CRM tracking script captures with the submit event: consent (Yes/No) and submission time.
-    // Kept current on every change so they are correct whichever phase the tracking script reads the form in.
+    // Hidden fields sent with the quote: consent (Yes/No) and submission time, kept current on every change.
     const hidden = (name) => form.querySelector('input[type="hidden"][name="' + name + '"]');
     const consentBox = form.querySelector('input[name="partner_sharing_tick"]');
     const syncMeta = () => {
@@ -491,14 +509,31 @@
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({ event: 'quote_form_submit', form_id: form.id || 'quote', service_needed: data.service_needed || '', job_type: data.job_type || '', service_frequency: data.service_frequency || '', suburb: data.suburb || '', photos: photos.length });
       } catch (err) { /* non-fatal */ }
-      let result = { ok: false, photos: 0 };
-      try {
-        const res = await fetch('/api/quote', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...data, page: location.pathname, photos: photos.map((p) => ({ name: p.file.name, type: 'image/jpeg', data: p.dataUrl })) }),
-        });
-        result = await res.json().catch(() => ({ ok: res.ok, photos: 0 }));
-      } catch (err) { result = { ok: false, photos: 0 }; }
+      let attribution = null;
+      try { attribution = JSON.parse(sessionStorage.getItem('byg_src') || 'null'); } catch (err) { /* ignore */ }
+      // The API is the only route into the CRM, so a failed send is retried, then re-sent without photos (the most
+      // likely reason for a rejection), and only shown as an error if the details themselves can't get through.
+      const send = async (withPhotos) => {
+        try {
+          const res = await fetch('/api/quote', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...data, page: location.pathname, attribution, photos_dropped: withPhotos ? 0 : photos.length,
+              photos: withPhotos ? photos.map((p) => ({ name: p.file.name, type: 'image/jpeg', data: p.dataUrl })) : [] }),
+          });
+          const j = await res.json().catch(() => null);
+          if (j && (j.ok || j.error === 'verification')) return j;
+          return { ok: false, status: res.status };
+        } catch (err) { return { ok: false, status: 0 }; }
+      };
+      const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+      let result = await send(true);
+      if (!result.ok && !result.error && result.status !== 413) { await pause(1500); result = await send(true); }
+      if (!result.ok && !result.error && photos.length) { say('Sending your details without the photos…'); result = await send(false); }
+      if (!result.ok && !result.error) {
+        if (btn) { btn.disabled = false; btn.innerHTML = btn.dataset.label || 'Request my free quote'; }
+        say('Sorry, we could not send your request just now. Please try again in a minute, or call or text us on 0411 638 432.', true);
+        return;
+      }
       if (result && result.error === 'verification') {
         // The server could not verify the bot check. Keep the details on screen so they can try again or call.
         if (btn) { btn.disabled = false; btn.innerHTML = btn.dataset.label || 'Request my free quote'; }
@@ -509,8 +544,7 @@
       try {
         sessionStorage.setItem('byg_last_quote', JSON.stringify({ name: data.full_name || '', service: data.service_needed || '', photosSent: result.ok ? (result.photos || 0) : 0, photosWanted: photos.length, apiOk: !!result.ok, partner: partner === 'Yes' }));
       } catch (err) { /* ignore */ }
-      // Give the tracking script's own submit handler time to flush, then redirect.
-      setTimeout(() => { window.location.assign(form.dataset.redirect || '/thank-you/'); }, 400);
+      window.location.assign(form.dataset.redirect || '/thank-you/');
     });
   });
 

@@ -114,12 +114,18 @@ function originAllowed(req) {
   return host === 'localhost' || host === '127.0.0.1' || /(^|\.)begyourgarden\.com$/.test(host)
     || /^beg-your-garden[a-z0-9-]*\.vercel\.app$/.test(host) || extra.includes(host);
 }
-function spamReason(data, req) {
+// Hard signs (certainly a bot): the enquiry is dropped. Only these can lose a submission.
+function hardSpamReason(data, req) {
   if (clean(data.website)) return 'honeypot';
-  if (!originAllowed(req)) return 'origin';
+  if (!originAllowed(req)) return 'origin'; // browsers always send Origin/Referer on this POST
   const ms = Number(data.form_ms);
-  if (!Number.isFinite(ms)) return 'no-timer'; // posted without running the page's script
-  if (ms < MIN_FORM_MS) return 'too-fast';
+  if (Number.isFinite(ms) && ms < MIN_FORM_MS) return 'too-fast';
+  return '';
+}
+// Soft signs (probably spam, could be a real person): the contact is still saved, tagged possible-spam, and the
+// workflow tag is not added, so nobody is alerted but nothing is lost.
+function softSpamReason(data) {
+  if (!Number.isFinite(Number(data.form_ms))) return 'no-timer'; // posted without the page's script (or an old copy)
   const name = clean(data.full_name, 200), notes = clean(data.job_notes, 4000);
   if (LINK.test(name)) return 'link-in-name';
   if ((notes.match(LINKS) || []).length >= 2) return 'links';
@@ -343,9 +349,10 @@ async function upsertOpportunity(f, contactId, locationId, photos, tag, contactP
 // Tags go through the add/remove tag endpoints, which never touch the contact's other tags.
 const tagCall = (contactId, method, tags) => ghl(`/contacts/${encodeURIComponent(contactId)}/tags`, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tags }) });
 const ALL_JOB_TAGS = ['job-type-one-off', 'job-type-regular', 'job-type-not-sure'];
-async function setTags(contactId, f) {
+async function setTags(contactId, f, possibleSpam) {
   const partner = f.partner_sharing === 'Yes' ? 'partner-sharing-yes' : 'partner-sharing-no';
   const job = jobTag(f.job_type);
+  if (possibleSpam) { await tagCall(contactId, 'POST', ['possible-spam']); }
   // a returning customer may have answered differently last time: drop the answers that no longer apply
   const stale = ['partner-sharing-yes', 'partner-sharing-no', ...ALL_JOB_TAGS].filter((t) => t !== partner && t !== job);
   try { await tagCall(contactId, 'DELETE', stale); } catch (e) { /* none of them present */ }
@@ -369,12 +376,13 @@ export default async function handler(req, res) {
   let data;
   try { data = await readJson(req); } catch (e) { res.statusCode = e.status || 400; return res.end(JSON.stringify({ ok: false, error: 'Bad request' })); }
 
-  const reason = spamReason(data, req);
+  const reason = hardSpamReason(data, req);
   if (reason) {
     const ip = String((req.headers && req.headers['x-forwarded-for']) || '').split(',')[0].trim();
     console.warn('spam blocked', JSON.stringify({ reason, ip, origin: (req.headers && (req.headers.origin || req.headers.referer)) || '', name: clean(data.full_name, 60), email: clean(data.email, 80) }));
     res.statusCode = 200; return res.end(JSON.stringify({ ok: true, skipped: 'spam' }));
   }
+  const possibleSpam = softSpamReason(data);
   if (!(await turnstileOk(data.cf_token, req))) {
     console.warn('turnstile verification failed', clean(data.email, 80));
     res.statusCode = 400; return res.end(JSON.stringify({ ok: false, error: 'verification' }));
@@ -403,7 +411,7 @@ export default async function handler(req, res) {
   try {
     const contact = await upsertContact(f, locationId, tag);
     const contactId = contact && contact.id;
-    if (contactId) { try { await setTags(contactId, f); } catch (e) { console.error('tags failed', e.message); } }
+    if (contactId) { try { await setTags(contactId, f, possibleSpam); } catch (e) { console.error('tags failed', e.message); } }
     let uploaded = []; const failed = []; let photoMethod = null;
     let fieldId = null;
     if (photos.length && contactId) { try { fieldId = await resolvePhotoFieldId(locationId); } catch (e) { console.error('photo field lookup failed', e.message); } }
@@ -423,7 +431,14 @@ export default async function handler(req, res) {
       try { opportunity = await upsertOpportunity(f, contactId, locationId, photos, tag, photoMethod && photoMethod !== 'medias/upload-file' ? fieldId : null); }
       catch (e) { opportunityError = e.message; console.error('opportunity step failed', e.message, e.body ? JSON.stringify(e.body).slice(0, 300) : ''); }
     }
+    const a = data.attribution && typeof data.attribution === 'object' ? data.attribution : {};
+    const utm = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].map((k) => clean(a[k], 150)).filter(Boolean);
+    const clickIds = [['gclid', 'Google Ads'], ['gbraid', 'Google Ads'], ['wbraid', 'Google Ads'], ['fbclid', 'Facebook/Instagram'], ['msclkid', 'Microsoft Ads']].filter(([k]) => clean(a[k], 200)).map(([, n]) => n);
+    let refHost = ''; try { refHost = a.referrer ? new URL(String(a.referrer)).hostname.replace(/^www\./, '') : ''; } catch (e) { refHost = ''; }
+    const cameFrom = clickIds.length ? `${[...new Set(clickIds)].join(', ')} click` : utm.length ? `campaign (${utm.join(' / ')})` : refHost ? (/google\./.test(refHost) ? 'Google search' : /bing\./.test(refHost) ? 'Bing search' : /facebook|instagram/.test(refHost) ? 'Facebook/Instagram' : refHost) : 'direct visit (typed the address, bookmark or app)';
+    const droppedPhotos = Math.max(0, Math.min(MAX_PHOTOS, parseInt(data.photos_dropped, 10) || 0));
     const lines = [
+      possibleSpam ? `POSSIBLE SPAM (${possibleSpam}): not sent to the quote workflow. If this is a real enquiry, add the "${tag}" tag to send it through.` : null,
       `Website quote request (${clean(data.page, 120) || 'site'})`,
       `Submitted: ${f.submitted_local}`,
       `Partner sharing: ${f.partner_sharing}`,
@@ -436,14 +451,19 @@ export default async function handler(req, res) {
       uploaded.length ? (photoMethod === 'forms/upload-custom-files' ? `Photos (${uploaded.length}) attached to the Job Photos field: ${uploaded.map((u) => u.name).join(', ')}` : `Photos (${uploaded.length}):`) : null,
       ...(photoMethod === 'forms/upload-custom-files' ? [] : uploaded.map((u) => `- ${u.url || u.name}`)),
       failed.length ? `Photos that failed to upload: ${failed.map((x) => x.name).join(', ')}` : null,
+      droppedPhotos ? `The customer added ${droppedPhotos} photo${droppedPhotos === 1 ? '' : 's'} but they could not be sent; ask them to text the photos.` : null,
+      `Came from: ${cameFrom}`,
+      a.landing ? `Landing page: ${clean(a.landing, 300)}` : null,
+      a.referrer ? `Referrer: ${clean(a.referrer, 300)}` : null,
       opportunity ? `Opportunity ${opportunity.isNew ? 'created' : 'updated'}${opportunity.photos ? ` with ${opportunity.photos} photo${opportunity.photos === 1 ? '' : 's'} on the Job Photos field` : ''}` : null,
     ].filter(Boolean);
     if (contactId) { try { await addNote(contactId, lines.join('\n')); } catch (e) { console.error('note failed', e.message); } }
     if (failed.length) console.error('photo upload failures', JSON.stringify(failed));
     let signalled = false;
-    if (contactId) { try { await signalNewQuote(contactId, tag); signalled = true; } catch (e) { console.error('workflow tag failed', e.message); } }
+    if (contactId && !possibleSpam) { try { await signalNewQuote(contactId, tag); signalled = true; } catch (e) { console.error('workflow tag failed', e.message); } }
+    if (possibleSpam) console.warn('possible spam saved without workflow tag', JSON.stringify({ reason: possibleSpam, contactId }));
     if (contact && contact.missingFields && contact.missingFields.length) console.warn('no GHL custom field found for', JSON.stringify(contact.missingFields), '- create them with these keys or names');
-    console.log('quote saved', JSON.stringify({ contactId, missingFields: (contact && contact.missingFields) || [], photos: uploaded.length, photoMethod, opportunity: opportunity && { id: opportunity.id, photos: opportunity.photos, fieldsSet: opportunity.fieldsSet, fieldsError: opportunity.fieldsError, photoError: opportunity.photoError }, opportunityError, signalled }));
+    console.log('quote saved', JSON.stringify({ contactId, possibleSpam: possibleSpam || null, droppedPhotos, missingFields: (contact && contact.missingFields) || [], photos: uploaded.length, photoMethod, opportunity: opportunity && { id: opportunity.id, photos: opportunity.photos, fieldsSet: opportunity.fieldsSet, fieldsError: opportunity.fieldsError, photoError: opportunity.photoError }, opportunityError, signalled }));
     res.statusCode = 200;
     return res.end(JSON.stringify({ ok: true, contactId: contactId || null, photos: uploaded.length, photosFailed: failed.length, photoMethod, photoFieldId: fieldId || null, opportunity, opportunityError, signalled }));
   } catch (e) {
