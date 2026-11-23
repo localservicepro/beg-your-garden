@@ -26,10 +26,6 @@ export const site = {
     { days: 'Monday – Friday', open: '07:00', close: '18:00', label: '7:00am – 6:00pm' },
     { days: 'Saturday', open: '07:00', close: '13:00', label: '7:00am – 1:00pm' },
   ],
-  trackingScript: {
-    src: 'https://app.begyourgarden.com/js/external-tracking.js',
-    id: 'tk_e59f9b2a0c9242dda56136d98144604c',
-  },
 };
 
 export const routeDays = [

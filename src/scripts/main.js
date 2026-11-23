@@ -233,10 +233,9 @@
   });
 
   /* ---------- quote forms ----------
-     Photos are shrunk in the browser, then the whole form is POSTed as JSON to
-     /api/quote (Vercel function), the only route into the CRM: it creates the
-     contact, attaches the photos, adds the note and tags. Each photo is kept
-     under PHOTO_BUDGET so five always fit inside Vercel's 4.5 MB request limit. */
+     Photos are shrunk in the browser, then the form is POSTed (multipart/form-data)
+     to its action, Sales Brain's lead endpoint, which puts the lead into the CRM.
+     Without JS the form posts there directly and lands on /thank-you/. */
   const MAX_PHOTOS = 5;
   const PHOTO_BUDGET = 700000; // characters of base64 data URL (~520 KB) per photo
   const SHRINK_STEPS = [[1600, 0.8], [1400, 0.72], [1200, 0.65], [1024, 0.6], [900, 0.52], [760, 0.45]];
@@ -275,7 +274,7 @@
 
   /* ---------- spam protection ----------
      The inline guard in <head> calls this on every quote-form submit. A non-empty reason stops the submission there,
-     so obvious bots never reach /api/quote. */
+     so obvious bots never reach the lead endpoint. */
   const MIN_FORM_MS = 3000;
   const spamState = new WeakMap(); // form -> { ts: Turnstile state or null, pending }
   window.__bygSpamCheck = (form) => {
@@ -496,55 +495,49 @@
       if (btn && !btn.dataset.label) btn.dataset.label = btn.innerHTML;
       if (btn) { btn.disabled = true; btn.textContent = photos.length ? 'Sending photos…' : 'Sending…'; }
       say('Thanks — sending your request…');
-      const data = {};
       syncMeta();
-      const partner = hidden('partner_sharing').value === 'Yes' ? 'Yes' : 'No';
-      try {
-        Object.assign(data, Object.fromEntries(new FormData(form).entries()));
-        data.form_ms = Date.now() - (window.__bygT0 || Date.now()); // time on page, by the visitor's own clock
-        data.cf_token = (spam.ts && spam.ts.token) || data['cf-turnstile-response'] || '';
-        delete data['cf-turnstile-response'];
-        delete data.photos; delete data.website; delete data.partner_sharing_tick;
-        data.partner_sharing = partner;
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({ event: 'quote_form_submit', form_id: form.id || 'quote', service_needed: data.service_needed || '', job_type: data.job_type || '', service_frequency: data.service_frequency || '', suburb: data.suburb || '', photos: photos.length });
-      } catch (err) { /* non-fatal */ }
-      let attribution = null;
-      try { attribution = JSON.parse(sessionStorage.getItem('byg_src') || 'null'); } catch (err) { /* ignore */ }
-      // The API is the only route into the CRM, so a failed send is retried, then re-sent without photos (the most
-      // likely reason for a rejection), and only shown as an error if the details themselves can't get through.
-      const send = async (withPhotos) => {
+      const partner = hidden('partner_sharing') && hidden('partner_sharing').value === 'Yes' ? 'Yes' : 'No';
+      const sp = form.querySelector('input[name="source_page"]');
+      if (sp) sp.value = location.pathname;
+      // The shrunk photos go in the form's own photos input, so a fallback plain submit carries them too.
+      const blobs = photos.map((p, i) => {
         try {
-          const res = await fetch('/api/quote', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...data, page: location.pathname, attribution, photos_dropped: withPhotos ? 0 : photos.length,
-              photos: withPhotos ? photos.map((p) => ({ name: p.file.name, type: 'image/jpeg', data: p.dataUrl })) : [] }),
-          });
-          const j = await res.json().catch(() => null);
-          if (j && (j.ok || j.error === 'verification')) return j;
-          return { ok: false, status: res.status };
-        } catch (err) { return { ok: false, status: 0 }; }
-      };
-      const pause = (ms) => new Promise((r) => setTimeout(r, ms));
-      let result = await send(true);
-      if (!result.ok && !result.error && result.status !== 413) { await pause(1500); result = await send(true); }
-      if (!result.ok && !result.error && photos.length) { say('Sending your details without the photos…'); result = await send(false); }
-      if (!result.ok && !result.error) {
-        if (btn) { btn.disabled = false; btn.innerHTML = btn.dataset.label || 'Request my free quote'; }
-        say('Sorry, we could not send your request just now. Please try again in a minute, or call or text us on 0411 638 432.', true);
-        return;
-      }
-      if (result && result.error === 'verification') {
-        // The server could not verify the bot check. Keep the details on screen so they can try again or call.
-        if (btn) { btn.disabled = false; btn.innerHTML = btn.dataset.label || 'Request my free quote'; }
-        if (spam.ts && window.turnstile && spam.ts.id != null) { spam.ts.token = ''; try { window.turnstile.reset(spam.ts.id); } catch (err) { /* ignore */ } }
-        say('We could not complete the security check. Please press the button again, or call or text us on 0411 638 432.', true);
+          const [head, b64] = p.dataUrl.split(',');
+          const bin = atob(b64); const buf = new Uint8Array(bin.length);
+          for (let k = 0; k < bin.length; k++) buf[k] = bin.charCodeAt(k);
+          const name = (p.file.name || 'photo-' + (i + 1)).replace(/\.[^.]+$/, '') + '.jpg';
+          return new File([buf], name, { type: (head.match(/data:([^;]+)/) || [])[1] || 'image/jpeg' });
+        } catch (err) { return p.file; }
+      });
+      if (input) { try { const dt = new DataTransfer(); blobs.forEach((f) => dt.items.add(f)); input.files = dt.files; } catch (err) { /* old browser */ } }
+      const fd = new FormData(form);
+      fd.delete('photos'); blobs.forEach((f) => fd.append('photos', f, f.name));
+      fd.delete('partner_sharing_tick'); fd.set('partner_sharing', partner);
+      const first = String(fd.get('full_name') || '').trim().split(/\s+/)[0] || '';
+      try {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: 'quote_form_submit', form_id: form.id || 'quote', service_needed: fd.get('service_needed') || '', job_type: fd.get('job_type') || '', service_frequency: fd.get('service_frequency') || '', suburb: fd.get('suburb') || '', photos: blobs.length });
+      } catch (err) { /* non-fatal */ }
+      let ok = false;
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: fd, headers: { Accept: 'application/json' } });
+        if (!res.ok) {
+          if (btn) { btn.disabled = false; btn.innerHTML = btn.dataset.label || 'Request my free quote'; }
+          say('Sorry, we could not send your request just now. Please check your details and try again, or call or text us on 0411 638 432.', true);
+          return;
+        }
+        ok = true;
+      } catch (err) {
+        // Network error: hand the same form to the browser as a normal post (it lands on /thank-you/).
+        try { sessionStorage.setItem('byg_last_quote', JSON.stringify({ name: fd.get('full_name') || '', service: fd.get('service_needed') || '', photosSent: blobs.length, photosWanted: blobs.length, partner: partner === 'Yes' })); } catch (e2) { /* ignore */ }
+        if (consentBox) consentBox.disabled = true; // partner_sharing (hidden) carries the answer
+        HTMLFormElement.prototype.submit.call(form);
         return;
       }
       try {
-        sessionStorage.setItem('byg_last_quote', JSON.stringify({ name: data.full_name || '', service: data.service_needed || '', photosSent: result.ok ? (result.photos || 0) : 0, photosWanted: photos.length, apiOk: !!result.ok, partner: partner === 'Yes' }));
+        sessionStorage.setItem('byg_last_quote', JSON.stringify({ name: fd.get('full_name') || '', service: fd.get('service_needed') || '', photosSent: ok ? blobs.length : 0, photosWanted: blobs.length, partner: partner === 'Yes' }));
       } catch (err) { /* ignore */ }
-      window.location.assign(form.dataset.redirect || '/thank-you/');
+      window.location.assign((form.dataset.redirect || '/thank-you/') + (first ? '?name=' + encodeURIComponent(first) : ''));
     });
   });
 
@@ -572,7 +565,9 @@
   if (ty) {
     try {
       const last = JSON.parse(sessionStorage.getItem('byg_last_quote') || 'null');
-      if (last && last.name) ty.textContent = 'Thanks, ' + last.name.split(' ')[0] + '!';
+      const qn = (new URLSearchParams(location.search).get('name') || '').trim().split(/\s+/)[0];
+      const nm = qn || (last && last.name ? String(last.name).trim().split(/\s+/)[0] : '');
+      if (nm) ty.textContent = 'Thanks, ' + nm.slice(0, 40) + '!';
       const lede = d.querySelector('[data-thank-you-lede]');
       if (lede && last) {
         const email = lede.dataset.email || '';

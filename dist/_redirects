@@ -1,0 +1,11 @@
+# Old LeadConnector URLs -> new structure (301). Netlify format.
+/home                 /                       301!
+/home/                /                       301!
+/services             /services/              301
+/our-work             /our-work/              301
+/about                /about/                 301
+/contact              /contact/               301
+/lawn-mowing-ripley   /lawn-mowing-ripley/    301
+/thank-you            /thank-you/             301
+http://begyourgarden.com/*   https://www.begyourgarden.com/:splat  301!
+https://begyourgarden.com/*  https://www.begyourgarden.com/:splat  301!

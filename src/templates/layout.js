@@ -45,7 +45,7 @@ export function breadcrumbSchema(items) {
 }
 
 // Spam guard: a capture listener that sees every quote-form submit first and stops obvious bots (filled honeypot,
-// sent within 3 seconds, Turnstile still running) before anything is sent. /api/quote repeats the checks server-side.
+// sent within 3 seconds, Turnstile still running) before anything is sent. The lead endpoint ignores submissions that fill the honeypot.
 // main.js supplies the full check (window.__bygSpamCheck); until it loads, the honeypot and the 3-second rule apply.
 const spamGuard = `(function(){var t0=Date.now();window.__bygT0=t0;addEventListener('submit',function(e){var f=e.target;if(!f||!f.matches||!f.matches('form[data-quote-form]'))return;var hp=f.querySelector('.hp input');var r=window.__bygSpamCheck?window.__bygSpamCheck(f):(hp&&hp.value?'honeypot':(Date.now()-t0<3000?'too-fast':''));if(r){e.preventDefault();e.stopImmediatePropagation();try{f.dispatchEvent(new CustomEvent('byg:blocked',{detail:r}))}catch(x){}}},true)})();`;
 
@@ -92,7 +92,7 @@ ${header({ onDark })}
 ${body}
 </main>
 ${footer()}
-${path === '/contact/' || path === '/thank-you/' ? '' : quoteModal()}
+${path === '/contact/' || path === '/thank-you/' ? '' : quoteModal(path)}
 <script src="/assets/main.js?v=${assetHash}" defer></script>
 <script src="https://api.closebot.com/scripts/cb.js?source=NOaznR477jeopRlH" async></script>
 </body>

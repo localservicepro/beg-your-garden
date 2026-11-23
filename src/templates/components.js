@@ -213,7 +213,7 @@ export function footer() {
 }
 
 /* ---------- quote form (GoHighLevel field mapping) ---------- */
-// Lead-qualifying questions. Values are what the CRM stores, so keep them in step with api/quote.js.
+// Lead-qualifying questions. Values are what the CRM stores.
 export const jobTypes = [
   { value: 'One-off job', hint: 'e.g. garden tidy-up, initial clean' },
   { value: 'Regular ongoing service', hint: 'e.g. weekly, fortnightly' },
@@ -226,11 +226,15 @@ const placesKey = (process.env.GOOGLE_MAPS_API_KEY || '').trim();
 // Optional Cloudflare Turnstile bot check: public site key from TURNSTILE_SITE_KEY at build time. The server verifies
 // the token when TURNSTILE_SECRET_KEY is set. Without the keys the form relies on the honeypot, timing and API checks.
 const turnstileKey = (process.env.TURNSTILE_SITE_KEY || '').trim();
-export function quoteForm({ id = 'quote-form', compact = false, defaultService = '' } = {}) {
+// Leads post to Sales Brain, which puts them into the client's CRM (fields mapped, Lead Source set).
+export const leadAction = 'https://app.salesbrain.com.au/api/lead/fcf9185d-be89-4c32-a33d-60be36d877d3';
+export function quoteForm({ id = 'quote-form', compact = false, defaultService = '', sourcePage = '' } = {}) {
   const opts = serviceList.map((s) => `<option value="${esc(s.name)}"${s.name === defaultService ? ' selected' : ''}>${esc(s.name)}</option>`).join('') + '<option value="Other">Other</option>';
   return `
-<form class="form" id="${id}" data-quote-form data-redirect="/thank-you/" action="/thank-you/" method="get">
-  <div class="hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+<form class="form" id="${id}" data-quote-form data-redirect="/thank-you/" action="${leadAction}" method="POST" enctype="multipart/form-data">
+  <div class="hp" aria-hidden="true"><label>Website<input type="text" name="_hp_url" tabindex="-1" autocomplete="off"></label></div>
+  <input type="hidden" name="source_page" value="${esc(sourcePage)}">
+  <input type="hidden" name="redirect" value="${site.url}/thank-you/">
   <div class="field"><label for="${id}-name">Name <span>*</span></label><input id="${id}-name" name="full_name" type="text" autocomplete="name" required placeholder="Your full name"></div>
   <div class="form__row">
     <div class="field"><label for="${id}-email">Email <span>*</span></label><input id="${id}-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com"></div>
@@ -288,7 +292,7 @@ export function quoteForm({ id = 'quote-form', compact = false, defaultService =
 </form>`;
 }
 
-export function quoteModal() {
+export function quoteModal(sourcePage = '') {
   return `
 <dialog class="quote-modal" id="quote-modal" aria-labelledby="quote-modal-title">
   <div class="quote-modal__panel">
@@ -298,7 +302,7 @@ export function quoteModal() {
       <h2 id="quote-modal-title">Get a free quote</h2>
       <p>A price within one business day. Add a photo of the job if you have one.</p>
     </div>
-    ${quoteForm({ id: 'modal-quote', compact: true })}
+    ${quoteForm({ id: 'modal-quote', compact: true, sourcePage })}
   </div>
 </dialog>`;
 }

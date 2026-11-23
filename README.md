@@ -56,119 +56,26 @@ tools/optimise-images.py   image pipeline (WebP, resize, logo crops, favicons)
 Old URLs: `/home` 301s to `/`; `/services`, `/about`, `/our-work`, `/contact`, `/lawn-mowing-ripley`
 keep their paths (now with trailing slashes).
 
-## Lead capture (GoHighLevel)
+## Lead capture (Sales Brain)
 
-Leads reach GoHighLevel **only through `/api/quote`** (Private Integration Token). The GHL external tracking script
-was removed on purpose: it created a second, untagged "external_form" contact whenever the API path failed, which
-bypassed the `website-quote` workflow. `npm run check` fails if it is added back. Attribution it used to record is now
-sent with each quote instead: the first page of the visit, the referring site and any `utm_*`, `gclid`, `gbraid`,
-`wbraid`, `fbclid` or `msclkid` codes go into the contact note as "Came from", "Landing page" and "Referrer".
+Every quote form (`data-quote-form`: the Contact page form and the pop-up on every other page) posts
+`multipart/form-data` to Sales Brain's lead endpoint:
+`https://app.salesbrain.com.au/api/lead/fcf9185d-be89-4c32-a33d-60be36d877d3`. Sales Brain puts each lead into the
+client's GoHighLevel account through its own connection (fields mapped, Lead Source and contact source set), so the
+site has no CRM tracking script, no CRM form embed and no CRM token. `npm run check` fails a page that has one, or a
+quote form that posts anywhere else.
 
-Quote forms (`data-quote-form`) use these field names so the CRM mapping is direct:
+- Hidden fields: `source_page` (the page path) and `redirect` (`https://www.begyourgarden.com/thank-you/`).
+- Honeypot: `_hp_url` (visually hidden, `tabindex="-1"`). The endpoint ignores leads that fill it.
+- Photos: `<input type="file" name="photos" multiple>`. With JS the photos are shrunk in the browser (up to 5) and
+  the form is sent with `fetch()` (`Accept: application/json`), then the visitor goes to `/thank-you/?name=<first name>`.
+  On a network error the same form is posted normally. Without JS the browser posts straight to the endpoint.
+- The visible fields (name, email, phone, property address, suburb, property size, service needed, job type,
+  service frequency, job notes, photos, partner-sharing consent) were kept exactly as they were when leads moved to
+  Sales Brain (November 2026).
 
-| Field | `name` | CRM |
-|---|---|---|
-| Name | `full_name` | `{{contact.full_name}}` |
-| Email | `email` | `{{contact.email}}` |
-| Phone | `phone` | `{{contact.phone}}` |
-| Property Address | `property_address` | standard Address `{{contact.address1}}` and custom `{{contact.property_address}}` |
-| Suburb (required) | `suburb`, filled from the address until the customer types their own; datalist of service suburbs | standard City field, `{{contact.city}}` |
-| Property Size | `property_size` | `{{contact.property_size}}` |
-| Service Needed | `service_needed` (dropdown: nine services + Other) | `{{contact.service_needed}}` |
-| Job Type (required radio) | `job_type` = `One-off job` / `Regular ongoing service` / `Not sure yet` | `{{contact.job_type}}`, tag `job-type-one-off` / `-regular` / `-not-sure` |
-| Service Frequency (required only for Regular) | `service_frequency` = `Weekly` / `Fortnightly` / `Monthly / Every few weeks` / `Flexible / Not sure` | `{{contact.service_frequency}}` |
-| Job Notes | `job_notes` | `{{contact.job_notes}}` |
-| Referral tick box (optional) | `partner_sharing` = `Yes`/`No` | `{{contact.partner_sharing}}` |
-| Submission time (set by script) | `submitted_at` (ISO) and `submitted_local` (Brisbane) | `{{contact.submitted_at}}` |
-
-The referral tick box is unticked by default and optional. The thank-you page shows a different message depending on it,
-the contact is tagged `partner-sharing-yes` or `partner-sharing-no`, and the note on the contact starts with the
-submission time and "Partner sharing: Yes/No". To show it in the internal enquiry email, add `Partner sharing:
-{{contact.partner_sharing}}` to that email template in the CRM.
-
-`/api/quote` looks each custom field up in GHL by its key **or its name** (e.g. a field named "What type of service are
-you looking for?" still receives the job type) and sends it by ID. GHL silently ignores values for fields that don't
-exist, so any field it can't find is logged as `no GHL custom field found for [...]` in the Vercel function logs.
-
-The frequency question is hidden and disabled until "Regular ongoing service" is picked, so it is neither required
-nor sent for one-off or not-sure jobs. The API stores the suburb in the contact's City field, sends `job_type` and
-`service_frequency` as custom fields by key (create them as single-line text fields so any value is accepted), adds
-all three to the contact note, and names the opportunity "Service - Name - Suburb". The API does not hard-require
-the three new fields, so an enquiry from an old cached copy of the form is still saved; the browser enforces them.
-
-On submit the page posts to `/api/quote` (see below), then redirects to `/thank-you/`. Because the API is the only route
-into the CRM, a failed send is retried once; if it still fails and photos were attached, the details are re-sent
-without the photos (the note and the thank-you page ask for them by text); if even that fails, the form stays filled in
-and asks the person to try again or call. Each photo is compressed in the browser until it is under ~520 KB, so five
-photos always fit inside Vercel's 4.5 MB request limit.
-
-### Photo upload and the CRM API (Vercel function)
-
-The quote form accepts up to five photos. The browser shrinks each one to 1600 px JPEG, then POSTs the
-whole form as JSON to `/api/quote` (`api/quote.js`, a Vercel serverless function). The function:
-
-1. upserts the contact in GoHighLevel via the v2 API (`/contacts/upsert`) using a Private Integration Token,
-   mapping `property_address` to `address1` and `property_size`, `service_needed`, `job_notes` to custom fields;
-2. attaches each photo to the contact's "Job Photos" file-upload custom field (`GHL_JOB_PHOTOS_FIELD_ID`), via
-   `/forms/upload-custom-files` (the field ID is taken from `GHL_JOB_PHOTOS_FIELD_ID` or looked up by key), falling back to `/locations/{id}/customFields/upload` + contact update, and as a last
-   resort to the Media Library (`/medias/upload-file`) with links in the note;
-3. (only with `GHL_OPPORTUNITY=on`) upserts an opportunity and copies the contact's Job Photos onto it. Off by default:
-   the GHL workflow creates the opportunity;
-4. adds a note on the contact listing the service, size, address, notes and the photos;
-5. tags the contact: `partner-sharing-yes/-no` and `job-type-*` straight away, and **`website-quote` last**, once
-   everything above is saved. The API removes and re-adds `website-quote` on every enquiry, so a GHL workflow with the
-   trigger "Contact Tag: Tag Added = website-quote" fires for repeat enquiries from the same contact too, and never
-   before the fields and photos are in place. Tags are added with the add/remove tag endpoints, so a returning
-   customer's other tags are never overwritten.
-
-Environment variables to set in the Vercel project (Settings → Environment Variables):
-
-| Variable | Required | Value |
-|---|---|---|
-| `GHL_PIT_TOKEN` | yes | Private Integration Token from the sub-account (Settings → Private Integrations). Scopes: `contacts.write`, `contacts.readonly`, `medias.write`, `locations/customFields.readonly`, `opportunities.write`, `opportunities.readonly`. |
-| `GHL_LOCATION_ID` | yes | The sub-account / location ID. |
-| `GHL_JOB_PHOTOS_FIELD_ID` | no | ID of the contact's File Upload custom field. When unset the function finds it by key (`contact.job_photos`, override with `GHL_JOB_PHOTOS_FIELD_KEY`) through `GET /locations/{id}/customFields`, which needs the `locations/customFields.readonly` scope on the token. |
-| `GHL_CUSTOM_FIELDS` | no | JSON mapping form names to custom field IDs, e.g. `{"property_size":"...","service_needed":"...","job_notes":"..."}`. Without it the fields are sent by key (`property_size`, `service_needed`, `job_notes`), which works when the custom fields were created with those unique keys. |
-| `GHL_TAG` | no | Tag added to the contact (default `website-quote`). |
-| `GOOGLE_MAPS_API_KEY` | no | Browser key for the address lookup on the quote form (Maps JavaScript API + Places API (New)). Read at **build** time and written into the page, so redeploy after adding it, and restrict it to the site's domains in Google Cloud. The script loads only when a customer clicks into the address box, suggests Australian addresses near Ipswich, and fills the suburb from Google's result. Without the key, or if Google refuses it, the form falls back to typed or browser-autofilled addresses. |
-| `TURNSTILE_SITE_KEY` | no | Cloudflare Turnstile site key (public), read at **build** time to add the invisible bot check to the quote forms. |
-| `TURNSTILE_SECRET_KEY` | no | Turnstile secret key. When set, `/api/quote` only saves submissions whose token Cloudflare verifies. Set both keys together and redeploy. |
-| `ALLOWED_ORIGINS` | no | Extra comma-separated hostnames allowed to post the form. The live domain, `www`, this project's `*.vercel.app` previews and localhost are always allowed. |
-| `GHL_OPPORTUNITY` | no | Set to `on` to have the API create the opportunity as well (default off: the GHL workflow creates it). Needs the `opportunities.write` and `opportunities.readonly` scopes on the token. |
-| `GHL_PIPELINE_ID` | no | Pipeline to upsert the opportunity into. When unset the function uses `GHL_PIPELINE_NAME` (matched by name) or the location's first pipeline, via `GET /opportunities/pipelines`. |
-| `GHL_PIPELINE_STAGE_ID` | no | Stage for new opportunities (default: the pipeline's first stage). |
-| `GHL_OPP_JOB_PHOTOS_FIELD_ID` | no | ID of the opportunity's File Upload custom field. When unset it is looked up by key (`opportunity.job_photos`, override with `GHL_OPP_JOB_PHOTOS_FIELD_KEY`) through `GET /locations/{id}/customFields?model=opportunity`. |
-| `GHL_OPP_CUSTOM_FIELDS` | no | JSON mapping form names to opportunity custom field IDs (same shape as `GHL_CUSTOM_FIELDS`). Without it the fields are matched by key. |
-
-If the function is unreachable or not configured, the form shows an error with the phone number and keeps the details
-on screen. Photos over 1.5 MB after compression are skipped by the API. The Netlify config does not include this function; the Vercel deployment is the target.
-
-### Spam protection
-
-Bot submissions are checked in two places:
-
-1. **In the browser.** A tiny inline script in `<head>` (`spamGuard` in `src/templates/layout.js`) sees every
-   quote-form submit first. It stops the submit when the hidden honeypot field is filled, when the form is sent less
-   than 3 seconds after the page loaded, or while the optional Turnstile check is still running (the form then sends
-   itself once the check passes).
-2. **In `/api/quote`, in two tiers.**
-   - **Dropped** (logs `spam blocked`, returns a normal 200, nothing reaches the CRM) only for certain bots: the
-     honeypot is filled, the request did not come from the site (Origin/Referer), or it was sent in under 3 seconds.
-   - **Saved but flagged** for signs that could still be a real person: no page timer (an old cached copy of the
-     page), a link in the name, two or more links or a spam pitch (SEO, backlinks, crypto, etc.) in the notes, a
-     phone with fewer than 8 or more than 15 digits, or a malformed email. The contact is saved with the tag
-     `possible-spam` and a "POSSIBLE SPAM (reason)" line at the top of the note, and the `website-quote` workflow tag
-     is not added, so nobody is alerted. Adding `website-quote` by hand sends a genuine one through the workflow.
-   - With `TURNSTILE_SECRET_KEY` set, a missing or rejected Turnstile token returns an error and the form asks the
-     person to try again or call.
-
-Cloudflare Turnstile is optional and free: create a widget at dash.cloudflare.com (Turnstile, add the live domain and
-`vercel.app`), then add `TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` in Vercel and redeploy. It runs in
-"interaction-only" mode, so most people never see it. Blocked attempts can be reviewed in the Vercel function logs
-by searching for `spam blocked`.
-
-The Closebot chat widget (`https://api.closebot.com/scripts/cb.js?source=NOaznR477jeopRlH`) is loaded once,
-async, just before `</body>` on every page from `src/templates/layout.js`.
+The old direct-to-CRM route (`api/quote.js`, a Vercel function using a GHL Private Integration Token) was removed at
+the same time. Its `GHL_*` and `TURNSTILE_SECRET_KEY` env vars in Vercel are no longer used.
 
 ## Suburb pages and blog (keyword-led)
 
